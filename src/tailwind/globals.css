@@ -1,0 +1,17 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .pack-content {
+    @apply mx-auto max-w-6xl px-6;
+  }
+}
+
+html {
+  @apply flex flex-col h-full overflow-hidden;
+}
+
+body {
+  @apply relative flex flex-col flex-1 overflow-x-hidden overflow-y-auto;
+}
