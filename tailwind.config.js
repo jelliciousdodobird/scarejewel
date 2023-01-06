@@ -1,9 +1,25 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: "class",
-  content: ["./src/**/*.{js,ts,jsx,tsx}"],
+  content: [
+    "./src/app/**/*.{js,ts,jsx,tsx}",
+    "./src/pages/**/*.{js,ts,jsx,tsx}",
+    "./src/components/**/*.{js,ts,jsx,tsx}",
+    "./src/client-pages/**/*.{js,ts,jsx,tsx}",
+  ],
   theme: {
-    extend: {},
+    fontFamily: {
+      mono: ["var(--font-fira_code)"], // overriding mono
+    },
+    extend: {
+      fontFamily: {
+        base: ["var(--font-inter)"],
+      },
+    },
   },
-  plugins: [],
+  plugins: [
+    require("@headlessui/tailwindcss"),
+    require("tailwind-scrollbar"),
+    require("@tailwindcss/line-clamp"),
+  ],
 };

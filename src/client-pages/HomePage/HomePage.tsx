@@ -1,67 +1,89 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Combobox, Disclosure, Listbox } from "@headlessui/react";
+import { IconChevronsDown, IconSquareChevronUp } from "@tabler/icons";
+import { nanoid } from "nanoid";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { PrettyColor, prettyTailwindColors } from "../../utils/colors";
+import {
+  ComboOption,
+  CourseSelector,
+} from "../../components/CourseSelector/CourseSelector";
 import { ThemeSwitch } from "../../components/ThemeSwitch/ThemeSwitch";
-import supabase from "../../database/supabase";
-import { Database } from "../../database/types";
+import { Database, Semester, validSemesters } from "../../database/types";
+import { getCurrentSemester, getRandomPrettyColor } from "../../utils/util";
+import { PartialBy } from "../../utils/types";
 
 type ClassSection = Database["public"]["Tables"]["class_sections"]["Row"];
 
-const insertNewStuff = async () => {
-  const rand = crypto.randomUUID().slice(0, 5);
-  const group_id = crypto.randomUUID();
-  const { data, error } = await supabase.from("class_sections").insert({
-    semester: "Fall",
-    year: 2020,
-    dept_abbr: "CECS",
-    dept_title: "Idk man just try it",
-    course_number: rand,
-    course_title: rand,
-    units: "5",
-    group_id: group_id,
-    section_type: "lec",
-    section_number: rand,
-    class_number: rand,
-    instructor_fn: "",
-    instructor_ln: "",
-    days: "",
-    time_start: 0,
-    time_end: 6000,
-    location: "",
-    comment: "",
-  });
-
-  console.warn(error);
-};
-const deleteStuff = async () => {
-  const { data, error } = await supabase
-    .from("class_sections")
-    .delete()
-    .eq("uid", "3b793ce3-ce74-4d85-a998-f09825794359");
-
-  console.log(data);
-
-  console.warn(error);
+export type CourseItem = {
+  id: string;
+  color: PrettyColor;
+  selectedDept: ComboOption;
+  selectedCourse: ComboOption;
 };
 
-export default function HomePage() {
-  const str = "The quick brown fox jumps";
+export type HomePageProps = {
+  semesters: Semester[];
+  years: number[];
+};
+
+export default function HomePage({ semesters, years }: HomePageProps) {
+  const [loading, setLoading] = useState(false);
   const [data, setData] = useState<ClassSection[]>([]);
 
-  useEffect(() => {
-    const getClasses = async () => {
-      const { data, error } = await supabase.from("class_sections").select("*");
+  const [courseItems, setCourseItems] = useState<CourseItem[]>([]);
 
-      if (error) console.log(error);
-      if (data) setData(data);
-    };
-    getClasses();
-  }, []);
+  const addCourseItem = (
+    updateItem: PartialBy<PartialBy<CourseItem, "id">, "color">
+  ) =>
+    setCourseItems((items) => {
+      if (items.length > 10) return items;
+      const id = nanoid();
+      const excludeColors = items.map((v) => v.color);
+      const color = getRandomPrettyColor(excludeColors);
+      const { selectedDept, selectedCourse } = updateItem;
+      return [...items, { id, color, selectedDept, selectedCourse }];
+    });
+
+  const updateCourseItem = (updateItem: CourseItem) =>
+    setCourseItems((items) =>
+      items.map((item) =>
+        item.id === updateItem.id ? { ...item, ...updateItem } : item
+      )
+    );
+
+  const removeCourseItem = (updateItem: CourseItem) =>
+    setCourseItems((items) => items.filter(({ id }) => id !== updateItem.id));
+
+  const semesterOptions: SelectOption<Semester>[] = useMemo(
+    () =>
+      semesters.map((season) => ({
+        id: season,
+        label: season,
+        value: season,
+      })),
+    [semesters]
+  );
+
+  const yearOptions: SelectOption<number>[] = useMemo(
+    () =>
+      years.map((year) => ({
+        id: `${year}`,
+        label: `${year}`,
+        value: year,
+      })),
+    [years]
+  );
+
+  const [semester, setSemester] =
+    useState<SelectOption<Semester>>(default_semester);
+  const [year, setYear] = useState<SelectOption<number>>(default_year);
 
   return (
     <div className="flex flex-col gap-4">
       <div className="relative isolate">
-        <div className="-z-10 absolute -top-16 w-full h-[calc(100%+4rem)] bg-gradient-to-r from-purple-500 to-pink-500 "></div>
+        <div className="-z-10 absolute -top-16 w-full h-[calc(100%+4rem)] bg-gradient-to-r from-purple-500 to-pink-500"></div>
         <div className="pack-content flex flex-col py-8">
           <h1 className="text-7xl font-bold">Hero Section</h1>
           <h2 className="text-2xl font-semibold max-w-md">
@@ -76,40 +98,130 @@ export default function HomePage() {
           </h2>
 
           <div className="flex">
-            <button
-              className="p-2 bg-gradient-to-r from-emerald-400 to-fuchsia-600"
+            {/* <button
+              className="rounded-md p-2 bg-gradient-to-r from-emerald-400 to-fuchsia-600 disabled:cursor-not-allowed"
               type="button"
-              onClick={insertNewStuff}
+              disabled={loading}
+              onClick={() => {
+                console.log(courseItems);
+                // setLoading(true);
+                // const { data, error } = await supabase
+                //   .from("class_sections")
+                //   .select("*")
+                //   .match({
+                //     semester: semester.value,
+                //     year: year.value,
+                //     dept_abbr: dept.value,
+                //     course_number: course.value,
+                //   });
+                // if (error) console.error(error);
+                // setLoading(false);
+                // if (data) setData(data);
+              }}
             >
-              INSERT
-            </button>
-            <button
-              className="p-2 bg-gradient-to-r from-emerald-400 to-fuchsia-600"
-              type="button"
-              onClick={deleteStuff}
-            >
-              DELETE
-            </button>
+              Submit
+            </button> */}
           </div>
         </div>
+      </div>
+
+      <div className="pack-content w-full flex flex-col gap-4">
+        <ThemeSwitch />
+        <div className="flex gap-4">
+          <Select
+            options={semesterOptions}
+            onChange={setSemester}
+            selectedOption={semester}
+          />
+          <Select
+            options={yearOptions}
+            onChange={setYear}
+            selectedOption={year}
+          />
+        </div>
+
+        <ul className="flex flex-col gap-4">
+          {courseItems.map((v, i) => (
+            <CourseSelector
+              key={v.id}
+              courseItem={v}
+              updateCourseItem={updateCourseItem}
+              semester={semester.value}
+              year={year.value}
+              index={i}
+            />
+          ))}
+        </ul>
+        <button
+          className="rounded-md p-2 bg-gradient-to-r from-emerald-400 to-fuchsia-600 disabled:cursor-not-allowed"
+          type="button"
+          disabled={loading}
+          onClick={() => {
+            addCourseItem({
+              selectedCourse: { id: "", label: "", title: "", value: "" },
+              selectedDept: { id: "", label: "", title: "", value: "" },
+            });
+          }}
+        >
+          ADD COURSE ITEM
+        </button>
       </div>
       <div className="w-full">
         <pre className="pack-content">{JSON.stringify(data, null, 2)}</pre>
       </div>
-      <div className="pack-content flex flex-col">
-        <ThemeSwitch />
-        <h1 className="text-5xl">{str}</h1>
-        <h1 className="font-sans text-5xl">{str}</h1>
-        <h1 className="font-mono text-5xl dark:text-blue-500">{str}</h1>
-
-        {[...Array(10).keys()].map((v) => (
-          <h2 key={v} className="text-2xl">
-            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Suscipit
-            cupiditate nam eveniet. Tempora provident autem reiciendis ratione
-            unde quos distinctio.
-          </h2>
-        ))}
-      </div>
     </div>
   );
 }
+
+interface SelectOption<T> {
+  id: string;
+  label: string;
+  value: T;
+}
+
+interface SelectProps<T> {
+  options: SelectOption<T>[];
+  selectedOption: SelectOption<T>;
+  onChange: (opt: SelectOption<T>) => void;
+}
+
+export const Select = <T extends string | number>({
+  options,
+  selectedOption,
+  onChange,
+}: SelectProps<T>) => {
+  return (
+    <Listbox value={selectedOption} onChange={onChange}>
+      <div className="relative flex flex-col">
+        <Listbox.Button className="h-10 px-3 py-1 rounded-sm bg-slate-500">
+          {selectedOption.label}
+        </Listbox.Button>
+        <Listbox.Options className="absolute top-9 overflow-hidden flex flex-col bg-slate-500 rounded-sm">
+          {options.map((opt) => (
+            <Listbox.Option
+              className="px-3 py-1 cursor-pointer hover:bg-red-500 hover:text-white "
+              key={opt.id}
+              value={opt}
+            >
+              {opt.label}
+            </Listbox.Option>
+          ))}
+        </Listbox.Options>
+      </div>
+    </Listbox>
+  );
+};
+
+const currentSem = getCurrentSemester();
+const default_semester: SelectOption<Semester> = {
+  id: currentSem,
+  label: currentSem,
+  value: currentSem,
+};
+
+const currentYear = new Date().getFullYear();
+const default_year: SelectOption<number> = {
+  id: currentYear.toString(),
+  label: currentYear.toString(),
+  value: currentYear,
+};

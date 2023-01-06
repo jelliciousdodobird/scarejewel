@@ -5,7 +5,6 @@ import Link from "next/link";
 const links = [
   { label: "home", path: "/", color: "#555468" },
   { label: "schedule", path: "/schedule", color: "#555468" },
-  { label: "test", path: "/test", color: "#555468" },
 ];
 
 export const Navbar = () => {
