@@ -9,7 +9,7 @@
 }
 
 html {
-  @apply flex flex-col h-full overflow-hidden selection:bg-black selection:text-white;
+  @apply flex flex-col h-full overflow-hidden selection:bg-black selection:text-white font-base;
 }
 
 body {

@@ -1,10 +1,9 @@
 "use client";
 
-import { Combobox, Disclosure, Listbox } from "@headlessui/react";
-import { IconChevronsDown, IconSquareChevronUp } from "@tabler/icons";
+import { Listbox } from "@headlessui/react";
 import { nanoid } from "nanoid";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { PrettyColor, prettyTailwindColors } from "../../utils/colors";
+import { PrettyColor } from "../../utils/colors";
 import {
   ComboOption,
   CourseSelector,
@@ -140,7 +139,7 @@ export default function HomePage({ semesters, years }: HomePageProps) {
           />
         </div>
 
-        <ul className="flex flex-col gap-4">
+        <ul className="flex flex-col gap-6">
           {courseItems.map((v, i) => (
             <CourseSelector
               key={v.id}

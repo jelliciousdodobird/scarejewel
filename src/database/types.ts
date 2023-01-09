@@ -7,7 +7,7 @@ export const validSectionTypes = [
   "act",
   "add",
 ] as const;
-export const validClassDays = ["m", "tu", "w", "th", "f", "sa"] as const;
+export const validClassDays = ["s", "m", "tu", "w", "th", "f", "sa"] as const;
 export const validSectionKeys = [
   "section_number",
   "class_number",
@@ -35,6 +35,9 @@ export const isClassDays = (str: string): str is ClassDay =>
 
 export const isValidSectionKey = (str: string): str is ValidSectionKey =>
   validSectionKeys.some((key) => key === str);
+
+export type ClassSection =
+  Database["public"]["Tables"]["class_sections"]["Row"];
 
 export interface Database {
   public: {

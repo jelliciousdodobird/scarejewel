@@ -1,7 +1,6 @@
 import HomePage from "../client-pages/HomePage/HomePage";
 import supabase from "../database/supabase";
 import { Semester } from "../database/types";
-// export const revalidate = 30;
 
 // use these if the database fails:
 const sems: { semester: Semester }[] = [

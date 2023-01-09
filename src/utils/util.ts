@@ -38,6 +38,24 @@ export const formatTitle = (str: string) => {
   return words.join(" ");
 };
 
+/**
+ *
+ * @param time the number of minutes since 00:00 (12:00 AM)
+ */
+export const formatTime = (time: number, byMeridiem = true) => {
+  const hours = Math.floor(time / 60);
+  const minutes = time - hours * 60;
+  const minutesPadded = zeroPad(minutes, 2);
+
+  const h12 = hours % 12 === 0 ? 12 : hours % 12;
+  const meridiem = hours >= 12 && hours < 24 ? "PM" : "AM";
+
+  const format24Hours = `${hours}:${minutesPadded}`;
+  const format12Hours = `${h12}:${minutesPadded}${meridiem}`;
+
+  return byMeridiem ? format12Hours : format24Hours;
+};
+
 export const getRandomPrettyColor = (exclude?: PrettyColor[]) => {
   let arr = exclude
     ? pretty_colors.filter((c) => !exclude.includes(c))
