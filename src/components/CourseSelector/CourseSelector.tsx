@@ -13,10 +13,10 @@ import { SectionSelector } from "../SectionSelector/SectionSelector";
 import {
   disclosure_header_bg_color,
   combobox_placeholder_text_color,
-  disclose_header_hover_gb_color,
+  disclosure_header_hover_ring_color,
   disclosure_header_text_color,
   input_bg,
-  outline_color,
+  ring_color,
 } from "./CourseSelector.variants";
 
 const fetchDistinctDepts = async (semester: Semester, year: number) => {
@@ -74,6 +74,7 @@ const arePropsEqual = (
   prev: Readonly<CourseSelectorProps>,
   next: Readonly<CourseSelectorProps>
 ) => {
+  if (prev.index !== next.index) return false;
   if (prev.semester !== next.semester) return false;
   if (prev.year !== next.year) return false;
   if (prev.courseItem.id !== next.courseItem.id) return false;
@@ -154,10 +155,15 @@ export const CourseSelector = memo(function CourseSelector({
 
   const { color } = courseItem;
   const bgc = disclosure_header_bg_color[color];
-  const hover_bgc = disclose_header_hover_gb_color[color];
   const textColor = disclosure_header_text_color[color];
-  const outlineColor = outline_color[color];
+
+  const headerRingColor = disclosure_header_hover_ring_color[color];
+  const headerBtnRingColor = ring_color[color];
+
   const disableCourseSelect = !courseItem.selectedDept.value;
+
+  const headerRing = `${headerRingColor} ring-0 hover:ring-4 border border-white/0 hover:border-black/30 transition-[box-shadow]`;
+  const headerBtnRing = `${headerBtnRingColor} ring-0 focus-visible:ring-2 ring-inset appearance-none outline-none transition-[box-shadow]`;
 
   return (
     <Disclosure
@@ -167,7 +173,7 @@ export const CourseSelector = memo(function CourseSelector({
       style={{ zIndex: 20 - index }}
     >
       <div
-        className={`sticky z-10 top-16 flex w-full justify-between rounded-lg p-2 text-sm font-medium ${textColor} ${bgc} ${hover_bgc} shadow-[0_2px_10px_10px_rgba(255,255,255,1)]`}
+        className={`sticky z-10 top-16 flex w-full justify-between rounded-lg p-2 text-sm font-medium ${textColor} ${bgc} ${headerRing} shadow-[0_2px_10px_10px_rgba(255,255,255,1)]`}
       >
         <AutoCompleteInput
           options={deptOptions}
@@ -185,7 +191,7 @@ export const CourseSelector = memo(function CourseSelector({
           disabled={disableCourseSelect}
         />
         <Disclosure.Button
-          className={`flex justify-between items-center pl-3 pr-1 w-full rounded-md -outline-offset-2 outline outline-0 focus:outline-2 ${outlineColor} text-base`}
+          className={`flex justify-between items-center pl-3 pr-1 w-full rounded-md text-base ${headerBtnRing}`}
         >
           <span className="text-left line-clamp-1">
             {title || "Pick a department then course code"}
@@ -232,11 +238,17 @@ export const AutoCompleteInput = ({
   placeholder = "",
   color = "amber",
 }: ComboerProps) => {
+  const inputRef = useRef<HTMLInputElement>(null!);
   const buttonRef = useRef<HTMLButtonElement>(null!);
+
+  const [query, setQuery] = useState("");
+  const resetQuery = () => {
+    setQuery("");
+    inputRef?.current?.focus();
+  };
   const clickButton = (opened: boolean) =>
     !opened && buttonRef.current?.click();
 
-  const [query, setQuery] = useState("");
   const filteredOptions =
     query === ""
       ? options
@@ -245,12 +257,16 @@ export const AutoCompleteInput = ({
             fuzzyCompare(query, opt.value) || fuzzyCompare(query, opt.title)
         );
 
+  // style tokens:
   const inputBg = input_bg[color];
   const placeholderTextColor = combobox_placeholder_text_color[color];
-  const italic = selectedOption.value === "" ? "" : "";
-  const outlineColor = outline_color[color];
-  const openedStyles = `placeholder:text-white/80 ${inputBg} text-white  font-normal`;
-  const closedStyles = `${placeholderTextColor} bg-transparent  font-semibold`;
+  const ringColor = ring_color[color];
+
+  // styles:
+  const openedStyles = `ring-2 bg-white`;
+  const closedStyles = `ring-0 bg-white/0`;
+  const placeholderStyles = `${placeholderTextColor} placeholder:text-base placeholder:lowercase`;
+  const ringStyle = `${ringColor} ring-inset focus:ring-2 hover:ring-2 appearance-none outline-none transition-[box-shadow] `;
 
   return (
     <Combobox
@@ -263,14 +279,15 @@ export const AutoCompleteInput = ({
         <>
           <div className="relative">
             <Combobox.Input
+              ref={inputRef}
               autoComplete="off"
               placeholder={placeholder}
-              className={`relative z-50 flex justify-between px-3 h-8 max-w-[62px] min-w-[62px] rounded-md text-base placeholder:text-base placeholder:capitalize  disabled:cursor-not-allowed caret-black  w-full font-mono font-semiboldzz ${outlineColor} outline -outline-offset-2 outline-0 hover:outline-2 focus:outline-2 ${
+              className={`relative z-50 flex justify-between px-3 h-8 max-w-[62px] min-w-[62px] rounded-md caret-black w-full text-base font-mono font-semibold disabled:cursor-not-allowed ${placeholderStyles} ${ringStyle} ${
                 open ? openedStyles : closedStyles
-              } ${italic}`}
+              }`}
               displayValue={(dept: ComboOption) => (open ? query : dept.value)}
               onChange={(e) => setQuery(e.target.value)}
-              onClick={() => clickButton(open)}
+              onFocus={() => clickButton(open)}
               required
             />
 
@@ -299,17 +316,23 @@ export const AutoCompleteInput = ({
               )}
             </Combobox.Button>
           </div>
-
           <Combobox.Options
             as="div"
-            className="absolute z-40 top-0 left-0 p-2 pr-1 pt-12 bg-white/60 shadow-xl rounded-lg backdrop-blur-sm w-full sm:w-min min-w-[18rem] mb-32 ring-1 ring-slate-200"
+            className="absolute z-40 top-0 left-0 p-2 pr-1 pt-12 bg-white/60 shadow-xl rounded-lg backdrop-blur-sm w-full sm:w-min min-w-[18rem] mb-32"
           >
             <Combobox.Button className=" absolute top-0 right-0 flex justify-center items-center p-3 text-rose-500 hover:text-rose-700">
               <IconX />
             </Combobox.Button>
-            <ul className="overflow-y-auto overflow-x-hidden max-h-48 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-stone-400 hover:scrollbar-track-stone-200 hover:scrollbar-thumb-stone-900 pr-4">
+            <ul className="flex flex-col gap-2 custom-scrollbar-tiny overflow-y-auto overflow-x-hidden max-h-48 pr-4">
               {filteredOptions.length === 0 && (
-                <li className="px-3 py-1 text-rose-700">😵 No results</li>
+                <li className="px-3 py-1 text-rose-700">
+                  <button
+                    className="flex px-3 py-1 hover:bg-red-500 hover:text-white"
+                    onClick={resetQuery}
+                  >
+                    😵 No results. Clear here to reset.
+                  </button>
+                </li>
               )}
               {filteredOptions.map((option) => (
                 <Combobox.Option

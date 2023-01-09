@@ -112,6 +112,18 @@ export interface Database {
       [_ in never]: never;
     };
     Functions: {
+      get_distinct_course_ids: {
+        Args: { _semester: string; _year: number; _dept_abbr: string };
+        Returns: { uid: string; course_number: string; course_title: string };
+      };
+      get_distinct_depts: {
+        Args: { _semester: string; _year: number };
+        Returns: { uid: string; dept_abbr: string; dept_title: string };
+      };
+      get_distinct_terms: {
+        Args: Record<PropertyKey, never>;
+        Returns: { semester: Semester; year: number };
+      };
       get_distinct_semesters: {
         Args: Record<PropertyKey, never>;
         Returns: { semester: Semester };
@@ -119,14 +131,6 @@ export interface Database {
       get_distinct_years: {
         Args: Record<PropertyKey, never>;
         Returns: { year: number };
-      };
-      get_distinct_depts: {
-        Args: { _semester: string; _year: number };
-        Returns: { uid: string; dept_abbr: string; dept_title: string };
-      };
-      get_distinct_course_ids: {
-        Args: { _semester: string; _year: number; _dept_abbr: string };
-        Returns: { uid: string; course_number: string; course_title: string };
       };
     };
     Enums: {

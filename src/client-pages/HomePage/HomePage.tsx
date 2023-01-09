@@ -9,11 +9,12 @@ import {
   CourseSelector,
 } from "../../components/CourseSelector/CourseSelector";
 import { ThemeSwitch } from "../../components/ThemeSwitch/ThemeSwitch";
-import { Database, Semester, validSemesters } from "../../database/types";
-import { getCurrentSemester, getRandomPrettyColor } from "../../utils/util";
+import { Semester } from "../../database/types";
+import { getRandomPrettyColor } from "../../utils/util";
 import { PartialBy } from "../../utils/types";
+import { IconSelector } from "@tabler/icons";
 
-type ClassSection = Database["public"]["Tables"]["class_sections"]["Row"];
+type Term = { semester: Semester; year: number };
 
 export type CourseItem = {
   id: string;
@@ -23,14 +24,11 @@ export type CourseItem = {
 };
 
 export type HomePageProps = {
-  semesters: Semester[];
-  years: number[];
+  terms: Term[];
 };
 
-export default function HomePage({ semesters, years }: HomePageProps) {
+export default function HomePage({ terms }: HomePageProps) {
   const [loading, setLoading] = useState(false);
-  const [data, setData] = useState<ClassSection[]>([]);
-
   const [courseItems, setCourseItems] = useState<CourseItem[]>([]);
 
   const addCourseItem = (
@@ -55,29 +53,26 @@ export default function HomePage({ semesters, years }: HomePageProps) {
   const removeCourseItem = (updateItem: CourseItem) =>
     setCourseItems((items) => items.filter(({ id }) => id !== updateItem.id));
 
-  const semesterOptions: SelectOption<Semester>[] = useMemo(
+  const termOptions: SelectOption[] = useMemo(
     () =>
-      semesters.map((season) => ({
-        id: season,
-        label: season,
-        value: season,
-      })),
-    [semesters]
+      [...terms]
+        .sort((a, b) => {
+          // sort by year (greatest year first, lowest year last):
+          if (a.year < b.year) return 1;
+          if (a.year > b.year) return -1;
+
+          // if the years are equal then sort by semester:
+          return a.semester.localeCompare(b.semester);
+        })
+        .map((term) => ({
+          id: `${term.semester}-${term.year}`,
+          label: `${term.semester}-${term.year}`,
+          value: term,
+        })),
+    [terms]
   );
 
-  const yearOptions: SelectOption<number>[] = useMemo(
-    () =>
-      years.map((year) => ({
-        id: `${year}`,
-        label: `${year}`,
-        value: year,
-      })),
-    [years]
-  );
-
-  const [semester, setSemester] =
-    useState<SelectOption<Semester>>(default_semester);
-  const [year, setYear] = useState<SelectOption<number>>(default_year);
+  const [term, setTerm] = useState<SelectOption>(termOptions[0]);
 
   return (
     <div className="flex flex-col gap-4">
@@ -95,62 +90,32 @@ export default function HomePage({ semesters, years }: HomePageProps) {
             eius minima animi eos ipsum aut id similique distinctio, quod
             eveniet?
           </h2>
-
-          <div className="flex">
-            {/* <button
-              className="rounded-md p-2 bg-gradient-to-r from-emerald-400 to-fuchsia-600 disabled:cursor-not-allowed"
-              type="button"
-              disabled={loading}
-              onClick={() => {
-                console.log(courseItems);
-                // setLoading(true);
-                // const { data, error } = await supabase
-                //   .from("class_sections")
-                //   .select("*")
-                //   .match({
-                //     semester: semester.value,
-                //     year: year.value,
-                //     dept_abbr: dept.value,
-                //     course_number: course.value,
-                //   });
-                // if (error) console.error(error);
-                // setLoading(false);
-                // if (data) setData(data);
-              }}
-            >
-              Submit
-            </button> */}
-          </div>
         </div>
       </div>
 
       <div className="pack-content w-full flex flex-col gap-4">
         <ThemeSwitch />
-        <div className="flex gap-4">
+        <div className="relative z-10 flex">
           <Select
-            options={semesterOptions}
-            onChange={setSemester}
-            selectedOption={semester}
-          />
-          <Select
-            options={yearOptions}
-            onChange={setYear}
-            selectedOption={year}
+            options={termOptions}
+            onChange={setTerm}
+            selectedOption={term}
           />
         </div>
 
-        <ul className="flex flex-col gap-6">
+        <ul className="relative z-0 flex flex-col gap-6">
           {courseItems.map((v, i) => (
             <CourseSelector
               key={v.id}
               courseItem={v}
               updateCourseItem={updateCourseItem}
-              semester={semester.value}
-              year={year.value}
+              semester={term.value.semester}
+              year={term.value.year}
               index={i}
             />
           ))}
         </ul>
+
         <button
           className="rounded-md p-2 bg-gradient-to-r from-emerald-400 to-fuchsia-600 disabled:cursor-not-allowed"
           type="button"
@@ -165,62 +130,55 @@ export default function HomePage({ semesters, years }: HomePageProps) {
           ADD COURSE ITEM
         </button>
       </div>
-      <div className="w-full">
-        <pre className="pack-content">{JSON.stringify(data, null, 2)}</pre>
-      </div>
     </div>
   );
 }
 
-interface SelectOption<T> {
+interface SelectOption {
   id: string;
   label: string;
-  value: T;
+  value: Term;
 }
 
-interface SelectProps<T> {
-  options: SelectOption<T>[];
-  selectedOption: SelectOption<T>;
-  onChange: (opt: SelectOption<T>) => void;
+interface SelectProps {
+  options: SelectOption[];
+  selectedOption: SelectOption;
+  onChange: (opt: SelectOption) => void;
 }
 
-export const Select = <T extends string | number>({
-  options,
-  selectedOption,
-  onChange,
-}: SelectProps<T>) => {
+export const Select = ({ options, selectedOption, onChange }: SelectProps) => {
   return (
-    <Listbox value={selectedOption} onChange={onChange}>
-      <div className="relative flex flex-col">
-        <Listbox.Button className="h-10 px-3 py-1 rounded-sm bg-slate-500">
-          {selectedOption.label}
-        </Listbox.Button>
-        <Listbox.Options className="absolute top-9 overflow-hidden flex flex-col bg-slate-500 rounded-sm">
+    <Listbox
+      value={selectedOption}
+      onChange={onChange}
+      by="id"
+      as="div"
+      className="relative flex flex-col "
+    >
+      <Listbox.Button className="rounded flex justify-center items-center gap-2 h-10 pl-4 pr-2 py-1 bg-slate-100 text-slate-700 hover:bg-slate-200 font-semibold">
+        <span className="flex ">{selectedOption.value.semester}</span>
+        <span className="flex font-mono ">{selectedOption.value.year}</span>
+        <IconSelector />
+      </Listbox.Button>
+      <Listbox.Options
+        as="div"
+        className="absolute top-12 p-2 pr-1 bg-white/60 shadow-xl rounded-lg backdrop-blur-sm outline-none  border border-slate-200"
+      >
+        <ul className="custom-scrollbar-tiny overflow-y-auto overflow-x-hidden max-h-48  pr-4 flex flex-col items-center">
           {options.map((opt) => (
             <Listbox.Option
-              className="px-3 py-1 cursor-pointer hover:bg-red-500 hover:text-white "
+              className="flex px-3 py-1 rounded cursor-pointer  ui-active:bg-indigo-400 ui-active:text-white "
               key={opt.id}
               value={opt}
             >
-              {opt.label}
+              <span className="flex min-w-[5rem] font-semibold">
+                {opt.value.semester}
+              </span>
+              <span className="flex font-mono">{opt.value.year}</span>
             </Listbox.Option>
           ))}
-        </Listbox.Options>
-      </div>
+        </ul>
+      </Listbox.Options>
     </Listbox>
   );
-};
-
-const currentSem = getCurrentSemester();
-const default_semester: SelectOption<Semester> = {
-  id: currentSem,
-  label: currentSem,
-  value: currentSem,
-};
-
-const currentYear = new Date().getFullYear();
-const default_year: SelectOption<number> = {
-  id: currentYear.toString(),
-  label: currentYear.toString(),
-  value: currentYear,
 };

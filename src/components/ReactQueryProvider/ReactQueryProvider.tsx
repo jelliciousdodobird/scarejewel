@@ -19,7 +19,7 @@ type Props = {
 const ReactQueryProvider = ({ children }: Props) => {
   return (
     <QueryClientProvider client={queryClient}>
-      <ReactQueryDevtools initialIsOpen={false} />
+      {/* <ReactQueryDevtools initialIsOpen={false} /> */}
       {children}
     </QueryClientProvider>
   );

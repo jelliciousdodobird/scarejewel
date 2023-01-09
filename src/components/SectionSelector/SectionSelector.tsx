@@ -150,7 +150,7 @@ export const SectionSelector = ({
       {groups.map((group, i) => (
         <Fragment key={group[0].group_id}>
           {groups.length > 1 && (
-            <h2 className="font-extrabold text-xl uppercase pt-4 border-b border-slate-300">
+            <h2 className="font-extrabold text-xl uppercase pt-4">
               Group {i + 1}
             </h2>
           )}
@@ -166,18 +166,18 @@ export const SectionSelector = ({
 };
 
 const ClassCard = ({ s }: { s: ClassSection }) => {
-  const [disable, setDisabled] = useState(false);
-  const [chosen, setChosen] = useState(false);
+  const [hidden, setDisabled] = useState(false);
+  const [selected, setChosen] = useState(false);
   const toggleDisable = () => setDisabled((v) => !v);
 
   const toggleChosen = () => setChosen((v) => !v);
 
-  const grayscale = disable
+  const bgColor = hidden ? "bg-slate-100" : "bg-white";
+  const collapse = hidden ? "overflow-hidden h-16" : "h-auto";
+  const grayscale = hidden
     ? "grayscale-[80%] opacity-50"
     : "grayscale-0 opacity-100 ";
-  const bgColor = disable ? "bg-slate-100" : "bg-white";
-  const collapse = disable ? "overflow-hidden h-16" : "h-auto";
-  const borderColor = chosen
+  const borderColor = selected
     ? "ring-[4px] ring-emerald-100 border-emerald-500"
     : "border-slate-200 group-hover:border-slate-300 group-hover:shadow ";
 
@@ -188,12 +188,12 @@ const ClassCard = ({ s }: { s: ClassSection }) => {
           className={`flex items-center flex-1 pl-2 text-slate-900 text-lg font-mono font-extrabold ${grayscale}`}
         >
           {s.section_number} {s.class_number}
-          {chosen && (
+          {selected && (
             <span className="text-slate-500 font-semibold text-sm font-base ml-4">
               (added)
             </span>
           )}
-          {disable && (
+          {hidden && (
             <span className="text-slate-500 font-semibold text-sm font-base ml-2 ">
               (hidden)
             </span>
@@ -203,13 +203,13 @@ const ClassCard = ({ s }: { s: ClassSection }) => {
           className="flex justify-center items-center w-12 h-12 rounded-[50%] hover:text-slate-600"
           onClick={toggleDisable}
         >
-          {disable ? <IconEyeOff /> : <IconEye />}
+          {hidden ? <IconEyeOff /> : <IconEye />}
         </button>
         <button
           className="flex justify-center items-center w-12 h-12 rounded-[50%] hover:text-slate-600"
           onClick={toggleChosen}
         >
-          {chosen ? (
+          {selected ? (
             <IconCircleMinus className="text-rose-500 hover:text-rose-400" />
           ) : (
             <IconCirclePlus className="text-emerald-500 hover:text-emerald-400" />
