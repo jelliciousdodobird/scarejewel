@@ -83,7 +83,6 @@ const arePropsEqual = (
     return false;
   if (prev.courseItem.selectedCourse.id !== next.courseItem.selectedCourse.id)
     return false;
-
   return true;
 };
 
@@ -318,19 +317,20 @@ export const AutoCompleteInput = ({
           </div>
           <Combobox.Options
             as="div"
-            className="absolute z-40 top-0 left-0 p-2 pr-1 pt-12 bg-white/60 shadow-xl rounded-lg backdrop-blur-sm w-full sm:w-min min-w-[18rem] mb-32"
+            className="absolute z-40 top-0 left-0 p-2 pr-1 pt-12 bg-white/70 shadow-xl rounded-lg backdrop-blur-sm w-full sm:w-min min-w-[18rem] mb-32"
           >
             <Combobox.Button className=" absolute top-0 right-0 flex justify-center items-center p-3 text-rose-500 hover:text-rose-700">
               <IconX />
             </Combobox.Button>
-            <ul className="flex flex-col gap-2 custom-scrollbar-tiny overflow-y-auto overflow-x-hidden max-h-48 pr-4">
+            <ul className="flex flex-col gap-2 custom-scrollbar-tiny overflow-y-auto overflow-x-hidden max-h-48 pr-3">
               {filteredOptions.length === 0 && (
-                <li className="px-3 py-1 text-rose-700">
+                <li className="w-full">
                   <button
-                    className="flex px-3 py-1 hover:bg-red-500 hover:text-white"
+                    type="button"
+                    className="w-full flex justify-center items-center gap-4 px-3 py-2 whitespace-nowrap rounded text-rose-700  hover:bg-red-500 hover:text-white"
                     onClick={resetQuery}
                   >
-                    😵 No results. Clear here to reset.
+                    No results. Click here to reset.
                   </button>
                 </li>
               )}

@@ -177,9 +177,9 @@ const ClassCard = ({ s }: { s: ClassSection }) => {
   const grayscale = hidden
     ? "grayscale-[80%] opacity-50"
     : "grayscale-0 opacity-100 ";
-  const borderColor = selected
-    ? "ring-[4px] ring-emerald-100 border-emerald-500"
-    : "border-slate-200 group-hover:border-slate-300 group-hover:shadow ";
+  const ringGlow = selected
+    ? "ring-4 ring-emerald-100 border-emerald-400 group-hover:ring-4 group-hover:ring-emerald-200  group-hover:border-emerald-500"
+    : "ring-0 ring-transparent border-slate-200 group-hover:ring-4 group-hover:ring-slate-100  group-hover:border-slate-300";
 
   return (
     <li className="flex flex-col group self-stretch">
@@ -217,7 +217,7 @@ const ClassCard = ({ s }: { s: ClassSection }) => {
         </button>
       </span>
       <div
-        className={`flex-grow relative flex flex-col gap-6 p-4 rounded-md border transition-[opacity_filter_background-color] ${borderColor} ${bgColor} ${grayscale} ${collapse}`}
+        className={`flex-grow relative flex flex-col gap-8 p-4 rounded-md border transition-[opacity_filter_background-color_box-shadow] ${ringGlow} ${bgColor} ${grayscale} ${collapse}`}
       >
         <div className="flex gap-2 ">
           <div className="flex min-w-[7rem]">
@@ -258,11 +258,17 @@ const ClassCard = ({ s }: { s: ClassSection }) => {
         </div>
 
         <div className="flex gap-2">
+          <Comment comment={s.comment} />
+          {/* <div className="flex flex-col gap-1">
+          
+          </div> */}
+        </div>
+        {/* <div className="flex gap-2">
           <div className="flex min-w-[7rem]"></div>
           <div className="flex flex-col gap-1">
             <Comment comment={s.comment} />
           </div>
-        </div>
+        </div> */}
       </div>
     </li>
   );
@@ -273,7 +279,7 @@ const Comment = ({ comment }: { comment: string }) => {
   const [isClamped, setClamped] = useState(false);
   const [isExpanded, setExpanded] = useState(false);
   const toggleExpand = () => setExpanded((v) => !v);
-  const clamp = isExpanded ? "line-clamp-none" : "line-clamp-2";
+  const clamp = isExpanded ? "line-clamp-none" : "line-clamp-1";
 
   useEffect(() => {
     const handleResize = () => {
@@ -294,10 +300,7 @@ const Comment = ({ comment }: { comment: string }) => {
 
   return (
     <div className="flex flex-col">
-      <span
-        ref={contentRef}
-        className={`${clamp} bg-transparent text-slate-500`}
-      >
+      <span ref={contentRef} className={`${clamp} text-sm text-slate-500`}>
         {formatComment(comment)}
       </span>
       {isClamped && (

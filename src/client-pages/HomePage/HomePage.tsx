@@ -9,18 +9,23 @@ import {
   CourseSelector,
 } from "../../components/CourseSelector/CourseSelector";
 import { ThemeSwitch } from "../../components/ThemeSwitch/ThemeSwitch";
-import { Semester } from "../../database/types";
+import { ClassSection, Semester } from "../../database/types";
 import { getRandomPrettyColor } from "../../utils/util";
 import { PartialBy } from "../../utils/types";
 import { IconSelector } from "@tabler/icons";
 
 type Term = { semester: Semester; year: number };
+export type CartItem = ClassSection & {
+  hidden: boolean;
+  selected: boolean;
+};
 
 export type CourseItem = {
   id: string;
   color: PrettyColor;
   selectedDept: ComboOption;
   selectedCourse: ComboOption;
+  // selectedSections: Class
 };
 
 export type HomePageProps = {
@@ -129,6 +134,7 @@ export default function HomePage({ terms }: HomePageProps) {
         >
           ADD COURSE ITEM
         </button>
+        <div className="min-h-[20rem]"></div>
       </div>
     </div>
   );
@@ -155,7 +161,7 @@ export const Select = ({ options, selectedOption, onChange }: SelectProps) => {
       as="div"
       className="relative flex flex-col "
     >
-      <Listbox.Button className="rounded flex justify-center items-center gap-2 h-10 pl-4 pr-2 py-1 bg-slate-100 text-slate-700 hover:bg-slate-200 font-semibold">
+      <Listbox.Button className="rounded-lg flex justify-center items-center gap-2 h-10 pl-4 pr-2 py-1 bg-slate-100 text-slate-700 hover:bg-slate-200 font-semibold">
         <span className="flex ">{selectedOption.value.semester}</span>
         <span className="flex font-mono ">{selectedOption.value.year}</span>
         <IconSelector />
@@ -167,7 +173,7 @@ export const Select = ({ options, selectedOption, onChange }: SelectProps) => {
         <ul className="custom-scrollbar-tiny overflow-y-auto overflow-x-hidden max-h-48  pr-4 flex flex-col items-center">
           {options.map((opt) => (
             <Listbox.Option
-              className="flex px-3 py-1 rounded cursor-pointer  ui-active:bg-indigo-400 ui-active:text-white "
+              className="flex px-3 py-1 rounded cursor-pointer ui-active:bg-indigo-400 ui-active:text-white "
               key={opt.id}
               value={opt}
             >
