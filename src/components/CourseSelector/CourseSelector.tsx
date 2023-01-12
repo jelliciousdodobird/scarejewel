@@ -3,8 +3,10 @@
 import { Combobox, Disclosure } from "@headlessui/react";
 import { IconCheck, IconChevronDown, IconX } from "@tabler/icons";
 import { useQuery } from "@tanstack/react-query";
+import { PrimitiveAtom, useAtom } from "jotai";
 import { Fragment, memo, useEffect, useMemo, useRef, useState } from "react";
-import { CourseItem } from "../../client-pages/HomePage/HomePage";
+// import { CourseItem } from "../../client-pages/HomePage/HomePage";
+import { CourseItem } from "../../state/course-cart";
 import supabase from "../../database/supabase";
 import { ClassSection, Database, Semester } from "../../database/types";
 import { PrettyColor } from "../../utils/colors";
@@ -63,36 +65,40 @@ export interface ComboOption {
 export type CourseSelectorProps = {
   semester: Semester;
   year: number;
-  courseItem: CourseItem;
-  updateCourseItem: (item: CourseItem) => void;
+  courseItemAtom: PrimitiveAtom<CourseItem>;
+  // courseItem: CourseItem;
+  // updateCourseItem: (item: CourseItem) => void;
   index: number;
 };
 
 const staleTime = 60 * 60 * 1000;
 
-const arePropsEqual = (
-  prev: Readonly<CourseSelectorProps>,
-  next: Readonly<CourseSelectorProps>
-) => {
-  if (prev.index !== next.index) return false;
-  if (prev.semester !== next.semester) return false;
-  if (prev.year !== next.year) return false;
-  if (prev.courseItem.id !== next.courseItem.id) return false;
-  if (prev.courseItem.color !== next.courseItem.color) return false;
-  if (prev.courseItem.selectedDept.id !== next.courseItem.selectedDept.id)
-    return false;
-  if (prev.courseItem.selectedCourse.id !== next.courseItem.selectedCourse.id)
-    return false;
-  return true;
-};
+// const arePropsEqual = (
+//   prev: Readonly<CourseSelectorProps>,
+//   next: Readonly<CourseSelectorProps>
+// ) => {
+//   if (prev.index !== next.index) return false;
+//   if (prev.semester !== next.semester) return false;
+//   if (prev.year !== next.year) return false;
+//   if (prev.courseItem.id !== next.courseItem.id) return false;
+//   if (prev.courseItem.color !== next.courseItem.color) return false;
+//   if (prev.courseItem.selectedDept.id !== next.courseItem.selectedDept.id)
+//     return false;
+//   if (prev.courseItem.selectedCourse.id !== next.courseItem.selectedCourse.id)
+//     return false;
+//   return true;
+// };
 
-export const CourseSelector = memo(function CourseSelector({
+export function CourseSelector({
   semester,
   year,
-  courseItem,
-  updateCourseItem,
+  // courseItem,
+  // updateCourseItem,
+  courseItemAtom,
   index,
 }: CourseSelectorProps) {
+  const [courseItem, setCourseItem] = useAtom(courseItemAtom);
+
   const { data: distinctDepts } = useQuery({
     queryKey: ["dept-abbrs", semester, year],
     queryFn: () => fetchDistinctDepts(semester, year),
@@ -134,7 +140,7 @@ export const CourseSelector = memo(function CourseSelector({
     const newId = updateItem.id;
     if (oldId === newId) return;
 
-    updateCourseItem({
+    setCourseItem({
       ...courseItem,
       selectedDept: updateItem,
       selectedCourse: {
@@ -143,12 +149,41 @@ export const CourseSelector = memo(function CourseSelector({
         label: "",
         title: "",
       },
+      selectedSections: [],
     });
   };
 
   const updateSelectedCourse = (updateItem: ComboOption) => {
-    updateCourseItem({ ...courseItem, selectedCourse: updateItem });
+    const oldId = courseItem.selectedCourse.id;
+    const newId = updateItem.id;
+    if (oldId === newId) return;
+
+    setCourseItem({
+      ...courseItem,
+      selectedCourse: updateItem,
+      selectedSections: [],
+    });
   };
+  // const updateSelectedDept = (updateItem: ComboOption) => {
+  //   const oldId = courseItem.selectedDept.id;
+  //   const newId = updateItem.id;
+  //   if (oldId === newId) return;
+
+  //   updateCourseItem({
+  //     ...courseItem,
+  //     selectedDept: updateItem,
+  //     selectedCourse: {
+  //       id: "",
+  //       value: "",
+  //       label: "",
+  //       title: "",
+  //     },
+  //   });
+  // };
+
+  // const updateSelectedCourse = (updateItem: ComboOption) => {
+  //   updateCourseItem({ ...courseItem, selectedCourse: updateItem });
+  // };
 
   const title = formatTitle(courseItem.selectedCourse.title);
 
@@ -163,6 +198,10 @@ export const CourseSelector = memo(function CourseSelector({
 
   const headerRing = `${headerRingColor} ring-0 hover:ring-4 border border-white/0 hover:border-black/30 transition-[box-shadow]`;
   const headerBtnRing = `${headerBtnRingColor} ring-0 focus-visible:ring-2 ring-inset appearance-none outline-none transition-[box-shadow]`;
+
+  useEffect(() => {
+    console.log("CourseSelector RENDER", courseItem.id);
+  });
 
   return (
     <Disclosure
@@ -207,14 +246,12 @@ export const CourseSelector = memo(function CourseSelector({
         <SectionSelector
           semester={semester}
           year={year}
-          dept={courseItem.selectedDept.value}
-          course_number={courseItem.selectedCourse.value}
+          courseItemAtom={courseItemAtom}
         />
       </Disclosure.Panel>
     </Disclosure>
   );
-},
-arePropsEqual);
+}
 
 const fuzzy = (str: string) => str.toLowerCase().replace(/[^a-z0-9]/g, "");
 const fuzzyCompare = (searchTerm: string, comparedTerm: string) =>
@@ -290,7 +327,8 @@ export const AutoCompleteInput = ({
               required
             />
 
-            {/* taking advantage of this button in TWO ways:
+            {/* 
+                Taking advantage of this button in TWO ways:
                 1. as a graphic element to let the user know they must fill in the input field (red dot)
                 2. as a way to force headless-ui to open the options menu when the input is clicked (using refs)
             */}

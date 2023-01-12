@@ -4,59 +4,41 @@ import { Listbox } from "@headlessui/react";
 import { nanoid } from "nanoid";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { PrettyColor } from "../../utils/colors";
-import {
-  ComboOption,
-  CourseSelector,
-} from "../../components/CourseSelector/CourseSelector";
+import { CourseSelector } from "../../components/CourseSelector/CourseSelector";
 import { ThemeSwitch } from "../../components/ThemeSwitch/ThemeSwitch";
 import { ClassSection, Semester } from "../../database/types";
 import { getRandomPrettyColor } from "../../utils/util";
 import { PartialBy } from "../../utils/types";
 import { IconSelector } from "@tabler/icons";
+import { atom, useAtom, useSetAtom } from "jotai";
+import { courseItemsAtomAtom } from "../../state/course-cart";
+import { useHasMounted } from "../../hooks/useHasMounted";
 
-type Term = { semester: Semester; year: number };
-export type CartItem = ClassSection & {
-  hidden: boolean;
-  selected: boolean;
-};
-
-export type CourseItem = {
-  id: string;
-  color: PrettyColor;
-  selectedDept: ComboOption;
-  selectedCourse: ComboOption;
-  // selectedSections: Class
-};
+export type Term = { semester: Semester; year: number };
 
 export type HomePageProps = {
   terms: Term[];
 };
 
 export default function HomePage({ terms }: HomePageProps) {
+  const mounted = useHasMounted(); // need to make sure we're mounted so we can use the localstorage in the courseItemsAtomAtom
   const [loading, setLoading] = useState(false);
-  const [courseItems, setCourseItems] = useState<CourseItem[]>([]);
+  const [courseItems, setCourseItems] = useAtom(courseItemsAtomAtom);
 
-  const addCourseItem = (
-    updateItem: PartialBy<PartialBy<CourseItem, "id">, "color">
-  ) =>
-    setCourseItems((items) => {
-      if (items.length > 10) return items;
-      const id = nanoid();
-      const excludeColors = items.map((v) => v.color);
-      const color = getRandomPrettyColor(excludeColors);
-      const { selectedDept, selectedCourse } = updateItem;
-      return [...items, { id, color, selectedDept, selectedCourse }];
+  const addCourseItem = () => {
+    if (courseItems.length > 10) return;
+
+    setCourseItems({
+      type: "insert",
+      value: {
+        id: nanoid(),
+        color: getRandomPrettyColor(),
+        selectedCourse: { id: "", label: "", title: "", value: "" },
+        selectedDept: { id: "", label: "", title: "", value: "" },
+        selectedSections: [],
+      },
     });
-
-  const updateCourseItem = (updateItem: CourseItem) =>
-    setCourseItems((items) =>
-      items.map((item) =>
-        item.id === updateItem.id ? { ...item, ...updateItem } : item
-      )
-    );
-
-  const removeCourseItem = (updateItem: CourseItem) =>
-    setCourseItems((items) => items.filter(({ id }) => id !== updateItem.id));
+  };
 
   const termOptions: SelectOption[] = useMemo(
     () =>
@@ -78,6 +60,8 @@ export default function HomePage({ terms }: HomePageProps) {
   );
 
   const [term, setTerm] = useState<SelectOption>(termOptions[0]);
+
+  if (!mounted) return null;
 
   return (
     <div className="flex flex-col gap-4">
@@ -111,9 +95,8 @@ export default function HomePage({ terms }: HomePageProps) {
         <ul className="relative z-0 flex flex-col gap-6">
           {courseItems.map((v, i) => (
             <CourseSelector
-              key={v.id}
-              courseItem={v}
-              updateCourseItem={updateCourseItem}
+              key={v.toString()}
+              courseItemAtom={v}
               semester={term.value.semester}
               year={term.value.year}
               index={i}
@@ -125,12 +108,7 @@ export default function HomePage({ terms }: HomePageProps) {
           className="rounded-md p-2 bg-gradient-to-r from-emerald-400 to-fuchsia-600 disabled:cursor-not-allowed"
           type="button"
           disabled={loading}
-          onClick={() => {
-            addCourseItem({
-              selectedCourse: { id: "", label: "", title: "", value: "" },
-              selectedDept: { id: "", label: "", title: "", value: "" },
-            });
-          }}
+          onClick={addCourseItem}
         >
           ADD COURSE ITEM
         </button>

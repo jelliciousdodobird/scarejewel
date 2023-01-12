@@ -12,8 +12,10 @@ import {
   IconYoga,
 } from "@tabler/icons";
 import { useQuery } from "@tanstack/react-query";
+import { PrimitiveAtom, SetStateAction, useAtom } from "jotai";
 import Link from "next/link";
-import { Fragment, useEffect, useRef, useState } from "react";
+import { Fragment, memo, useEffect, useMemo, useRef, useState } from "react";
+import { ClassSectionWithState, CourseItem } from "../../state/course-cart";
 import supabase from "../../database/supabase";
 import {
   ClassDay,
@@ -21,6 +23,7 @@ import {
   SectionType,
   Semester,
 } from "../../database/types";
+import { ClassSectionState } from "../../state/course-cart";
 import { formatTime } from "../../utils/util";
 import { day_bg_color, day_text_color } from "./SectionSelector.variants";
 
@@ -99,8 +102,8 @@ const getTimeMarkup = (start: number, end: number) => {
   );
 };
 
-const splitIntoGroups = (data: ClassSection[]) => {
-  const groups: { [key: string]: ClassSection[] } = {};
+const splitIntoGroups = (data: ClassSectionWithState[]) => {
+  const groups: { [key: string]: ClassSectionWithState[] } = {};
 
   for (let row of data) {
     const id = row.group_id;
@@ -117,25 +120,70 @@ const get_rmp_URL = (firstname: string, lastname: string) =>
 type SectionSelectorProps = {
   semester: Semester;
   year: number;
-  dept: string;
-  course_number: string;
+  courseItemAtom: PrimitiveAtom<CourseItem>;
 };
 
 export const SectionSelector = ({
   semester,
   year,
-  dept,
-  course_number,
+  courseItemAtom,
 }: SectionSelectorProps) => {
-  const { data, isLoading, isPaused, isInitialLoading } = useQuery({
+  const [courseItem, setCourseItem] = useAtom(courseItemAtom);
+  const dept = courseItem.selectedDept.value;
+  const course_number = courseItem.selectedCourse.value;
+
+  const { data, isLoading } = useQuery({
     queryKey: ["fetchSections", semester, year, dept, course_number],
     queryFn: () => fetchSections(semester, year, dept, course_number),
     enabled: dept !== "" && course_number !== "",
     staleTime,
   });
 
-  if (isPaused) return <div className="flex">PAUSE</div>;
-  if (isInitialLoading) return <div className="flex">isInitialLoading</div>;
+  const updateClassSectionState = (updateItem: ClassSectionWithState) => {
+    setCourseItem((v) => {
+      const sections = v.selectedSections;
+      const index = sections.findIndex(({ uid }) => uid === updateItem.uid);
+
+      if (index === -1) return v;
+      return {
+        ...v,
+        selectedSections: [
+          ...sections.slice(0, index),
+          updateItem,
+          ...sections.slice(index + 1),
+        ],
+      };
+    });
+  };
+
+  useEffect(() => {
+    if (!data) return;
+
+    setCourseItem((v) => {
+      const dataWithState = data.map((cs) => {
+        const oldItem = v.selectedSections.find(({ uid }) => uid === cs.uid);
+
+        const freshState = {
+          hidden: false,
+          selected: false,
+          notes: "",
+        };
+
+        const state: ClassSectionState = !!oldItem ? oldItem.state : freshState;
+
+        return {
+          ...cs,
+          state,
+        };
+      });
+
+      return { ...v, selectedSections: dataWithState };
+    });
+  }, [data]);
+
+  useEffect(() => {
+    console.log("SectionSelector", courseItem.id);
+  });
 
   if (isLoading)
     return (
@@ -143,7 +191,8 @@ export const SectionSelector = ({
         <div className="animate-pulse flex text-2xl font-bold p-4">LOADING</div>
       </div>
     );
-  const groups = splitIntoGroups(data ?? []);
+
+  const groups = splitIntoGroups(courseItem.selectedSections);
 
   return (
     <div className="flex flex-col gap-4 pt-4">
@@ -156,7 +205,11 @@ export const SectionSelector = ({
           )}
           <ul className="grid grid-cols-[repeat(auto-fit,minmax(320px,1fr))] gap-8 rounded-md bg-transparent">
             {group.map((s) => (
-              <ClassCard s={s} key={s.uid} />
+              <ClassCard
+                data={s}
+                key={s.uid}
+                update={updateClassSectionState}
+              />
             ))}
           </ul>
         </Fragment>
@@ -165,12 +218,25 @@ export const SectionSelector = ({
   );
 };
 
-const ClassCard = ({ s }: { s: ClassSection }) => {
-  const [hidden, setDisabled] = useState(false);
-  const [selected, setChosen] = useState(false);
-  const toggleDisable = () => setDisabled((v) => !v);
+export type ClassCardProps = {
+  data: ClassSectionWithState;
+  update: (updateItem: ClassSectionWithState) => void;
+};
 
-  const toggleChosen = () => setChosen((v) => !v);
+const ClassCard = memo(function ClassCard({ data, update }: ClassCardProps) {
+  const { selected, hidden, notes } = data.state;
+
+  const toggleSelected = () => {
+    update({ ...data, state: { ...data.state, selected: !selected } });
+  };
+
+  const toggleHidden = () => {
+    update({ ...data, state: { ...data.state, hidden: !hidden } });
+  };
+
+  useEffect(() => {
+    console.log("ClassCard Render", data.section_number);
+  });
 
   const bgColor = hidden ? "bg-slate-100" : "bg-white";
   const collapse = hidden ? "overflow-hidden h-16" : "h-auto";
@@ -187,7 +253,7 @@ const ClassCard = ({ s }: { s: ClassSection }) => {
         <h3
           className={`flex items-center flex-1 pl-2 text-slate-900 text-lg font-mono font-extrabold ${grayscale}`}
         >
-          {s.section_number} {s.class_number}
+          {data.section_number} {data.class_number}
           {selected && (
             <span className="text-slate-500 font-semibold text-sm font-base ml-4">
               (added)
@@ -201,13 +267,13 @@ const ClassCard = ({ s }: { s: ClassSection }) => {
         </h3>
         <button
           className="flex justify-center items-center w-12 h-12 rounded-[50%] hover:text-slate-600"
-          onClick={toggleDisable}
+          onClick={toggleHidden}
         >
           {hidden ? <IconEyeOff /> : <IconEye />}
         </button>
         <button
           className="flex justify-center items-center w-12 h-12 rounded-[50%] hover:text-slate-600"
-          onClick={toggleChosen}
+          onClick={toggleSelected}
         >
           {selected ? (
             <IconCircleMinus className="text-rose-500 hover:text-rose-400" />
@@ -221,9 +287,9 @@ const ClassCard = ({ s }: { s: ClassSection }) => {
       >
         <div className="flex gap-2 ">
           <div className="flex min-w-[7rem]">
-            <span className="flex items-center gap-1 rounded-md font-semibold capitalize pl-2 pr-3 py-[0.125rem]zz py-1 w-min bg-slate-200 text-slate-500 h-min">
-              {section_type_icons[s.section_type]}
-              {s.section_type}
+            <span className="flex items-center gap-1 rounded-md font-semibold capitalize pl-1 pr-2 py-[0.125rem]zz py-1 w-min bg-slate-200 text-slate-500 h-min">
+              {section_type_icons[data.section_type]}
+              {data.section_type}
             </span>
           </div>
           <div className="flex flex-col items-start gap-2">
@@ -232,9 +298,9 @@ const ClassCard = ({ s }: { s: ClassSection }) => {
               <Link
                 className="flex items-center gap-1 font-bold hover:underline text-slate-900"
                 target="_blank" // open in new tab/window
-                href={get_rmp_URL(s.instructor_fn, s.instructor_ln)}
+                href={get_rmp_URL(data.instructor_fn, data.instructor_ln)}
               >
-                {formatFirstName(s.instructor_fn)} {s.instructor_ln}
+                {formatFirstName(data.instructor_fn)} {data.instructor_ln}
                 <IconExternalLink size={16} />
               </Link>
             </span>
@@ -244,13 +310,13 @@ const ClassCard = ({ s }: { s: ClassSection }) => {
         <div className="flex gap-2">
           <div className="flex min-w-[7rem]">
             <span className="text-slate-500 font-semibold">
-              {formatLocation(s.location)}
+              {formatLocation(data.location)}
             </span>
           </div>
           <div className="flex flex-col gap-1">
-            {getTimeMarkup(s.time_start, s.time_end)}
+            {getTimeMarkup(data.time_start, data.time_end)}
             <div className="flex gap-2 flex-wrap">
-              {getDays(s.days).map((day) => (
+              {getDays(data.days).map((day) => (
                 <DayTag key={day} day={day} />
               ))}
             </div>
@@ -258,21 +324,24 @@ const ClassCard = ({ s }: { s: ClassSection }) => {
         </div>
 
         <div className="flex gap-2">
-          <Comment comment={s.comment} />
-          {/* <div className="flex flex-col gap-1">
-          
-          </div> */}
+          <Comment comment={data.comment} />
         </div>
-        {/* <div className="flex gap-2">
-          <div className="flex min-w-[7rem]"></div>
-          <div className="flex flex-col gap-1">
-            <Comment comment={s.comment} />
-          </div>
-        </div> */}
       </div>
     </li>
   );
-};
+}, arePropsEqual);
+
+function arePropsEqual(
+  prev: Readonly<ClassCardProps>,
+  next: Readonly<ClassCardProps>
+) {
+  if (prev.data.uid !== next.data.uid) return false;
+  if (prev.data.state.selected !== next.data.state.selected) return false;
+  if (prev.data.state.hidden !== next.data.state.hidden) return false;
+  if (prev.data.state.notes !== next.data.state.notes) return false;
+
+  return true;
+}
 
 const Comment = ({ comment }: { comment: string }) => {
   const contentRef = useRef<HTMLDivElement>(null!);
