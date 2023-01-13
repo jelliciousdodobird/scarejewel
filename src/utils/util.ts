@@ -125,6 +125,8 @@ export const roundIntToNearestMultiple = (num: number, multiple: number) =>
 
 export const round10 = (num: number) => Math.round(num * 10) / 10;
 export const round100 = (num: number) => Math.round(num * 100) / 100;
+export const roundToNearestMultipleOf = (m: number, n: number) =>
+  Math.round(n / m) * m;
 
 export const deepCopy = <T>(obj: T): T => JSON.parse(JSON.stringify(obj));
 

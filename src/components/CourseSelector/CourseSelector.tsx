@@ -66,8 +66,6 @@ export type CourseSelectorProps = {
   semester: Semester;
   year: number;
   courseItemAtom: PrimitiveAtom<CourseItem>;
-  // courseItem: CourseItem;
-  // updateCourseItem: (item: CourseItem) => void;
   index: number;
 };
 
@@ -92,21 +90,24 @@ const staleTime = 60 * 60 * 1000;
 export function CourseSelector({
   semester,
   year,
-  // courseItem,
-  // updateCourseItem,
   courseItemAtom,
   index,
 }: CourseSelectorProps) {
   const [courseItem, setCourseItem] = useAtom(courseItemAtom);
 
   const { data: distinctDepts } = useQuery({
-    queryKey: ["dept-abbrs", semester, year],
+    queryKey: ["fetchDistinctDepts", semester, year],
     queryFn: () => fetchDistinctDepts(semester, year),
     staleTime,
   });
 
   const { data: distinctCourseIds } = useQuery({
-    queryKey: ["course-ids", semester, year, courseItem.selectedDept.value],
+    queryKey: [
+      "fetchDistinctCourseIds",
+      semester,
+      year,
+      courseItem.selectedDept.value,
+    ],
     queryFn: () =>
       fetchDistinctCourseIds(semester, year, courseItem.selectedDept.value),
     enabled: courseItem.selectedDept.id !== "",
@@ -149,7 +150,7 @@ export function CourseSelector({
         label: "",
         title: "",
       },
-      selectedSections: [],
+      availableSections: [],
     });
   };
 
@@ -161,29 +162,9 @@ export function CourseSelector({
     setCourseItem({
       ...courseItem,
       selectedCourse: updateItem,
-      selectedSections: [],
+      availableSections: [],
     });
   };
-  // const updateSelectedDept = (updateItem: ComboOption) => {
-  //   const oldId = courseItem.selectedDept.id;
-  //   const newId = updateItem.id;
-  //   if (oldId === newId) return;
-
-  //   updateCourseItem({
-  //     ...courseItem,
-  //     selectedDept: updateItem,
-  //     selectedCourse: {
-  //       id: "",
-  //       value: "",
-  //       label: "",
-  //       title: "",
-  //     },
-  //   });
-  // };
-
-  // const updateSelectedCourse = (updateItem: ComboOption) => {
-  //   updateCourseItem({ ...courseItem, selectedCourse: updateItem });
-  // };
 
   const title = formatTitle(courseItem.selectedCourse.title);
 
@@ -207,7 +188,7 @@ export function CourseSelector({
     <Disclosure
       defaultOpen
       as="li"
-      className="relative flex flex-col"
+      className="relative flex flex-col gap-4"
       style={{ zIndex: 20 - index }}
     >
       <div

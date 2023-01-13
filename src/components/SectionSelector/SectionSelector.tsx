@@ -131,23 +131,24 @@ export const SectionSelector = ({
   const [courseItem, setCourseItem] = useAtom(courseItemAtom);
   const dept = courseItem.selectedDept.value;
   const course_number = courseItem.selectedCourse.value;
+  const queryDisabled = dept === "" || course_number === "";
 
   const { data, isLoading } = useQuery({
     queryKey: ["fetchSections", semester, year, dept, course_number],
     queryFn: () => fetchSections(semester, year, dept, course_number),
-    enabled: dept !== "" && course_number !== "",
+    enabled: !queryDisabled,
     staleTime,
   });
 
   const updateClassSectionState = (updateItem: ClassSectionWithState) => {
     setCourseItem((v) => {
-      const sections = v.selectedSections;
+      const sections = v.availableSections;
       const index = sections.findIndex(({ uid }) => uid === updateItem.uid);
 
       if (index === -1) return v;
       return {
         ...v,
-        selectedSections: [
+        availableSections: [
           ...sections.slice(0, index),
           updateItem,
           ...sections.slice(index + 1),
@@ -161,7 +162,7 @@ export const SectionSelector = ({
 
     setCourseItem((v) => {
       const dataWithState = data.map((cs) => {
-        const oldItem = v.selectedSections.find(({ uid }) => uid === cs.uid);
+        const oldItem = v.availableSections.find(({ uid }) => uid === cs.uid);
 
         const freshState = {
           hidden: false,
@@ -177,13 +178,18 @@ export const SectionSelector = ({
         };
       });
 
-      return { ...v, selectedSections: dataWithState };
+      return { ...v, availableSections: dataWithState };
     });
   }, [data]);
 
   useEffect(() => {
     console.log("SectionSelector", courseItem.id);
   });
+
+  if (queryDisabled)
+    return (
+      <div className="text-xl">Please pick a department and course code</div>
+    );
 
   if (isLoading)
     return (
@@ -192,10 +198,10 @@ export const SectionSelector = ({
       </div>
     );
 
-  const groups = splitIntoGroups(courseItem.selectedSections);
+  const groups = splitIntoGroups(courseItem.availableSections);
 
   return (
-    <div className="flex flex-col gap-4 pt-4">
+    <div className="flex flex-col gap-4">
       {groups.map((group, i) => (
         <Fragment key={group[0].group_id}>
           {groups.length > 1 && (
@@ -203,7 +209,7 @@ export const SectionSelector = ({
               Group {i + 1}
             </h2>
           )}
-          <ul className="grid grid-cols-[repeat(auto-fit,minmax(320px,1fr))] gap-8 rounded-md bg-transparent">
+          <ul className="grid grid-cols-[repeat(auto-fill,minmax(320px,1fr))] gap-8 rounded-md bg-transparent">
             {group.map((s) => (
               <ClassCard
                 data={s}

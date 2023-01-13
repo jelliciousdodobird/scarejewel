@@ -16,6 +16,8 @@ export default async function Page() {
   // const semesters = sems ? sems.map(({ semester }) => semester) : [];
   // const years = yrs ? yrs.map(({ year }) => year) : [];
 
+  console.log(data);
+
   const terms = data ?? [];
 
   return <HomePage terms={terms} />;

@@ -13,6 +13,7 @@ import { IconSelector } from "@tabler/icons";
 import { atom, useAtom, useSetAtom } from "jotai";
 import { courseItemsAtomAtom } from "../../state/course-cart";
 import { useHasMounted } from "../../hooks/useHasMounted";
+import { WeeklyPreview } from "../../components/WeeklyPreview/WeeklyPreview";
 
 export type Term = { semester: Semester; year: number };
 
@@ -22,8 +23,11 @@ export type HomePageProps = {
 
 export default function HomePage({ terms }: HomePageProps) {
   const mounted = useHasMounted(); // need to make sure we're mounted so we can use the localstorage in the courseItemsAtomAtom
+  const [showWeeklyView, setShowWeeklyView] = useState(false);
   const [loading, setLoading] = useState(false);
   const [courseItems, setCourseItems] = useAtom(courseItemsAtomAtom);
+
+  const toggleWeeklyView = () => setShowWeeklyView((v) => !v);
 
   const addCourseItem = () => {
     if (courseItems.length > 10) return;
@@ -35,7 +39,7 @@ export default function HomePage({ terms }: HomePageProps) {
         color: getRandomPrettyColor(),
         selectedCourse: { id: "", label: "", title: "", value: "" },
         selectedDept: { id: "", label: "", title: "", value: "" },
-        selectedSections: [],
+        availableSections: [],
       },
     });
   };
@@ -59,26 +63,25 @@ export default function HomePage({ terms }: HomePageProps) {
     [terms]
   );
 
+  console.log({ terms });
+
   const [term, setTerm] = useState<SelectOption>(termOptions[0]);
 
   if (!mounted) return null;
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="relative isolate">
-        <div className="-z-10 absolute -top-16 w-full h-[calc(100%+4rem)] bg-gradient-to-r from-purple-500 to-pink-500"></div>
+      <div className="relative isolate ">
+        <div className="-z-10 absolute -top-16 w-full h-[calc(100%+4rem)] bg-gradient-to-b from-white to-slate-100 overflow-hidden">
+          {/* <div className="relative pack-content flex flex-col w-full h-full ">
+            <div className="absolute rounded-full blur-xl w-[500px] h-[500px] bg-sky-300     -right-20 -bottom-20"></div>
+            <div className="absolute rounded-full blur-xl w-[600px] h-[600px] bg-emerald-300 -left-10 right-0 "></div>
+            <div className="absolute rounded-full blur-xl w-[400px] h-[400px] bg-amber-300   left-[20%] bottom-0"></div>
+            <div className="absolute rounded-full blur-xl w-[500px] h-[500px] bg-rose-300    left-[50%]"></div>
+          </div> */}
+        </div>
         <div className="pack-content flex flex-col py-8">
-          <h1 className="text-7xl font-bold">Hero Section</h1>
-          <h2 className="text-2xl font-semibold max-w-md">
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolore
-            eius minima animi eos ipsum aut id similique distinctio, quod
-            eveniet?
-          </h2>
-          <h2 className="text-2xl font-semibold max-w-md">
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolore
-            eius minima animi eos ipsum aut id similique distinctio, quod
-            eveniet?
-          </h2>
+          <WeeklyPreview />
         </div>
       </div>
 
@@ -113,6 +116,12 @@ export default function HomePage({ terms }: HomePageProps) {
           ADD COURSE ITEM
         </button>
         <div className="min-h-[20rem]"></div>
+      </div>
+
+      <div className="sticky bottom-0 flex justify-end w-full pack-content py-2">
+        <button type="button" className="bg-sky-500" onClick={toggleWeeklyView}>
+          sldjf
+        </button>
       </div>
     </div>
   );
