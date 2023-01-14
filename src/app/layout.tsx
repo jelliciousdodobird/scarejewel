@@ -29,7 +29,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
             <header className="sticky top-0 z-40 flex flex-col w-full">
               <Navbar />
             </header>
-            <main>{children}</main>
+            <main className="flex-1">{children}</main>
           </ReactQueryProvider>
         </ThemeProviders>
       </body>

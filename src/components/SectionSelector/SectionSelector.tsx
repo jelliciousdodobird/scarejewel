@@ -16,106 +16,22 @@ import { PrimitiveAtom, SetStateAction, useAtom } from "jotai";
 import Link from "next/link";
 import { Fragment, memo, useEffect, useMemo, useRef, useState } from "react";
 import { ClassSectionWithState, CourseItem } from "../../state/course-cart";
-import supabase from "../../database/supabase";
-import {
-  ClassDay,
-  ClassSection,
-  SectionType,
-  Semester,
-} from "../../database/types";
+import { ClassDay, SectionType, Semester } from "../../database/types";
 import { ClassSectionState } from "../../state/course-cart";
 import { formatTime } from "../../utils/util";
 import { day_bg_color, day_text_color } from "./SectionSelector.variants";
+import { fetchSections } from "../../database/api";
+import {
+  formatComment,
+  formatFirstName,
+  formatLocation,
+  getDays,
+  get_rmp_URL,
+  shortToFullDayMap,
+  splitIntoGroups,
+} from "./helpers";
 
 const staleTime = 60 * 60 * 1000; // 1 hour
-
-const fetchSections = async (
-  semester: Semester,
-  year: number,
-  dept: string,
-  course_number: string
-) => {
-  if (dept === "") return []; // if department is empty dont even try to fetch anything
-
-  const { data, error } = await supabase
-    .from("class_sections")
-    .select("*")
-    .match({
-      semester,
-      year,
-      dept_abbr: dept,
-      course_number,
-    });
-  if (error) console.log(error);
-
-  return data ?? [];
-};
-
-const formatFirstName = (name: string) =>
-  name === "Staff" ? name : name + ".";
-
-const formatComment = (comment: string) =>
-  comment.replace(/\. /g, ".").replace(/\./g, ". ");
-
-const formatLocation = (location: string) => location.replace(/-/g, " ");
-
-export const section_type_icons: Record<SectionType, React.ReactNode> = {
-  lab: <IconMicroscope className="text-slate-500" />,
-  lec: <IconNotes className="text-slate-500" />,
-  sem: <IconBook className="text-slate-500" />,
-  sup: <IconPencilPlus className="text-slate-500" />,
-  act: <IconYoga className="text-slate-500" />,
-  add: <IconLayersLinked className="text-slate-500" />,
-};
-
-const shortToFullDayMap: Record<ClassDay, string> = {
-  s: "sun",
-  m: "mon",
-  tu: "tue",
-  w: "wed",
-  th: "thu",
-  f: "fri",
-  sa: "sat",
-};
-
-const getDays = (dayStr: string) => dayStr.split(",");
-
-const getTimeMarkup = (start: number, end: number) => {
-  if (start === end) return <span className="flex gap-2">TBA</span>;
-
-  const startTime = formatTime(start);
-  const startTimePre = startTime.replace(/(am|pm)/gi, "");
-  const startTimePost = startTime.slice(-2);
-
-  const endTime = formatTime(end).toLowerCase();
-  const endTimePre = endTime.slice(-2);
-  const endTimePost = endTime.replace(/(am|pm)/gi, "");
-
-  return (
-    <span className="flex">
-      <span className="text-slate-900 font-bold">{startTimePre}</span>
-      <span className="text-slate-500 lowercase">{startTimePost}</span>
-      <span className="text-slate-500 mx-1">-</span>
-      <span className="text-slate-900 font-bold">{endTimePost}</span>
-      <span className="text-slate-500 lowercase">{endTimePre}</span>
-    </span>
-  );
-};
-
-const splitIntoGroups = (data: ClassSectionWithState[]) => {
-  const groups: { [key: string]: ClassSectionWithState[] } = {};
-
-  for (let row of data) {
-    const id = row.group_id;
-    const prevItems = groups[id] ?? [];
-    groups[id] = [...prevItems, row];
-  }
-
-  return Object.values(groups);
-};
-
-const get_rmp_URL = (firstname: string, lastname: string) =>
-  `https://www.ratemyprofessors.com/search/teachers?query=${firstname}%20${lastname}&sid=U2Nob29sLTE2Mg==`;
 
 type SectionSelectorProps = {
   semester: Semester;
@@ -164,10 +80,11 @@ export const SectionSelector = ({
       const dataWithState = data.map((cs) => {
         const oldItem = v.availableSections.find(({ uid }) => uid === cs.uid);
 
-        const freshState = {
+        const freshState: ClassSectionState = {
           hidden: false,
           selected: false,
           notes: "",
+          color: v.color,
         };
 
         const state: ClassSectionState = !!oldItem ? oldItem.state : freshState;
@@ -405,6 +322,37 @@ export const DayTag = ({ day }: { day: ClassDay | string }) => {
       className={`flex justify-center items-center rounded-full px-4 py-1 capitalize text-sm ${bgColor} ${textColor}`}
     >
       {text}
+    </span>
+  );
+};
+
+export const section_type_icons: Record<SectionType, React.ReactNode> = {
+  lab: <IconMicroscope className="text-slate-500" />,
+  lec: <IconNotes className="text-slate-500" />,
+  sem: <IconBook className="text-slate-500" />,
+  sup: <IconPencilPlus className="text-slate-500" />,
+  act: <IconYoga className="text-slate-500" />,
+  add: <IconLayersLinked className="text-slate-500" />,
+};
+
+const getTimeMarkup = (start: number, end: number) => {
+  if (start === end) return <span className="flex gap-2">TBA</span>;
+
+  const startTime = formatTime(start);
+  const startTimePre = startTime.replace(/(am|pm)/gi, "");
+  const startTimePost = startTime.slice(-2);
+
+  const endTime = formatTime(end).toLowerCase();
+  const endTimePre = endTime.slice(-2);
+  const endTimePost = endTime.replace(/(am|pm)/gi, "");
+
+  return (
+    <span className="flex">
+      <span className="text-slate-900 font-bold">{startTimePre}</span>
+      <span className="text-slate-500 lowercase">{startTimePost}</span>
+      <span className="text-slate-500 mx-1">-</span>
+      <span className="text-slate-900 font-bold">{endTimePost}</span>
+      <span className="text-slate-500 lowercase">{endTimePre}</span>
     </span>
   );
 };

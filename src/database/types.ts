@@ -23,6 +23,7 @@ export type Semester = typeof validSemesters[number];
 export type SectionType = typeof validSectionTypes[number];
 export type ClassDay = typeof validClassDays[number];
 export type ValidSectionKey = typeof validSectionKeys[number];
+export type Term = { semester: Semester; year: number };
 
 export const isSemester = (str: string): str is Semester =>
   validSemesters.some((sem) => sem === str);

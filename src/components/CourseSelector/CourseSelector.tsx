@@ -5,9 +5,9 @@ import { IconCheck, IconChevronDown, IconX } from "@tabler/icons";
 import { useQuery } from "@tanstack/react-query";
 import { PrimitiveAtom, useAtom } from "jotai";
 import { Fragment, memo, useEffect, useMemo, useRef, useState } from "react";
-// import { CourseItem } from "../../client-pages/HomePage/HomePage";
+
 import { CourseItem } from "../../state/course-cart";
-import supabase from "../../database/supabase";
+
 import { ClassSection, Database, Semester } from "../../database/types";
 import { PrettyColor } from "../../utils/colors";
 import { formatTitle } from "../../utils/util";
@@ -20,40 +20,10 @@ import {
   input_bg,
   ring_color,
 } from "./CourseSelector.variants";
+import { fetchDistinctCourseIds, fetchDistinctDepts } from "../../database/api";
+import clsx from "clsx";
 
-const fetchDistinctDepts = async (semester: Semester, year: number) => {
-  const { data, error } = await supabase.rpc("get_distinct_depts", {
-    _semester: semester,
-    _year: year,
-  });
-  if (error) console.log(error);
-  return (
-    data?.map((v) => ({ ...v, uid: `${semester}-${year}-${v.dept_abbr}` })) ??
-    []
-  );
-};
-
-const fetchDistinctCourseIds = async (
-  semester: Semester,
-  year: number,
-  dept: string
-) => {
-  if (dept === "") return []; // if department is empty dont even try to fetch anything
-
-  const { data, error } = await supabase.rpc("get_distinct_course_ids", {
-    _semester: semester,
-    _year: year,
-    _dept_abbr: dept,
-  });
-  if (error) console.log(error);
-
-  return (
-    data?.map((v) => ({
-      ...v,
-      uid: `${semester}-${year}-${dept}-${v.course_number}`,
-    })) ?? []
-  );
-};
+const staleTime = 60 * 60 * 1000;
 
 export interface ComboOption {
   id: string;
@@ -69,25 +39,7 @@ export type CourseSelectorProps = {
   index: number;
 };
 
-const staleTime = 60 * 60 * 1000;
-
-// const arePropsEqual = (
-//   prev: Readonly<CourseSelectorProps>,
-//   next: Readonly<CourseSelectorProps>
-// ) => {
-//   if (prev.index !== next.index) return false;
-//   if (prev.semester !== next.semester) return false;
-//   if (prev.year !== next.year) return false;
-//   if (prev.courseItem.id !== next.courseItem.id) return false;
-//   if (prev.courseItem.color !== next.courseItem.color) return false;
-//   if (prev.courseItem.selectedDept.id !== next.courseItem.selectedDept.id)
-//     return false;
-//   if (prev.courseItem.selectedCourse.id !== next.courseItem.selectedCourse.id)
-//     return false;
-//   return true;
-// };
-
-export function CourseSelector({
+export const CourseSelector = memo(function CourseSelector({
   semester,
   year,
   courseItemAtom,
@@ -192,7 +144,7 @@ export function CourseSelector({
       style={{ zIndex: 20 - index }}
     >
       <div
-        className={`sticky z-10 top-16 flex w-full justify-between rounded-lg p-2 text-sm font-medium ${textColor} ${bgc} ${headerRing} shadow-[0_2px_10px_10px_rgba(255,255,255,1)]`}
+        className={`sticky z-10 top-[calc(4rem+3rem+5px)] flex w-full justify-between rounded-lg p-2 text-sm font-medium ${textColor} ${bgc} ${headerRing} shadow-[0_2px_10px_10px_rgba(255,255,255,1)]`}
       >
         <AutoCompleteInput
           options={deptOptions}
@@ -232,7 +184,8 @@ export function CourseSelector({
       </Disclosure.Panel>
     </Disclosure>
   );
-}
+},
+arePropsEqual);
 
 const fuzzy = (str: string) => str.toLowerCase().replace(/[^a-z0-9]/g, "");
 const fuzzyCompare = (searchTerm: string, comparedTerm: string) =>
@@ -354,19 +307,38 @@ export const AutoCompleteInput = ({
                 </li>
               )}
               {filteredOptions.map((option) => (
-                <Combobox.Option
-                  key={option.id}
-                  value={option}
-                  className={`flex gap-4 px-3 py-2 cursor-pointer whitespace-nowrap rounded  ui-not-selected:ui-not-active:bg-transparent ${inputBg} `}
-                >
-                  <span className="text-stone-800 ui-active:text-white ui-selected:text-white min-w-[2rem] font-mono font-semibold">
-                    {option.label}
-                  </span>
-                  <span className="text-stone-600 ui-active:text-white ui-selected:text-white flex-1">
-                    {formatTitle(option.title)}
-                  </span>
-                  {selectedOption.id === option.id && (
-                    <IconCheck size={20} stroke={3} className="text-white" />
+                <Combobox.Option key={option.id} value={option} as={Fragment}>
+                  {({ active, selected }) => (
+                    <li
+                      className={clsx(
+                        "flex gap-4 px-3 py-2 cursor-pointer whitespace-nowrap rounded",
+                        active || selected ? inputBg : "bg-transparent"
+                      )}
+                    >
+                      <span
+                        className={clsx(
+                          "min-w-[2rem] font-mono font-semibold",
+                          active || selected ? "text-white" : "text-stone-800"
+                        )}
+                      >
+                        {option.label}
+                      </span>
+                      <span
+                        className={clsx(
+                          " flex-1",
+                          active || selected ? "text-white" : "text-stone-600"
+                        )}
+                      >
+                        {formatTitle(option.title)}
+                      </span>
+                      {selectedOption.id === option.id && (
+                        <IconCheck
+                          size={20}
+                          stroke={3}
+                          className="text-white"
+                        />
+                      )}
+                    </li>
                   )}
                 </Combobox.Option>
               ))}
@@ -377,3 +349,24 @@ export const AutoCompleteInput = ({
     </Combobox>
   );
 };
+
+function arePropsEqual(
+  prev: Readonly<CourseSelectorProps>,
+  next: Readonly<CourseSelectorProps>
+) {
+  // if (prev.index !== next.index) return false;
+  // if (prev.semester !== next.semester) return false;
+  // if (prev.year !== next.year) return false;
+  // if (prev.courseItem.id !== next.courseItem.id) return false;
+  // if (prev.courseItem.color !== next.courseItem.color) return false;
+  // if (prev.courseItem.selectedDept.id !== next.courseItem.selectedDept.id)
+  //   return false;
+  // if (prev.courseItem.selectedCourse.id !== next.courseItem.selectedCourse.id)
+  //   return false;
+  // return true;
+
+  if (prev.courseItemAtom.toString() !== next.courseItemAtom.toString())
+    return false;
+
+  return true;
+}

@@ -3,8 +3,10 @@
 import { IconArrowsMaximize, IconArrowsMinimize } from "@tabler/icons";
 import { useAtom } from "jotai";
 import { ClassDay, ClassSection } from "../../database/types";
+import { useHasMounted } from "../../hooks/useHasMounted";
 import {
-  ClassSectionWithColor,
+  // ClassSectionWithColor,
+  ClassSectionWithState,
   selectedSectionsAtom,
   weeklyFullViewAtom,
 } from "../../state/course-cart";
@@ -30,7 +32,8 @@ type DayName = {
 
 type DayColumn = {
   day: DayName;
-  sections: ClassSectionWithColor[];
+  sections: ClassSectionWithState[];
+  // sections: ClassSectionWithColor[];
   show: boolean;
 };
 
@@ -47,9 +50,12 @@ const dayNameMap: Record<ClassDay, DayName> = {
 export type WeeklyPreviewProps = {};
 
 export function WeeklyPreview({}: WeeklyPreviewProps) {
+  const mounted = useHasMounted();
+
   const [showFullView, setShowFullView] = useAtom(weeklyFullViewAtom);
   const [sections, setSections] = useAtom(selectedSectionsAtom);
 
+  if (!mounted) return null;
   if (sections.length === 0) return null;
 
   const earliestTime = Math.min(
@@ -166,20 +172,22 @@ export function WeeklyPreview({}: WeeklyPreviewProps) {
 }
 
 type TimeItemProps = {
-  data: ClassSectionWithColor;
+  // data: ClassSectionWithColor;
+  data: ClassSectionWithState;
   startOffset: number;
 };
 
 function TimeItem({ data, startOffset }: TimeItemProps) {
   const {
-    color,
     time_start,
     time_end,
     section_number,
     class_number,
     dept_abbr,
     course_number,
+    state,
   } = data;
+  const { color } = state;
   const bgColor = disclosure_header_bg_color[color];
   const textColor = disclosure_header_text_color[color];
   const height = time_end - time_start;

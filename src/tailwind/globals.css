@@ -16,5 +16,5 @@ html {
 }
 
 body {
-  @apply relative flex flex-col flex-1 overflow-x-hidden overflow-y-auto;
+  @apply relative flex flex-col flex-1 overflow-x-hidden overflow-y-scroll;
 }
