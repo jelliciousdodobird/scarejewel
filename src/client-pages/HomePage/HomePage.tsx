@@ -50,18 +50,22 @@ export default function HomePage({ terms }: HomePageProps) {
     <div className="flex flex-col gap-4 bg-gradient-to-b from-white to-slate-100 min-h-full border-2zz border-dashedzz zzborder-red-500">
       <Tab.Group selectedIndex={selectedTab} onChange={setSelectedTab}>
         <div className="z-10 sticky top-16 backdrop-blur-md bg-slate-200/30 border-b border-t border-slate-200/50">
-          <Tab.List className="pack-content flex gap-0 w-full h-12 py-1">
+          <Tab.List className="pack-content flex gap-0 w-full h-12 py-1zz pt-1 sm:gap-4">
             {tabs.map(({ name, icon }) => (
               <Tab
                 key={name}
-                className="flex-1 h-full rounded-lg overflow-hidden max-w-xs"
+                className="flex-grow sm:flex-grow-0 h-full rounded-lgzz overflow-hidden max-w-xszz "
               >
                 {({ selected }) => (
                   <span
                     className={clsx(
-                      "flex justify-center items-center gap-1  h-full font-semibold text-sm",
-                      selected ? "text-white" : "text-slate-500",
-                      selected ? "bg-indigo-500" : "bg-transparent"
+                      "flex justify-center items-center gap-1  h-full font-semibold text-sm whitespace-nowrap px-2",
+                      selected ? "text-indigo-500" : "text-slate-500",
+                      // selected ? "text-white" : "text-slate-500",
+                      // selected ? "bg-indigo-500" : "bg-transparent",
+                      selected
+                        ? "border-b-[3px] border-indigo-500"
+                        : "border-b-[3px] border-transparent"
                     )}
                   >
                     {icon}

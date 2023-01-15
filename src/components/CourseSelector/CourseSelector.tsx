@@ -129,7 +129,7 @@ export const CourseSelector = memo(function CourseSelector({
 
   const disableCourseSelect = !courseItem.selectedDept.value;
 
-  const headerRing = `${headerRingColor} ring-0 hover:ring-4 border border-white/0 hover:border-black/30 transition-[box-shadow]`;
+  const headerRing = `${headerRingColor} ring-0 hover:ring-4 border border-white/0zz hover:border-black/30zz transition-[box-shadow]`;
   const headerBtnRing = `${headerBtnRingColor} ring-0 focus-visible:ring-2 ring-inset appearance-none outline-none transition-[box-shadow]`;
 
   useEffect(() => {
@@ -144,7 +144,13 @@ export const CourseSelector = memo(function CourseSelector({
       style={{ zIndex: 20 - index }}
     >
       <div
-        className={`sticky z-10 top-[calc(4rem+3rem+5px)] flex w-full justify-between rounded-lg p-2 text-sm font-medium ${textColor} ${bgc} ${headerRing} shadow-[0_2px_10px_10px_rgba(255,255,255,1)]`}
+        className={clsx(
+          "sticky z-10 top-[calc(4rem+3rem+5px)] flex w-full justify-between rounded-lg p-2 text-sm font-medium",
+          // "shadow-[0_2px_10px_10px_rgba(255,255,255,1)]",
+          textColor,
+          bgc,
+          headerRing
+        )}
       >
         <AutoCompleteInput
           options={deptOptions}
@@ -169,7 +175,7 @@ export const CourseSelector = memo(function CourseSelector({
           </span>
           <span className="ml-5">
             <IconChevronDown
-              className={`ui-open:rotate-180 ui-open:transform h-5 w-5`}
+              className={`ui-open:rotate-180 ui-open:transform`}
             />
           </span>
         </Disclosure.Button>

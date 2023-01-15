@@ -1,5 +1,7 @@
 import {
   IconBook,
+  IconChevronDown,
+  IconCircleChevronDown,
   IconCircleMinus,
   IconCirclePlus,
   IconExternalLink,
@@ -9,12 +11,27 @@ import {
   IconMicroscope,
   IconNotes,
   IconPencilPlus,
+  IconSquare,
+  IconSquareCheck,
+  IconSquareRounded,
+  IconSquareRoundedCheck,
+  IconSquareRoundedChevronDown,
+  IconSquareRoundedChevronUp,
+  IconSquareRoundedMinus,
   IconYoga,
 } from "@tabler/icons";
 import { useQuery } from "@tanstack/react-query";
 import { PrimitiveAtom, SetStateAction, useAtom } from "jotai";
 import Link from "next/link";
-import { Fragment, memo, useEffect, useMemo, useRef, useState } from "react";
+import {
+  Fragment,
+  memo,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { ClassSectionWithState, CourseItem } from "../../state/course-cart";
 import { ClassDay, SectionType, Semester } from "../../database/types";
 import { ClassSectionState } from "../../state/course-cart";
@@ -32,6 +49,7 @@ import {
 } from "./helpers";
 import { useMediaQuery } from "react-responsive";
 import clsx from "clsx";
+import { Switch } from "@headlessui/react";
 
 const staleTime = 60 * 60 * 1000; // 1 hour
 
@@ -132,7 +150,12 @@ export const SectionSelector = ({
               Group {i + 1}
             </h2>
           )}
-          <ul className="flex flex-col gap-8 sm:gap-4 rounded-md bg-transparent">
+          <ul
+            className={clsx(
+              "flex flex-col gap-8 rounded-lg bg-transparent",
+              "sm:gap-[1px] sm:border sm:border-slate-200 sm:bg-slate-200 sm:overflow-hidden"
+            )}
+          >
             {/* <ul className="grid grid-cols-[repeat(auto-fill,minmax(320px,1fr))] gap-8 rounded-md bg-transparent"> */}
             {group.map((s) => (
               <ClassEntry
@@ -173,96 +196,141 @@ export const ClassRow = ({ data, update }: BaseClassEntryProps) => {
     comment,
   } = data;
 
-  const bgColor = hidden ? "bg-slate-100" : "bg-white";
-  const collapse = hidden ? "overflow-hidden h-16" : "h-auto";
-  const grayscale = hidden
-    ? "grayscale-[80%] opacity-50"
-    : "grayscale-0 opacity-100 ";
+  const { setHidden, setSelected } = useClassEntry(data, update);
+  const [showExtraContent, setShowExtraContent] = useState(false);
+  const toggleShowContent = () => setShowExtraContent((v) => !v);
+
+  const bgColor = hidden ? "bg-stone-100" : "bg-white";
+  const grayscale = hidden ? "grayscale-[80%]" : "grayscale-0";
   const ringGlow = selected
     ? "ring-4 ring-emerald-100 border-emerald-400 group-hover:ring-4 group-hover:ring-emerald-200  group-hover:border-emerald-500"
     : "ring-0 ring-transparent border-slate-200 group-hover:ring-4 group-hover:ring-slate-100  group-hover:border-slate-300";
 
-  const toggleSelected = () => {
-    update(transformToggleSelected(data));
-  };
-
-  const toggleHidden = () => {
-    update(transformToggleHidden(data));
-  };
-
   return (
     <li
       className={clsx(
-        "grid grid-cols-[min-content_80px_2fr_2fr_2fr_2fr_8rem] grid-rows-[min-content_min-content] justify-items-start items-center place-items-centerzz  gap-0",
-        "rounded-md py-2 px-2 bg-transparent border border-slate-200"
+        "relative overflow-hiddenzz flex flex-col gap-3 py-3 px-4 ",
+        bgColor
       )}
     >
-      <div className="flex">
-        <button
-          className="flex justify-center items-center w-10 h-10 rounded-[50%] hover:text-slate-600"
-          onClick={toggleSelected}
-        >
-          {selected ? (
-            <IconCircleMinus className="text-rose-500 hover:text-rose-400" />
-          ) : (
-            <IconCirclePlus className="text-emerald-500 hover:text-emerald-400" />
-          )}
-        </button>
-        <button
-          className="flex justify-center items-center w-10 h-10 rounded-[50%] hover:text-slate-600"
-          onClick={toggleHidden}
-        >
-          {hidden ? <IconEyeOff /> : <IconEye />}
-        </button>
-      </div>
-
-      <span className="flex items-center gap-1 rounded-md font-semibold capitalize pl-1 pr-2 py-[0.125rem]zz py-1 w-min bg-slate-200 text-slate-500 h-min">
-        {section_type_icons[section_type]}
-        {section_type}
-      </span>
-      <h3
-        className={`flex items-center flex-1 pl-2 text-slate-900 text-lg font-mono font-extrabold ${grayscale}`}
+      <div
+        className={clsx(
+          "relative bg-inherit grid justify-items-start items-center justify-between gap-0",
+          "md:grid-cols-[min-content_5rem_6rem_10rem_12rem_10rem]",
+          "sm:grid-cols-[min-content_5rem_6rem_10rem_12rem]",
+          hidden &&
+            "[&>*:not(:first-child)]:opacity-20 [&>*:not(:first-child)]:grayscale-[80%]"
+        )}
       >
-        {section_number} {class_number}
-      </h3>
-      <div className="flex flex-col gap-1">
-        {getTimeMarkup(time_start, time_end)}
+        <div className="flex gap-2">
+          <Switch
+            checked={selected}
+            onChange={setSelected}
+            className="grid place-items-center"
+          >
+            {selected ? (
+              <IconSquareRoundedCheck className="text-emerald-500 hover:text-emerald-400" />
+            ) : (
+              <IconSquareRounded className="text-slate-500 hover:text-slate-700" />
+            )}
+          </Switch>
+          <Switch
+            checked={hidden}
+            onChange={setHidden}
+            className="grid place-items-center text-slate-500 hover:text-slate-700"
+          >
+            {hidden ? (
+              <IconSquareRoundedMinus />
+            ) : (
+              <span className="relative">
+                <IconEye
+                  className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-3 w-3"
+                  stroke={3}
+                />
+                <IconSquareRounded />
+              </span>
+            )}
+          </Switch>
+
+          <Switch
+            checked={showExtraContent}
+            onChange={setShowExtraContent}
+            className={clsx(
+              "grid place-items-center bg-inherit text-slate-500 hover:text-slate-700"
+            )}
+            onClick={toggleShowContent}
+          >
+            {showExtraContent ? (
+              <IconSquareRoundedChevronUp />
+            ) : (
+              <IconSquareRoundedChevronDown />
+            )}
+          </Switch>
+        </div>
+        <SectionType sectionType={section_type} />
+
+        <h3 className="flex items-center flex-1 text-slate-900 text-base font-mono font-bold">
+          {section_number} {class_number}
+        </h3>
+        <div className="flex flex-col gap-1">
+          <TimeRange start={time_start} end={time_end} />
+        </div>
+        <div className="flex gap-2 flex-wrap">
+          {getDays(days).map((day) => (
+            <DayTag key={day} day={day} />
+          ))}
+        </div>
+        <span className="sm:hidden md:flex text-slate-500 ">
+          <InstructorLink firstName={instructor_fn} lastName={instructor_ln} />
+        </span>
       </div>
-      <div className="flex gap-2 flex-wrap">
-        {getDays(days).map((day) => (
-          <DayTag key={day} day={day} />
-        ))}
-      </div>
-      <span className="flex gap-1 text-slate-500">
-        <Link
-          className="flex items-center gap-1 font-bold hover:underline text-slate-900"
-          target="_blank" // open in new tab/window
-          href={get_rmp_URL(instructor_fn, instructor_ln)}
+      {showExtraContent && (
+        <div
+          className={clsx(
+            "flex flex-col gap-4 rounded-lg p-4",
+            hidden ? "bg-stone-100" : "bg-stone-100",
+            hidden && "[&>*]:opacity-20 [&>*]:grayscale-[80%]"
+          )}
         >
-          {formatFirstName(instructor_fn)} {instructor_ln}
-          <IconExternalLink size={16} />
-        </Link>
-      </span>
+          <div className="flex gap-4">
+            <span className="text-slate-500 font-semibold">
+              {formatLocation(location)}
+            </span>
 
-      <span className="text-slate-500 font-semibold">
-        {formatLocation(data.location)}
-      </span>
+            <span className="sm:flex md:hidden text-slate-500 ">
+              <InstructorLink
+                firstName={data.instructor_fn}
+                lastName={data.instructor_ln}
+              />
+            </span>
+          </div>
 
-      <Comment comment={comment} />
+          <Comment comment={comment} forceShowFull />
+        </div>
+      )}
     </li>
   );
 };
 
 export const ClassCard = ({ data, update }: BaseClassEntryProps) => {
   const { selected, hidden, notes } = data.state;
+  const {
+    section_type,
+    section_number,
+    class_number,
+    instructor_fn,
+    instructor_ln,
+    time_start,
+    time_end,
+    days,
+    location,
+    comment,
+  } = data;
 
-  const toggleSelected = () => {
-    update(transformToggleSelected(data));
-  };
+  const { setHidden, setSelected } = useClassEntry(data, update);
 
-  const toggleHidden = () => {
-    update(transformToggleHidden(data));
-  };
+  const toggleSelected = () => setSelected(!selected);
+  const toggleHidden = () => setHidden(!hidden);
 
   const bgColor = hidden ? "bg-slate-100" : "bg-white";
   const collapse = hidden ? "overflow-hidden h-16" : "h-auto";
@@ -279,7 +347,7 @@ export const ClassCard = ({ data, update }: BaseClassEntryProps) => {
         <h3
           className={`flex items-center flex-1 pl-2 text-slate-900 text-lg font-mono font-extrabold ${grayscale}`}
         >
-          {data.section_number} {data.class_number}
+          {section_number} {class_number}
           {selected && (
             <span className="text-slate-500 font-semibold text-sm font-base ml-4">
               (added)
@@ -313,21 +381,14 @@ export const ClassCard = ({ data, update }: BaseClassEntryProps) => {
       >
         <div className="flex gap-2 ">
           <div className="flex min-w-[7rem]">
-            <span className="flex items-center gap-1 rounded-md font-semibold capitalize pl-1 pr-2 py-[0.125rem]zz py-1 w-min bg-slate-200 text-slate-500 h-min">
-              {section_type_icons[data.section_type]}
-              {data.section_type}
-            </span>
+            <SectionType sectionType={section_type} />
           </div>
           <div className="flex flex-col items-start gap-2">
             <span className="flex gap-1 text-slate-500">
-              <Link
-                className="flex items-center gap-1 font-bold hover:underline text-slate-900"
-                target="_blank" // open in new tab/window
-                href={get_rmp_URL(data.instructor_fn, data.instructor_ln)}
-              >
-                {formatFirstName(data.instructor_fn)} {data.instructor_ln}
-                <IconExternalLink size={16} />
-              </Link>
+              <InstructorLink
+                firstName={instructor_fn}
+                lastName={instructor_ln}
+              />
             </span>
           </div>
         </div>
@@ -335,13 +396,13 @@ export const ClassCard = ({ data, update }: BaseClassEntryProps) => {
         <div className="flex gap-2">
           <div className="flex min-w-[7rem]">
             <span className="text-slate-500 font-semibold">
-              {formatLocation(data.location)}
+              {formatLocation(location)}
             </span>
           </div>
           <div className="flex flex-col gap-1">
-            {getTimeMarkup(data.time_start, data.time_end)}
+            <TimeRange start={time_start} end={time_end} />
             <div className="flex gap-2 flex-wrap">
-              {getDays(data.days).map((day) => (
+              {getDays(days).map((day) => (
                 <DayTag key={day} day={day} />
               ))}
             </div>
@@ -349,7 +410,7 @@ export const ClassCard = ({ data, update }: BaseClassEntryProps) => {
         </div>
 
         <div className="flex gap-2">
-          <Comment comment={data.comment} />
+          <Comment comment={comment} />
         </div>
       </div>
     </li>
@@ -387,12 +448,30 @@ function arePropsEqual(
   return true;
 }
 
-const Comment = ({ comment }: { comment: string }) => {
+const SectionType = ({
+  sectionType,
+}: {
+  sectionType: ClassSectionWithState["section_type"];
+}) => {
+  return (
+    <span className="flex items-center gap-1 rounded-md font-semibold capitalize pl-1 pr-2 py-1 w-min bg-slate-100 text-slate-400 h-min">
+      {section_type_icons[sectionType]}
+      {sectionType}
+    </span>
+  );
+};
+
+const Comment = ({
+  comment,
+  forceShowFull = false,
+}: {
+  comment: string;
+  forceShowFull?: boolean;
+}) => {
   const contentRef = useRef<HTMLDivElement>(null!);
   const [isClamped, setClamped] = useState(false);
   const [isExpanded, setExpanded] = useState(false);
   const toggleExpand = () => setExpanded((v) => !v);
-  const clamp = isExpanded ? "line-clamp-none" : "line-clamp-1";
 
   useEffect(() => {
     const handleResize = () => {
@@ -413,10 +492,16 @@ const Comment = ({ comment }: { comment: string }) => {
 
   return (
     <div className={clsx("flex", isExpanded ? "flex-col" : "flex-row")}>
-      <span ref={contentRef} className={`${clamp} text-sm text-slate-500`}>
+      <span
+        ref={contentRef}
+        className={clsx(
+          "text-sm text-slate-500",
+          isExpanded || forceShowFull ? "line-clamp-none" : "line-clamp-1"
+        )}
+      >
         {formatComment(comment)}
       </span>
-      {isClamped && (
+      {isClamped && !forceShowFull && (
         <button
           type="button"
           className="flex justify-center items-center self-end px-2 py-[0.125rem] rounded-md text-sm text-slate-400 cursor-pointer hover:bg-slate-300 hover:text-slate-700 w-min whitespace-nowrap "
@@ -440,23 +525,48 @@ export const DayTag = ({ day }: { day: ClassDay | string }) => {
 
   return (
     <span
-      className={`flex justify-center items-center rounded-full px-4 py-1 capitalize text-sm ${bgColor} ${textColor}`}
+      className={clsx(
+        "flex justify-center items-center rounded-full px-4 py-1 capitalize text-sm",
+        bgColor,
+        textColor
+      )}
     >
       {text}
     </span>
   );
 };
 
-export const section_type_icons: Record<SectionType, React.ReactNode> = {
-  lab: <IconMicroscope className="text-slate-500" />,
-  lec: <IconNotes className="text-slate-500" />,
-  sem: <IconBook className="text-slate-500" />,
-  sup: <IconPencilPlus className="text-slate-500" />,
-  act: <IconYoga className="text-slate-500" />,
-  add: <IconLayersLinked className="text-slate-500" />,
+export const InstructorLink = ({
+  firstName,
+  lastName,
+}: {
+  firstName: string;
+  lastName: string;
+}) => {
+  const link = get_rmp_URL(firstName, lastName);
+
+  return (
+    <Link
+      className="relative flex items-center gap-1 font-bold hover:underline text-slate-900 whitespace-nowrap"
+      target="_blank" // open in new tab/window
+      href={link}
+    >
+      {formatFirstName(firstName)} {lastName}
+      <IconExternalLink size={14} />
+    </Link>
+  );
 };
 
-const getTimeMarkup = (start: number, end: number) => {
+export const section_type_icons: Record<SectionType, React.ReactNode> = {
+  lab: <IconMicroscope className="text-slate-400" />,
+  lec: <IconNotes className="text-slate-400" />,
+  sem: <IconBook className="text-slate-400" />,
+  sup: <IconPencilPlus className="text-slate-400" />,
+  act: <IconYoga className="text-slate-400" />,
+  add: <IconLayersLinked className="text-slate-400" />,
+};
+
+const TimeRange = ({ start, end }: { start: number; end: number }) => {
   if (start === end) return <span className="flex gap-2">TBA</span>;
 
   const startTime = formatTime(start);
@@ -478,9 +588,27 @@ const getTimeMarkup = (start: number, end: number) => {
   );
 };
 
-const transformToggleSelected = (data: ClassSectionWithState) => {
-  return { ...data, state: { ...data.state, selected: !data.state.selected } };
-};
-const transformToggleHidden = (data: ClassSectionWithState) => {
-  return { ...data, state: { ...data.state, hidden: !data.state.hidden } };
+const useClassEntry = (
+  data: BaseClassEntryProps["data"],
+  update: BaseClassEntryProps["update"]
+) => {
+  const setSelected = useCallback(
+    (value: boolean) =>
+      update({
+        ...data,
+        state: { ...data.state, selected: value },
+      }),
+    [data, update]
+  );
+
+  const setHidden = useCallback(
+    (value: boolean) =>
+      update({
+        ...data,
+        state: { ...data.state, hidden: value },
+      }),
+    [data, update]
+  );
+
+  return { setSelected, setHidden };
 };
