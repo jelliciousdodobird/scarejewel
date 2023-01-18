@@ -1,6 +1,7 @@
 "use client";
 
 import { IconArrowsMaximize, IconArrowsMinimize } from "@tabler/icons";
+import clsx from "clsx";
 import { useAtom } from "jotai";
 import { ClassDay, ClassSection } from "../../database/types";
 import { useHasMounted } from "../../hooks/useHasMounted";
@@ -199,16 +200,20 @@ function TimeItem({ data, startOffset }: TimeItemProps) {
 
   return (
     <div
-      className={`${bgColor} ${textColor} overflow-hidden absolute flex flex-col rounded p-1 mix-blend-multiply w-full `}
+      className={clsx(
+        "overflow-hidden absolute flex flex-col gap-1 rounded p-1 mix-blend-multiply w-full",
+        bgColor,
+        textColor
+      )}
       style={{ height, top: posY }}
     >
-      <span className="flex text-sm">
+      <span className="flex text-sm font-semibold">
         {dept_abbr} {course_number}
       </span>
-      <span className="flex text-sm">
+      <span className="flex text-sm font-semibold">
         {section_number} {class_number}
       </span>
-      <span className="flex text-sm">
+      <span className="flex text-sm font-semibold">
         {timeStart} {timeEnd}
       </span>
     </div>

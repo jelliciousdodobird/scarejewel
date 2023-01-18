@@ -1,9 +1,14 @@
 import {
   IconBook,
+  IconCaretDown,
+  IconCheck,
   IconChevronDown,
+  IconChevronUp,
   IconCircleChevronDown,
+  IconCircleChevronUp,
   IconCircleMinus,
   IconCirclePlus,
+  IconDotsCircleHorizontal,
   IconExternalLink,
   IconEye,
   IconEyeOff,
@@ -201,57 +206,55 @@ export const ClassRow = ({ data, update }: BaseClassEntryProps) => {
   const toggleShowContent = () => setShowExtraContent((v) => !v);
 
   const bgColor = hidden ? "bg-stone-100" : "bg-white";
-  const grayscale = hidden ? "grayscale-[80%]" : "grayscale-0";
-  const ringGlow = selected
-    ? "ring-4 ring-emerald-100 border-emerald-400 group-hover:ring-4 group-hover:ring-emerald-200  group-hover:border-emerald-500"
-    : "ring-0 ring-transparent border-slate-200 group-hover:ring-4 group-hover:ring-slate-100  group-hover:border-slate-300";
 
   return (
-    <li
-      className={clsx(
-        "relative overflow-hiddenzz flex flex-col gap-3 py-3 px-4 ",
-        bgColor
-      )}
-    >
-      <div
-        className={clsx(
-          "relative bg-inherit grid justify-items-start items-center justify-between gap-0",
-          "md:grid-cols-[min-content_5rem_6rem_10rem_12rem_10rem]",
-          "sm:grid-cols-[min-content_5rem_6rem_10rem_12rem]",
-          hidden &&
-            "[&>*:not(:first-child)]:opacity-20 [&>*:not(:first-child)]:grayscale-[80%]"
-        )}
-      >
-        <div className="flex gap-2">
-          <Switch
+    <li className={clsx("relative flex flex-col", bgColor)}>
+      <div className="flex w-full">
+        <div className="grid place-items-center p-2 border-r border-slate-200 bg-white">
+          <SelectedButton
+            type="row"
             checked={selected}
             onChange={setSelected}
-            className="grid place-items-center"
-          >
-            {selected ? (
-              <IconSquareRoundedCheck className="text-emerald-500 hover:text-emerald-400" />
-            ) : (
-              <IconSquareRounded className="text-slate-500 hover:text-slate-700" />
-            )}
-          </Switch>
+          />
+        </div>
+        <div
+          className={clsx(
+            "grid justify-items-start items-start justify-between gap-0",
+            "grid-cols-[5rem_6rem_14rem_10rem]",
+            "relative flex-1 bg-inherit px-4 pt-8 pb-3",
+            hidden && "[&>*]:opacity-20 [&>*]:grayscale-[80%]"
+          )}
+        >
+          <SectionType sectionType={section_type} />
+
+          <span className="flex items-center flex-1 lowercase text-slate-700 font-monozz font-semibold">
+            {section_number} {class_number}
+          </span>
+
+          <div className="flex flex-col">
+            <TimeRange start={time_start} end={time_end} />
+            <div className="flex gap-2 flex-wrap">
+              {getDays(days).map((day) => (
+                <DayTag key={day} day={day} />
+              ))}
+            </div>
+          </div>
+
+          <span className="flex text-slate-500 ">
+            <InstructorLink
+              firstName={instructor_fn}
+              lastName={instructor_ln}
+            />
+          </span>
+        </div>
+        <div className="absolute right-0 top-0 flex gap-2 p-2 bg-inherit">
           <Switch
             checked={hidden}
             onChange={setHidden}
             className="grid place-items-center text-slate-500 hover:text-slate-700"
           >
-            {hidden ? (
-              <IconSquareRoundedMinus />
-            ) : (
-              <span className="relative">
-                <IconEye
-                  className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-3 w-3"
-                  stroke={3}
-                />
-                <IconSquareRounded />
-              </span>
-            )}
+            {hidden ? <IconEyeOff size={16} /> : <IconEye size={16} />}
           </Switch>
-
           <Switch
             checked={showExtraContent}
             onChange={setShowExtraContent}
@@ -261,49 +264,24 @@ export const ClassRow = ({ data, update }: BaseClassEntryProps) => {
             onClick={toggleShowContent}
           >
             {showExtraContent ? (
-              <IconSquareRoundedChevronUp />
+              <IconChevronUp size={16} />
             ) : (
-              <IconSquareRoundedChevronDown />
+              <IconChevronDown size={16} />
             )}
           </Switch>
         </div>
-        <SectionType sectionType={section_type} />
-
-        <h3 className="flex items-center flex-1 text-slate-900 text-base font-mono font-bold">
-          {section_number} {class_number}
-        </h3>
-        <div className="flex flex-col gap-1">
-          <TimeRange start={time_start} end={time_end} />
-        </div>
-        <div className="flex gap-2 flex-wrap">
-          {getDays(days).map((day) => (
-            <DayTag key={day} day={day} />
-          ))}
-        </div>
-        <span className="sm:hidden md:flex text-slate-500 ">
-          <InstructorLink firstName={instructor_fn} lastName={instructor_ln} />
-        </span>
       </div>
       {showExtraContent && (
         <div
           className={clsx(
-            "flex flex-col gap-4 rounded-lg p-4",
+            "flex flex-col gap-4  p-4 pl-[4rem] border-t border-slate-200",
             hidden ? "bg-stone-100" : "bg-stone-100",
             hidden && "[&>*]:opacity-20 [&>*]:grayscale-[80%]"
           )}
         >
-          <div className="flex gap-4">
-            <span className="text-slate-500 font-semibold">
-              {formatLocation(location)}
-            </span>
-
-            <span className="sm:flex md:hidden text-slate-500 ">
-              <InstructorLink
-                firstName={data.instructor_fn}
-                lastName={data.instructor_ln}
-              />
-            </span>
-          </div>
+          <span className="text-slate-500 font-semibold">
+            {formatLocation(location)}
+          </span>
 
           <Comment comment={comment} forceShowFull />
         </div>
@@ -337,47 +315,33 @@ export const ClassCard = ({ data, update }: BaseClassEntryProps) => {
   const grayscale = hidden
     ? "grayscale-[80%] opacity-50"
     : "grayscale-0 opacity-100 ";
-  const ringGlow = selected
-    ? "ring-4 ring-emerald-100 border-emerald-400 group-hover:ring-4 group-hover:ring-emerald-200  group-hover:border-emerald-500"
-    : "ring-0 ring-transparent border-slate-200 group-hover:ring-4 group-hover:ring-slate-100  group-hover:border-slate-300";
 
   return (
-    <li className="flex flex-col group self-stretchzz">
+    <li className="flex flex-col group">
       <span className="flex text-slate-400">
-        <h3
+        <span
           className={`flex items-center flex-1 pl-2 text-slate-900 text-lg font-mono font-extrabold ${grayscale}`}
         >
           {section_number} {class_number}
-          {selected && (
-            <span className="text-slate-500 font-semibold text-sm font-base ml-4">
-              (added)
-            </span>
-          )}
-          {hidden && (
-            <span className="text-slate-500 font-semibold text-sm font-base ml-2 ">
-              (hidden)
-            </span>
-          )}
-        </h3>
-        <button
-          className="flex justify-center items-center w-12 h-12 rounded-[50%] hover:text-slate-600"
-          onClick={toggleHidden}
+        </span>
+        <Switch
+          checked={hidden}
+          onChange={setHidden}
+          className="flex justify-center items-center w-10 h-12 hover:text-slate-600"
         >
           {hidden ? <IconEyeOff /> : <IconEye />}
-        </button>
-        <button
-          className="flex justify-center items-center w-12 h-12 rounded-[50%] hover:text-slate-600"
-          onClick={toggleSelected}
-        >
-          {selected ? (
-            <IconCircleMinus className="text-rose-500 hover:text-rose-400" />
-          ) : (
-            <IconCirclePlus className="text-emerald-500 hover:text-emerald-400" />
-          )}
-        </button>
+        </Switch>
+
+        <SelectedButton type="card" checked={selected} onChange={setSelected} />
       </span>
       <div
-        className={`flex-grow relative flex flex-col gap-8 p-4 rounded-md border transition-[opacity_filter_background-color_box-shadow] ${ringGlow} ${bgColor} ${grayscale} ${collapse}`}
+        className={clsx(
+          "flex-grow relative flex flex-col gap-8 p-4 rounded-md border transition-[opacity_filter_background-color_box-shadow]",
+          "ring-0 ring-transparent border-slate-200 group-hover:ring-[3px] group-hover:ring-slate-900/5  group-hover:border-slate-300",
+          bgColor,
+          grayscale,
+          collapse
+        )}
       >
         <div className="flex gap-2 ">
           <div className="flex min-w-[7rem]">
@@ -417,15 +381,36 @@ export const ClassCard = ({ data, update }: BaseClassEntryProps) => {
   );
 };
 
+const useClassEntry = (
+  data: BaseClassEntryProps["data"],
+  update: BaseClassEntryProps["update"]
+) => {
+  const setSelected = useCallback(
+    (value: boolean) =>
+      update({
+        ...data,
+        state: { ...data.state, selected: value },
+      }),
+    [data, update]
+  );
+
+  const setHidden = useCallback(
+    (value: boolean) =>
+      update({
+        ...data,
+        state: { ...data.state, hidden: value },
+      }),
+    [data, update]
+  );
+
+  return { setSelected, setHidden };
+};
+
 const ClassEntry = memo(function ClassEntry({
   type,
   data,
   update,
 }: ClassEntryProps) {
-  useEffect(() => {
-    console.log("ClassEntry", data.section_number);
-  });
-
   return type === "card" ? (
     <ClassCard data={data} update={update} />
   ) : (
@@ -454,7 +439,7 @@ const SectionType = ({
   sectionType: ClassSectionWithState["section_type"];
 }) => {
   return (
-    <span className="flex items-center gap-1 rounded-md font-semibold capitalize pl-1 pr-2 py-1 w-min bg-slate-100 text-slate-400 h-min">
+    <span className="flex items-center gap-1 rounded-md font-semibold uppercase pl-2 pr-3 py-1 w-min h-min bg-slate-200 text-slate-700 text-sm">
       {section_type_icons[sectionType]}
       {sectionType}
     </span>
@@ -526,12 +511,13 @@ export const DayTag = ({ day }: { day: ClassDay | string }) => {
   return (
     <span
       className={clsx(
-        "flex justify-center items-center rounded-full px-4 py-1 capitalize text-sm",
+        "relative grid place-items-center rounded-full px-4 py-1  capitalize text-sm",
+        "sm:px-[0.625rem] sm:py-[0.125rem] sm:rounded",
         bgColor,
         textColor
       )}
     >
-      {text}
+      <span className="relative top-0">{text}</span>
     </span>
   );
 };
@@ -547,23 +533,17 @@ export const InstructorLink = ({
 
   return (
     <Link
-      className="relative flex items-center gap-1 font-bold hover:underline text-slate-900 whitespace-nowrap"
+      className={clsx(
+        "relative flex items-center gap-1 font-bold hover:underline text-slate-900",
+        "sm:font-semibold sm:text-slate-700"
+      )}
       target="_blank" // open in new tab/window
       href={link}
     >
       {formatFirstName(firstName)} {lastName}
-      <IconExternalLink size={14} />
+      {/* <IconExternalLink size={14} /> */}
     </Link>
   );
-};
-
-export const section_type_icons: Record<SectionType, React.ReactNode> = {
-  lab: <IconMicroscope className="text-slate-400" />,
-  lec: <IconNotes className="text-slate-400" />,
-  sem: <IconBook className="text-slate-400" />,
-  sup: <IconPencilPlus className="text-slate-400" />,
-  act: <IconYoga className="text-slate-400" />,
-  add: <IconLayersLinked className="text-slate-400" />,
 };
 
 const TimeRange = ({ start, end }: { start: number; end: number }) => {
@@ -578,37 +558,58 @@ const TimeRange = ({ start, end }: { start: number; end: number }) => {
   const endTimePost = endTime.replace(/(am|pm)/gi, "");
 
   return (
-    <span className="flex">
+    <span className="relative flex">
       <span className="text-slate-900 font-bold">{startTimePre}</span>
-      <span className="text-slate-500 lowercase">{startTimePost}</span>
-      <span className="text-slate-500 mx-1">-</span>
+      <span className="relative top-0 text-slate-400 lowercase text-[12px] font-semibold">
+        {startTimePost}
+      </span>
+      <span className="text-slate-900 mx-1">-</span>
       <span className="text-slate-900 font-bold">{endTimePost}</span>
-      <span className="text-slate-500 lowercase">{endTimePre}</span>
+      <span className="relative top-0 text-slate-400 lowercase text-[12px] font-semibold">
+        {endTimePre}
+      </span>
     </span>
   );
 };
 
-const useClassEntry = (
-  data: BaseClassEntryProps["data"],
-  update: BaseClassEntryProps["update"]
-) => {
-  const setSelected = useCallback(
-    (value: boolean) =>
-      update({
-        ...data,
-        state: { ...data.state, selected: value },
-      }),
-    [data, update]
+const SelectedButton = ({
+  type,
+  checked,
+  onChange,
+}: {
+  type: ClassEntryProps["type"];
+  checked: boolean;
+  onChange: (value: boolean) => void;
+}) => {
+  return (
+    <Switch
+      checked={checked}
+      onChange={onChange}
+      className={clsx(
+        "grid place-items-center",
+        type === "card" && "w-10 h-12"
+      )}
+    >
+      <span
+        className={clsx(
+          "grid place-items-center rounded-md border",
+          "w-5 h-5",
+          checked
+            ? "bg-emerald-500 text-white border-transparent"
+            : "bg-slate-100 text-white/0 border-slate-200 hover:border-slate-300"
+        )}
+      >
+        <IconCheck size={16} stroke={4} />
+      </span>
+    </Switch>
   );
+};
 
-  const setHidden = useCallback(
-    (value: boolean) =>
-      update({
-        ...data,
-        state: { ...data.state, hidden: value },
-      }),
-    [data, update]
-  );
-
-  return { setSelected, setHidden };
+export const section_type_icons: Record<SectionType, React.ReactNode> = {
+  lab: <IconMicroscope />,
+  lec: <IconNotes />,
+  sem: <IconBook />,
+  sup: <IconPencilPlus />,
+  act: <IconYoga />,
+  add: <IconLayersLinked />,
 };
