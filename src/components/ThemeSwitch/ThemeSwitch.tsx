@@ -2,16 +2,12 @@
 
 import { useTheme } from "next-themes";
 import { useState, useEffect } from "react";
+import { useHasMounted } from "../../hooks/useHasMounted";
 // import { useTheme } from "@wits/next-themes";
 
 export const ThemeSwitch = () => {
-  const [mounted, setMounted] = useState(false);
+  const mounted = useHasMounted();
   const { theme, setTheme } = useTheme();
-
-  // useEffect only runs on the client, so now we can safely show the UI
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   if (!mounted) {
     return null;

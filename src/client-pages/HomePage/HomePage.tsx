@@ -43,10 +43,6 @@ export default function HomePage({ terms }: HomePageProps) {
   const [selectedTab, setSelectedTab] = useState(0);
   // const toggleTabs = () => setSelectedTab((v) => (v === 0 ? 1 : 0));
 
-  useEffect(() => {
-    console.log("home page");
-  });
-
   return (
     <div className="flex flex-col gap-4 bg-gradient-to-b from-white to-slate-100 min-h-full border-2zz border-dashedzz zzborder-red-500">
       <Tab.Group selectedIndex={selectedTab} onChange={setSelectedTab}>

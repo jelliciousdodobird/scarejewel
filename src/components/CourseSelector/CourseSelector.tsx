@@ -151,10 +151,6 @@ export const CourseSelector = memo(function CourseSelector({
   const headerRing = `${headerRingColor} ring-0 hover:ring-4 border transition-[box-shadow]`;
   const ringStyle = `${headerBtnRingColor} ring-0 focus-visible:ring-2 ring-inset appearance-none outline-none`;
 
-  useEffect(() => {
-    console.log("CourseSelector RENDER", courseItem.id);
-  });
-
   return (
     <Disclosure
       defaultOpen

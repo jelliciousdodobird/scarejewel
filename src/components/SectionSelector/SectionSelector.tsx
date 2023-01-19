@@ -128,10 +128,6 @@ export const SectionSelector = ({
     });
   }, [data]);
 
-  useEffect(() => {
-    console.log("SectionSelector", courseItem.id);
-  });
-
   if (queryDisabled)
     return (
       <div className="text-xl">Please pick a department and course code</div>
