@@ -44,7 +44,7 @@ export default function HomePage({ terms }: HomePageProps) {
   // const toggleTabs = () => setSelectedTab((v) => (v === 0 ? 1 : 0));
 
   return (
-    <div className="flex flex-col gap-4 bg-gradient-to-b from-white to-slate-100 min-h-full border-2zz border-dashedzz zzborder-red-500">
+    <div className="flex flex-col gap-4 bg-gradient-to-bzz from-whitezz to-slate-100zz min-h-full">
       <Tab.Group selectedIndex={selectedTab} onChange={setSelectedTab}>
         <div className="z-10 sticky top-16 backdrop-blur-md bg-slate-200/30 border-b border-t border-slate-200/50">
           <Tab.List className="pack-content flex gap-0 w-full h-12 py-1zz pt-1 sm:gap-4">
@@ -56,7 +56,7 @@ export default function HomePage({ terms }: HomePageProps) {
                 {({ selected }) => (
                   <span
                     className={clsx(
-                      "flex justify-center items-center gap-1  h-full font-semibold text-sm whitespace-nowrap px-2",
+                      "flex justify-center items-center gap-1 h-full font-semibold text-sm whitespace-nowrap px-2",
                       selected ? "text-indigo-500" : "text-slate-500",
                       // selected ? "text-white" : "text-slate-500",
                       // selected ? "bg-indigo-500" : "bg-transparent",
@@ -191,7 +191,7 @@ const AddButton = ({ addLimit = 10 }: { addLimit?: number }) => {
   return (
     <button
       type="button"
-      className="flex justify-center items-center gap-2 rounded-lg  p-2 pr-3 bg-indigo-500 text-white font-semibold disabled:cursor-not-allowed"
+      className="flex justify-center items-center gap-2 rounded-lg p-2 pr-3 bg-indigo-500 text-white font-semibold disabled:cursor-not-allowed"
       onClick={addCourseItem}
     >
       <IconPlus />

@@ -7,13 +7,13 @@ export const pretty_colors = [
   "sky",
   "indigo",
   "fuchsia",
-  "amber",
+  "yellow",
   "lime",
   "cyan",
   "violet",
 
   // "emerald",
-  // "amber",
+  // "yellow",
   // "orange",
   // "rose",
   // "fuchsia",
@@ -43,7 +43,7 @@ export const pretty_colors = [
   // "trueGray",
   // "warmGray",
   // "white",
-  // "yellow",
+  // "amber",
   // "zinc",
 ] as const;
 
@@ -58,7 +58,7 @@ export type Shade = typeof shades[number];
 export type ColorShade = Record<Shade, string>;
 
 export const prettyTailwindColors: Record<PrettyColor, ColorShade> = {
-  amber: tailwind_colors["amber"],
+  // amber: tailwind_colors["amber"],
   // "black": tailwind_colors["black"],
   // blue: tailwind_colors["blue"],
   // "blueGray": tailwind_colors["blueGray"],
@@ -88,6 +88,6 @@ export const prettyTailwindColors: Record<PrettyColor, ColorShade> = {
   violet: tailwind_colors["violet"],
   // "warmGray": tailwind_colors["warmGray"],
   // "white": tailwind_colors["white"],
-  // yellow: tailwind_colors["yellow"],
+  yellow: tailwind_colors["yellow"],
   // zinc: tailwind_colors["zinc"],
 };

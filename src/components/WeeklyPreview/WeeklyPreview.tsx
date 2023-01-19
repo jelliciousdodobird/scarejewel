@@ -6,7 +6,6 @@ import { useAtom } from "jotai";
 import { ClassDay, ClassSection } from "../../database/types";
 import { useHasMounted } from "../../hooks/useHasMounted";
 import {
-  // ClassSectionWithColor,
   ClassSectionWithState,
   selectedSectionsAtom,
   weeklyFullViewAtom,
@@ -14,8 +13,8 @@ import {
 import { PrettyColor } from "../../utils/colors";
 import { formatTime, roundToNearestMultipleOf } from "../../utils/util";
 import {
-  disclosure_header_bg_color,
-  disclosure_header_text_color,
+  bg_color_base,
+  text_color,
 } from "../CourseSelector/CourseSelector.variants";
 import {
   day_bg_color,
@@ -189,8 +188,9 @@ function TimeItem({ data, startOffset }: TimeItemProps) {
     state,
   } = data;
   const { color } = state;
-  const bgColor = disclosure_header_bg_color[color];
-  const textColor = disclosure_header_text_color[color];
+  // const bgColor = bg_color[color].light;
+  const bgColor = bg_color_base[color];
+  const textColor = text_color[color];
   const height = time_end - time_start;
 
   const timeStart = formatTime(time_start);

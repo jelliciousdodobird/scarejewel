@@ -1,7 +1,8 @@
+import { PrettyColor } from "../../utils/colors";
 import { PrettyColorMap } from "../../utils/types";
 
-export const disclosure_header_bg_color: PrettyColorMap = {
-  amber: "bg-amber-200",
+export const bg_color_base: PrettyColorMap = {
+  yellow: "bg-yellow-200",
   cyan: "bg-cyan-200",
   emerald: "bg-emerald-200",
   fuchsia: "bg-fuchsia-200",
@@ -13,47 +14,8 @@ export const disclosure_header_bg_color: PrettyColorMap = {
   violet: "bg-violet-200",
 };
 
-export const disclosure_header_hover_ring_color: PrettyColorMap = {
-  amber: "ring-amber-100 border-amber-300",
-  cyan: "ring-cyan-100 border-cyan-300",
-  emerald: "ring-emerald-100 border-emerald-300",
-  fuchsia: "ring-fuchsia-100 border-fuchsia-300",
-  indigo: "ring-indigo-100 border-indigo-300",
-  lime: "ring-lime-100 border-lime-300",
-  orange: "ring-orange-100 border-orange-300",
-  rose: "ring-rose-100 border-rose-300",
-  sky: "ring-sky-100 border-sky-300",
-  violet: "ring-violet-100 border-violet-300",
-};
-
-export const disclosure_header_text_color: PrettyColorMap = {
-  amber: "text-amber-800",
-  cyan: "text-cyan-800",
-  emerald: "text-emerald-800",
-  fuchsia: "text-fuchsia-800",
-  indigo: "text-indigo-800",
-  lime: "text-lime-800",
-  orange: "text-orange-800",
-  rose: "text-rose-800",
-  sky: "text-sky-800",
-  violet: "text-violet-800",
-};
-
-export const combobox_placeholder_text_color: PrettyColorMap = {
-  amber: "placeholder:text-amber-500",
-  cyan: "placeholder:text-cyan-500",
-  emerald: "placeholder:text-emerald-500",
-  fuchsia: "placeholder:text-fuchsia-500",
-  indigo: "placeholder:text-indigo-500",
-  lime: "placeholder:text-lime-500",
-  orange: "placeholder:text-orange-500",
-  rose: "placeholder:text-rose-500",
-  sky: "placeholder:text-sky-500",
-  violet: "placeholder:text-violet-500",
-};
-
-export const input_bg: PrettyColorMap = {
-  amber: "bg-amber-500",
+export const bg_color_highlight: PrettyColorMap = {
+  yellow: "bg-yellow-500",
   cyan: "bg-cyan-500",
   emerald: "bg-emerald-500",
   fuchsia: "bg-fuchsia-500",
@@ -65,8 +27,60 @@ export const input_bg: PrettyColorMap = {
   violet: "bg-violet-500",
 };
 
+export const bg_color_hover: PrettyColorMap = {
+  yellow: "hover:bg-yellow-300",
+  cyan: "hover:bg-cyan-300",
+  emerald: "hover:bg-emerald-300",
+  fuchsia: "hover:bg-fuchsia-300",
+  indigo: "hover:bg-indigo-300",
+  lime: "hover:bg-lime-300",
+  orange: "hover:bg-orange-300",
+  rose: "hover:bg-rose-300",
+  sky: "hover:bg-sky-300",
+  violet: "hover:bg-violet-300",
+};
+
+export const text_color_active: PrettyColorMap = {
+  yellow: "hover:text-yellow-900",
+  cyan: "hover:text-cyan-900",
+  emerald: "hover:text-emerald-900",
+  fuchsia: "hover:text-fuchsia-900",
+  indigo: "hover:text-indigo-900",
+  lime: "hover:text-lime-900",
+  orange: "hover:text-orange-900",
+  rose: "hover:text-rose-900",
+  sky: "hover:text-sky-900",
+  violet: "hover:text-violet-900",
+};
+
+export const text_color: PrettyColorMap = {
+  yellow: "text-yellow-700",
+  cyan: "text-cyan-700",
+  emerald: "text-emerald-700",
+  fuchsia: "text-fuchsia-700",
+  indigo: "text-indigo-700",
+  lime: "text-lime-700",
+  orange: "text-orange-700",
+  rose: "text-rose-700",
+  sky: "text-sky-700",
+  violet: "text-violet-700",
+};
+
+export const placeholder_text_color: PrettyColorMap = {
+  yellow: "placeholder:text-yellow-500",
+  cyan: "placeholder:text-cyan-500",
+  emerald: "placeholder:text-emerald-500",
+  fuchsia: "placeholder:text-fuchsia-500",
+  indigo: "placeholder:text-indigo-500",
+  lime: "placeholder:text-lime-500",
+  orange: "placeholder:text-orange-500",
+  rose: "placeholder:text-rose-500",
+  sky: "placeholder:text-sky-500",
+  violet: "placeholder:text-violet-500",
+};
+
 export const ring_color: PrettyColorMap = {
-  amber: "ring-amber-500",
+  yellow: "ring-yellow-500",
   cyan: "ring-cyan-500",
   emerald: "ring-emerald-500",
   fuchsia: "ring-fuchsia-500",
@@ -76,4 +90,17 @@ export const ring_color: PrettyColorMap = {
   rose: "ring-rose-500",
   sky: "ring-sky-500",
   violet: "ring-violet-500",
+};
+
+export const glow: PrettyColorMap = {
+  yellow: "ring-yellow-300/60 border-yellow-300",
+  cyan: "ring-cyan-300/60 border-cyan-300",
+  emerald: "ring-emerald-300/60 border-emerald-300",
+  fuchsia: "ring-fuchsia-300/60 border-fuchsia-300",
+  indigo: "ring-indigo-300/60 border-indigo-300",
+  lime: "ring-lime-300/60 border-lime-300",
+  orange: "ring-orange-300/60 border-orange-300",
+  rose: "ring-rose-300/60 border-rose-300",
+  sky: "ring-sky-300/60 border-sky-300",
+  violet: "ring-violet-300/60 border-violet-300",
 };

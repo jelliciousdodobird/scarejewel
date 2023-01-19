@@ -1,7 +1,7 @@
 import { PrettyColorMap } from "../../utils/types";
 
 export const bg_color: PrettyColorMap = {
-  amber: "bg-amber-400",
+  yellow: "bg-yellow-400",
   cyan: "bg-cyan-400",
   emerald: "bg-emerald-400",
   fuchsia: "bg-fuchsia-400",
@@ -14,7 +14,7 @@ export const bg_color: PrettyColorMap = {
 };
 
 export const selected_color: PrettyColorMap = {
-  amber: "bg-amber-500",
+  yellow: "bg-yellow-500",
   cyan: "bg-cyan-500",
   emerald: "bg-emerald-500",
   fuchsia: "bg-fuchsia-500",
@@ -27,7 +27,7 @@ export const selected_color: PrettyColorMap = {
 };
 
 export const ring_color: PrettyColorMap = {
-  amber: "ring-amber-500",
+  yellow: "ring-yellow-500",
   cyan: "ring-cyan-500",
   emerald: "ring-emerald-500",
   fuchsia: "ring-fuchsia-500",

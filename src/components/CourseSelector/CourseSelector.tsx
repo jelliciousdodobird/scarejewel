@@ -14,7 +14,6 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { PrimitiveAtom, useAtom, useSetAtom } from "jotai";
 import {
-  forwardRef,
   Fragment,
   memo,
   ReactNode,
@@ -26,17 +25,19 @@ import {
 
 import { CourseItem, courseItemsAtom } from "../../state/course-cart";
 
-import { ClassSection, Database, Semester } from "../../database/types";
+import { Semester } from "../../database/types";
 import { PrettyColor } from "../../utils/colors";
 import { formatTitle } from "../../utils/util";
 import { SectionSelector } from "../SectionSelector/SectionSelector";
 import {
-  disclosure_header_bg_color,
-  combobox_placeholder_text_color,
-  disclosure_header_hover_ring_color,
-  disclosure_header_text_color,
-  input_bg,
+  placeholder_text_color,
+  text_color,
   ring_color,
+  bg_color_base,
+  bg_color_highlight,
+  text_color_active,
+  bg_color_hover,
+  glow,
 } from "./CourseSelector.variants";
 import { fetchDistinctCourseIds, fetchDistinctDepts } from "../../database/api";
 import clsx from "clsx";
@@ -138,49 +139,49 @@ export const CourseSelector = memo(function CourseSelector({
   };
 
   const title = formatTitle(courseItem.selectedCourse.title);
-
-  const { color } = courseItem;
-  const bgc = disclosure_header_bg_color[color];
-  const textColor = disclosure_header_text_color[color];
-
-  const headerRingColor = disclosure_header_hover_ring_color[color];
-  const headerBtnRingColor = ring_color[color];
-
   const disableCourseSelect = !courseItem.selectedDept.value;
 
-  const headerRing = `${headerRingColor} ring-0 hover:ring-4 border transition-[box-shadow]`;
-  const ringStyle = `${headerBtnRingColor} ring-0 focus-visible:ring-2 ring-inset appearance-none outline-none`;
+  const { color } = courseItem;
+
+  // style tokens:
+  const bgc = bg_color_base[color];
+  const textColor = text_color[color];
+  const activeTextColor = text_color_active[color];
+  const ringColor = ring_color[color];
+
+  // repeated styles:
+  const ringStyle = `${ringColor} ring-0 focus-visible:ring-2 ring-inset appearance-none outline-none`;
 
   return (
     <Disclosure
       defaultOpen
       as="li"
-      className="relative flex flex-col gap-4"
+      className="relative flex flex-col gap-4 "
       style={{ zIndex: 20 - index }}
     >
       {({ open }) => (
         <>
           <div
             className={clsx(
-              "sticky z-10 top-[calc(4rem+3rem+5px)] flex gap-0 w-full rounded-lg p-2 pr-1 text-sm font-medium",
-              // "shadow-[0_2px_10px_10px_rgba(255,255,255,1)]",
+              "sticky z-10 top-[calc(4rem+3rem+5px)] flex gap-0 w-full rounded-lg p-2  text-sm font-medium",
               textColor,
-              bgc,
-              headerRing
+              bgc
             )}
           >
             <Disclosure.Button
-              className={clsx("grid place-items-center rounded-md", ringStyle)}
+              className={clsx(
+                "grid place-items-center rounded-md pl-1 pr-2",
+                ringStyle,
+                activeTextColor
+              )}
             >
-              <span className="">
-                <IconCircleChevronDown
-                  stroke={1.5}
-                  className={clsx(
-                    "transition-[transform]",
-                    open ? "rotate-180" : "rotate-0"
-                  )}
-                />
-              </span>
+              <IconCircleChevronDown
+                stroke={1.75}
+                className={clsx(
+                  "transition-[transform]",
+                  open ? "rotate-180" : "rotate-0"
+                )}
+              />
             </Disclosure.Button>
             <AutoCompleteInput
               options={deptOptions}
@@ -199,7 +200,7 @@ export const CourseSelector = memo(function CourseSelector({
             />
             <Disclosure.Button
               className={clsx(
-                "overflow-hidden flex items-center flex-grow flex-shrink pl-3 pr-1 rounded-md font-semibold text-base whitespace-nowrap",
+                "overflow-hidden flex items-center flex-grow flex-shrink pl-3 pr-1 rounded-md font-semibold text-sm whitespace-nowrap",
                 ringStyle
               )}
             >
@@ -238,6 +239,8 @@ const ActionDropdown = ({
 
   const { color } = courseItem;
 
+  const bgColorHighlight = bg_color_hover[color];
+
   const removeSelf = () =>
     setCourseItems((list) => {
       const idx = list.findIndex((item) => item.id === courseItem.id);
@@ -252,8 +255,9 @@ const ActionDropdown = ({
     <Popover as="div" className="relative flex flex-col">
       <Popover.Button
         className={clsx(
-          "grid place-items-center h-full w-full rounded-md",
-          buttonStyle
+          "grid place-items-center h-full w-full rounded-md ",
+          buttonStyle,
+          bgColorHighlight
         )}
       >
         <IconDotsVertical />
@@ -311,7 +315,7 @@ export const AutoCompleteInput = ({
   onChange,
   disabled = false,
   placeholder = "",
-  color = "amber",
+  color = "sky",
 }: ComboerProps) => {
   const inputRef = useRef<HTMLInputElement>(null!);
   const buttonRef = useRef<HTMLButtonElement>(null!);
@@ -333,9 +337,11 @@ export const AutoCompleteInput = ({
         );
 
   // style tokens:
-  const inputBg = input_bg[color];
-  const placeholderTextColor = combobox_placeholder_text_color[color];
+  const highlight_bg = bg_color_highlight[color];
+  const placeholderTextColor = placeholder_text_color[color];
   const ringColor = ring_color[color];
+
+  const glowColor = glow[color];
 
   return (
     <Combobox
@@ -352,10 +358,11 @@ export const AutoCompleteInput = ({
               autoComplete="off"
               placeholder={placeholder}
               className={clsx(
-                "relative z-50 flex justify-between px-3 h-8 max-w-[62px] min-w-[62px] rounded-md caret-black w-full text-base font-mono font-semibold disabled:cursor-not-allowed",
+                "relative z-50 flex justify-between px-3 h-8 w-full max-w-[62px] min-w-[62px] rounded-md text-base font-mono font-semibold caret-black disabled:cursor-not-allowed",
                 `${placeholderTextColor} placeholder:text-base placeholder:lowercase`,
                 `${ringColor} ring-inset focus:ring-2 hover:ring-2 appearance-none outline-none`,
                 open ? "ring-2 bg-white" : "ring-0 bg-white/0"
+                // !open && input_bg
               )}
               displayValue={(dept: ComboOption) => (open ? query : dept.value)}
               onChange={(e) => setQuery(e.target.value)}
@@ -375,23 +382,19 @@ export const AutoCompleteInput = ({
             >
               {selectedOption.value === "" && (
                 <>
-                  <span
-                    className={`absolute rounded-full h-2 w-2 -top-[0.125rem] -left-[0.125rem] ${
-                      open ? "bg-white/75" : "bg-red-500/75"
-                    } animate-ping-slow `}
-                  />
-                  <span
-                    className={`relative rounded-full h-full w-full ${
-                      open ? "bg-white" : "bg-red-500"
-                    }`}
-                  />
+                  <span className="absolute rounded-full h-2 w-2 -top-[0.125rem] -left-[0.125rem] animate-ping-slow bg-red-500/75" />
+                  <span className="relative rounded-full h-full w-full bg-red-500" />
                 </>
               )}
             </Combobox.Button>
           </div>
           <Combobox.Options
             as="div"
-            className="absolute z-40 top-0 left-0 p-2 pr-1 pt-12 bg-white/70 shadow-xl rounded-lg backdrop-blur-sm w-full sm:w-min min-w-[18rem] mb-32"
+            className={clsx(
+              "absolute z-40 top-0 left-0 p-2 pr-1 pt-12 bg-white rounded-lg backdrop-blur-smzz w-full sm:w-min min-w-[18rem] mb-32",
+              "border ring-[3px] appearance-none outline-none",
+              glowColor
+            )}
           >
             <Combobox.Button className=" absolute top-0 right-0 flex justify-center items-center p-3 text-rose-500 hover:text-rose-700">
               <IconX />
@@ -413,8 +416,8 @@ export const AutoCompleteInput = ({
                   {({ active, selected }) => (
                     <li
                       className={clsx(
-                        "flex gap-4 px-3 py-2 cursor-pointer whitespace-nowrap rounded",
-                        active || selected ? inputBg : "bg-transparent"
+                        "flex gap-4 px-3 py-2 rounded-md cursor-pointer whitespace-nowrap",
+                        active || selected ? highlight_bg : "bg-transparent"
                       )}
                     >
                       <span
