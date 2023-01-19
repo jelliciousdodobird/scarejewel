@@ -67,7 +67,7 @@ export const selectedSectionsAtom: Atom<ClassSectionWithState[]> = atom(
           (cs) =>
             cs.state.selected && cs.semester === semester && cs.year === year
         )
-        .map((cs) => ({ ...cs, color }))
+        .map((cs) => ({ ...cs, state: { ...cs.state, color } }))
     );
   }
 );

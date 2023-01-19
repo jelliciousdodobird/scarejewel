@@ -1,12 +1,30 @@
 "use client";
 
-import { Combobox, Disclosure } from "@headlessui/react";
-import { IconCheck, IconChevronDown, IconX } from "@tabler/icons";
+import { Combobox, Disclosure, Menu, Popover } from "@headlessui/react";
+import {
+  IconCheck,
+  IconChevronDown,
+  IconCircleChevronDown,
+  IconDotsVertical,
+  IconPalette,
+  IconSquareRoundedChevronDown,
+  IconTrash,
+  IconX,
+} from "@tabler/icons";
 import { useQuery } from "@tanstack/react-query";
-import { PrimitiveAtom, useAtom } from "jotai";
-import { Fragment, memo, useEffect, useMemo, useRef, useState } from "react";
+import { PrimitiveAtom, useAtom, useSetAtom } from "jotai";
+import {
+  forwardRef,
+  Fragment,
+  memo,
+  ReactNode,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
-import { CourseItem } from "../../state/course-cart";
+import { CourseItem, courseItemsAtom } from "../../state/course-cart";
 
 import { ClassSection, Database, Semester } from "../../database/types";
 import { PrettyColor } from "../../utils/colors";
@@ -22,6 +40,7 @@ import {
 } from "./CourseSelector.variants";
 import { fetchDistinctCourseIds, fetchDistinctDepts } from "../../database/api";
 import clsx from "clsx";
+import { PrettyColorPicker } from "../PrettyColorPicker/PrettyColorPicker";
 
 const staleTime = 60 * 60 * 1000;
 
@@ -129,8 +148,8 @@ export const CourseSelector = memo(function CourseSelector({
 
   const disableCourseSelect = !courseItem.selectedDept.value;
 
-  const headerRing = `${headerRingColor} ring-0 hover:ring-4 border border-white/0zz hover:border-black/30zz transition-[box-shadow]`;
-  const headerBtnRing = `${headerBtnRingColor} ring-0 focus-visible:ring-2 ring-inset appearance-none outline-none transition-[box-shadow]`;
+  const headerRing = `${headerRingColor} ring-0 hover:ring-4 border transition-[box-shadow]`;
+  const ringStyle = `${headerBtnRingColor} ring-0 focus-visible:ring-2 ring-inset appearance-none outline-none`;
 
   useEffect(() => {
     console.log("CourseSelector RENDER", courseItem.id);
@@ -143,55 +162,139 @@ export const CourseSelector = memo(function CourseSelector({
       className="relative flex flex-col gap-4"
       style={{ zIndex: 20 - index }}
     >
-      <div
-        className={clsx(
-          "sticky z-10 top-[calc(4rem+3rem+5px)] flex w-full justify-between rounded-lg p-2 text-sm font-medium",
-          // "shadow-[0_2px_10px_10px_rgba(255,255,255,1)]",
-          textColor,
-          bgc,
-          headerRing
-        )}
-      >
-        <AutoCompleteInput
-          options={deptOptions}
-          selectedOption={courseItem.selectedDept}
-          onChange={updateSelectedDept}
-          placeholder="Dept"
-          color={color}
-        />
-        <AutoCompleteInput
-          options={courseOptions}
-          selectedOption={courseItem.selectedCourse}
-          onChange={updateSelectedCourse}
-          placeholder="Code"
-          color={color}
-          disabled={disableCourseSelect}
-        />
-        <Disclosure.Button
-          className={`flex justify-between items-center pl-3 pr-1 w-full rounded-md text-base ${headerBtnRing}`}
-        >
-          <span className="text-left line-clamp-1">
-            {title || "Pick a department then course code"}
-          </span>
-          <span className="ml-5">
-            <IconChevronDown
-              className={`ui-open:rotate-180 ui-open:transform`}
+      {({ open }) => (
+        <>
+          <div
+            className={clsx(
+              "sticky z-10 top-[calc(4rem+3rem+5px)] flex gap-0 w-full rounded-lg p-2 pr-1 text-sm font-medium",
+              // "shadow-[0_2px_10px_10px_rgba(255,255,255,1)]",
+              textColor,
+              bgc,
+              headerRing
+            )}
+          >
+            <Disclosure.Button
+              className={clsx("grid place-items-center rounded-md", ringStyle)}
+            >
+              <span className="">
+                <IconCircleChevronDown
+                  stroke={1.5}
+                  className={clsx(
+                    "transition-[transform]",
+                    open ? "rotate-180" : "rotate-0"
+                  )}
+                />
+              </span>
+            </Disclosure.Button>
+            <AutoCompleteInput
+              options={deptOptions}
+              selectedOption={courseItem.selectedDept}
+              onChange={updateSelectedDept}
+              placeholder="Dept"
+              color={color}
             />
-          </span>
-        </Disclosure.Button>
-      </div>
+            <AutoCompleteInput
+              options={courseOptions}
+              selectedOption={courseItem.selectedCourse}
+              onChange={updateSelectedCourse}
+              placeholder="Code"
+              color={color}
+              disabled={disableCourseSelect}
+            />
+            <Disclosure.Button
+              className={clsx(
+                "overflow-hidden flex items-center flex-grow flex-shrink pl-3 pr-1 rounded-md font-semibold text-base whitespace-nowrap",
+                ringStyle
+              )}
+            >
+              {title || "Pick a department THEN a course code"}
+            </Disclosure.Button>
 
-      <Disclosure.Panel className="relative z-0">
-        <SectionSelector
-          semester={semester}
-          year={year}
-          courseItemAtom={courseItemAtom}
-        />
-      </Disclosure.Panel>
+            <ActionDropdown
+              courseItemAtom={courseItemAtom}
+              buttonStyle={ringStyle}
+            />
+          </div>
+
+          <Disclosure.Panel className="relative z-0">
+            <SectionSelector
+              semester={semester}
+              year={year}
+              courseItemAtom={courseItemAtom}
+            />
+          </Disclosure.Panel>
+        </>
+      )}
     </Disclosure>
   );
 },
 arePropsEqual);
+
+const ActionDropdown = ({
+  buttonStyle = "",
+  courseItemAtom,
+}: {
+  courseItemAtom: PrimitiveAtom<CourseItem>;
+  buttonStyle?: string;
+}) => {
+  const [courseItem, setCourseItem] = useAtom(courseItemAtom);
+  const setCourseItems = useSetAtom(courseItemsAtom);
+
+  const { color } = courseItem;
+
+  const removeSelf = () =>
+    setCourseItems((list) => {
+      const idx = list.findIndex((item) => item.id === courseItem.id);
+      if (idx === -1) return list;
+      return [...list.slice(0, idx), ...list.slice(idx + 1)];
+    });
+
+  const setColor = (color: PrettyColor) =>
+    setCourseItem((v) => ({ ...v, color }));
+
+  return (
+    <Popover as="div" className="relative flex flex-col">
+      <Popover.Button
+        className={clsx(
+          "grid place-items-center h-full w-full rounded-md",
+          buttonStyle
+        )}
+      >
+        <IconDotsVertical />
+      </Popover.Button>
+
+      {/* this extra div allows us to anchor the Menu.Items container to the bottom of Menu.Button*/}
+      <div className="relative">
+        <Popover.Panel
+          className={clsx(
+            "absolute right-0 top-0 flex flex-col gap-4 bg-white p-4 mt-4 text-slate-900",
+            "rounded-lg border border-slate-200 drop-shadow-md"
+          )}
+        >
+          {({ close }) => (
+            <>
+              <PrettyColorPicker selectedColor={color} onChange={setColor} />
+              <button
+                type="button"
+                onClick={() => {
+                  close();
+                  removeSelf();
+                }}
+                className={clsx(
+                  "flex justify-center items-center gap-2 px-4 py-2 rounded-lg bg-rose-50 text-rose-500 font-semibold",
+                  "hover:bg-rose-100 hover:text-rose-600"
+                )}
+              >
+                <IconTrash />
+                <span className="whitespace-nowrap">Remove Course</span>
+              </button>
+            </>
+          )}
+        </Popover.Panel>
+      </div>
+    </Popover>
+  );
+};
 
 const fuzzy = (str: string) => str.toLowerCase().replace(/[^a-z0-9]/g, "");
 const fuzzyCompare = (searchTerm: string, comparedTerm: string) =>
@@ -238,12 +341,6 @@ export const AutoCompleteInput = ({
   const placeholderTextColor = combobox_placeholder_text_color[color];
   const ringColor = ring_color[color];
 
-  // styles:
-  const openedStyles = `ring-2 bg-white`;
-  const closedStyles = `ring-0 bg-white/0`;
-  const placeholderStyles = `${placeholderTextColor} placeholder:text-base placeholder:lowercase`;
-  const ringStyle = `${ringColor} ring-inset focus:ring-2 hover:ring-2 appearance-none outline-none transition-[box-shadow] `;
-
   return (
     <Combobox
       disabled={disabled}
@@ -258,9 +355,12 @@ export const AutoCompleteInput = ({
               ref={inputRef}
               autoComplete="off"
               placeholder={placeholder}
-              className={`relative z-50 flex justify-between px-3 h-8 max-w-[62px] min-w-[62px] rounded-md caret-black w-full text-base font-mono font-semibold disabled:cursor-not-allowed ${placeholderStyles} ${ringStyle} ${
-                open ? openedStyles : closedStyles
-              }`}
+              className={clsx(
+                "relative z-50 flex justify-between px-3 h-8 max-w-[62px] min-w-[62px] rounded-md caret-black w-full text-base font-mono font-semibold disabled:cursor-not-allowed",
+                `${placeholderTextColor} placeholder:text-base placeholder:lowercase`,
+                `${ringColor} ring-inset focus:ring-2 hover:ring-2 appearance-none outline-none`,
+                open ? "ring-2 bg-white" : "ring-0 bg-white/0"
+              )}
               displayValue={(dept: ComboOption) => (open ? query : dept.value)}
               onChange={(e) => setQuery(e.target.value)}
               onFocus={() => clickButton(open)}
@@ -300,7 +400,7 @@ export const AutoCompleteInput = ({
             <Combobox.Button className=" absolute top-0 right-0 flex justify-center items-center p-3 text-rose-500 hover:text-rose-700">
               <IconX />
             </Combobox.Button>
-            <ul className="flex flex-col gap-2 custom-scrollbar-tiny overflow-y-auto overflow-x-hidden max-h-48 pr-3">
+            <ul className="flex flex-col gap-[1px] custom-scrollbar-tiny overflow-y-auto overflow-x-hidden max-h-48 pr-3">
               {filteredOptions.length === 0 && (
                 <li className="w-full">
                   <button
@@ -360,19 +460,11 @@ function arePropsEqual(
   prev: Readonly<CourseSelectorProps>,
   next: Readonly<CourseSelectorProps>
 ) {
-  // if (prev.index !== next.index) return false;
-  // if (prev.semester !== next.semester) return false;
-  // if (prev.year !== next.year) return false;
-  // if (prev.courseItem.id !== next.courseItem.id) return false;
-  // if (prev.courseItem.color !== next.courseItem.color) return false;
-  // if (prev.courseItem.selectedDept.id !== next.courseItem.selectedDept.id)
-  //   return false;
-  // if (prev.courseItem.selectedCourse.id !== next.courseItem.selectedCourse.id)
-  //   return false;
-  // return true;
-
   if (prev.courseItemAtom.toString() !== next.courseItemAtom.toString())
     return false;
+  if (prev.semester !== next.semester) return false;
+  if (prev.year !== next.year) return false;
+  if (prev.index !== next.index) return false;
 
   return true;
 }

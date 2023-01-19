@@ -14,16 +14,16 @@ export const disclosure_header_bg_color: PrettyColorMap = {
 };
 
 export const disclosure_header_hover_ring_color: PrettyColorMap = {
-  amber: "ring-amber-100 border-amber-400",
-  cyan: "ring-cyan-100 border-cyan-400",
-  emerald: "ring-emerald-100 border-emerald-400",
-  fuchsia: "ring-fuchsia-100 border-fuchsia-400",
-  indigo: "ring-indigo-100 border-indigo-400",
-  lime: "ring-lime-100 border-lime-400",
-  orange: "ring-orange-100 border-orange-400",
-  rose: "ring-rose-100 border-rose-400",
-  sky: "ring-sky-100 border-sky-400",
-  violet: "ring-violet-100 border-violet-400",
+  amber: "ring-amber-100 border-amber-300",
+  cyan: "ring-cyan-100 border-cyan-300",
+  emerald: "ring-emerald-100 border-emerald-300",
+  fuchsia: "ring-fuchsia-100 border-fuchsia-300",
+  indigo: "ring-indigo-100 border-indigo-300",
+  lime: "ring-lime-100 border-lime-300",
+  orange: "ring-orange-100 border-orange-300",
+  rose: "ring-rose-100 border-rose-300",
+  sky: "ring-sky-100 border-sky-300",
+  violet: "ring-violet-100 border-violet-300",
 };
 
 export const disclosure_header_text_color: PrettyColorMap = {

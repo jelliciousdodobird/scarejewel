@@ -12,6 +12,7 @@ import { PartialBy } from "../../utils/types";
 import {
   IconCalendarEvent,
   IconPlaylistAdd,
+  IconPlus,
   IconSelector,
 } from "@tabler/icons";
 import { atom, useAtom, useAtomValue, useSetAtom } from "jotai";
@@ -144,12 +145,14 @@ const CourseListPanel = ({ terms }: { terms: Term[] }) => {
 
   return (
     <div className="pack-content w-full flex flex-col gap-4">
-      <div className="relative z-10 flex">
+      <div className="relative z-10 flex justify-between">
         <TermSelect
           options={termOptions}
           onChange={setSelectedTermOption}
           selectedOption={selectedTermOption}
         />
+
+        <AddButton />
       </div>
 
       <ul className="relative z-0 flex flex-col gap-6">
@@ -164,17 +167,16 @@ const CourseListPanel = ({ terms }: { terms: Term[] }) => {
         ))}
       </ul>
 
-      <AddButton />
       <div className="min-h-[20rem]"></div>
     </div>
   );
 };
 
-const AddButton = () => {
+const AddButton = ({ addLimit = 10 }: { addLimit?: number }) => {
   const [courseItems, setCourseItems] = useAtom(courseItemsAtom);
 
   const addCourseItem = () => {
-    if (courseItems.length >= 10) return;
+    if (courseItems.length >= addLimit) return;
 
     setCourseItems((items) => {
       const takenColors = items.map(({ color }) => color);
@@ -193,10 +195,11 @@ const AddButton = () => {
   return (
     <button
       type="button"
-      className="rounded-md p-2 bg-gradient-to-r from-emerald-400 to-fuchsia-600 disabled:cursor-not-allowed"
+      className="flex justify-center items-center gap-2 rounded-lg  p-2 pr-3 bg-indigo-500 text-white font-semibold disabled:cursor-not-allowed"
       onClick={addCourseItem}
     >
-      ADD COURSE ITEM
+      <IconPlus />
+      Add Course
     </button>
   );
 };

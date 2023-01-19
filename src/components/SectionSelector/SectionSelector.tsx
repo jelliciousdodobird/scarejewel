@@ -116,7 +116,7 @@ export const SectionSelector = ({
           color: v.color,
         };
 
-        const state: ClassSectionState = !!oldItem ? oldItem.state : freshState;
+        const state: ClassSectionState = oldItem ? oldItem.state : freshState;
 
         return {
           ...cs,
@@ -263,11 +263,13 @@ export const ClassRow = ({ data, update }: BaseClassEntryProps) => {
             )}
             onClick={toggleShowContent}
           >
-            {showExtraContent ? (
-              <IconChevronUp size={16} />
-            ) : (
-              <IconChevronDown size={16} />
-            )}
+            <IconChevronDown
+              size={16}
+              className={clsx(
+                "transition-[transform]",
+                showExtraContent ? "rotate-180" : "rotate-0"
+              )}
+            />
           </Switch>
         </div>
       </div>
