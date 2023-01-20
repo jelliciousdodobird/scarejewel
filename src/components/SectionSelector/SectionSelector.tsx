@@ -153,7 +153,7 @@ export const SectionSelector = ({
       {groups.map((group, i) => (
         <Fragment key={group[0].group_id}>
           {groups.length > 1 && (
-            <h2 className="font-extrabold text-xl uppercase pt-4">
+            <h2 className="sticky top-0 font-extrabold text-xl uppercase pt-4">
               Group {i + 1}
             </h2>
           )}
@@ -312,64 +312,76 @@ export const ClassCard = ({ data, update }: BaseClassEntryProps) => {
 
   const { setHidden, setSelected } = useClassEntry(data, update);
 
-  const bgColor = hidden ? "bg-slate-100" : "bg-white";
-  const collapse = hidden ? "overflow-hidden h-16" : "h-auto";
-  const grayscale = hidden
-    ? "grayscale-[80%] opacity-50"
-    : "grayscale-0 opacity-100 ";
-
   return (
-    <li
-      className={clsx(
-        "flex flex-col gap-8 p-4 flex-grow ",
-        "rounded-md border transition-[opacity_filter_background-color_box-shadow]",
-        "ring-0 ring-transparent hover:ring-[3px]",
-        selected
-          ? "border-emerald-400 hover:ring-emerald-100"
-          : "border-slate-200 hover:border-slate-300 hover:ring-slate-100",
-        bgColor,
-        grayscale,
-        collapse
-      )}
-    >
-      <span className="flex text-slate-400 bg-slate-100zz rounded-md px-3zz py-2zz">
-        <span
-          className={`flex items-center flex-1 pl-2zz text-slate-900 text-lg font-mono font-extrabold ${grayscale}`}
-        >
-          {section_number} {class_number}
-        </span>
-        <Switch
-          checked={hidden}
-          onChange={setHidden}
-          className="grid place-items-center w-8 h-8 hover:text-slate-600"
-        >
-          {hidden ? <IconEyeOff /> : <IconEye />}
-        </Switch>
+    <li className="flex flex-col">
+      <div
+        className={clsx(
+          ////////////////////////////////////////////////////////////////////////////////////////
+          // Using the next two lines in combination with the parent having flex-col ensures that
+          // we maintain the card height until all items in a row are hidden (collapsed)
+          "flex-grow", //------------------------------> IMPORTANT (read above / DONT CHANGE)
+          hidden ? "h-16 overflow-hidden" : "h-auto", // IMPORTANT (this line changes the height)
+          ////////////////////////////////////////////////////////////////////////////////////////
 
-        <SelectedButton type="card" checked={selected} onChange={setSelected} />
-      </span>
+          // base styles:
+          "flex flex-col gap-8 p-4",
+          "rounded-md border transition-[opacity_background-color_box-shadow]",
+          "ring-0 ring-transparent hover:ring-[3px]",
 
-      <div className="grid grid-cols-[7rem_1fr] gap-x-2 gap-y-8">
-        <SectionType sectionType={section_type} />
-        <span className="flex gap-1 text-slate-500">
-          <InstructorLink firstName={instructor_fn} lastName={instructor_ln} />
+          // hidden styles:
+          hidden ? "bg-slate-100" : "bg-white",
+          hidden ? "opacity-50" : "opacity-100",
+          hidden ? "grayscale-[80%]" : "grayscale-0",
+
+          // selected styles:
+          selected ? "border-emerald-400" : "border-slate-200",
+          selected ? "hover:ring-emerald-100" : "hover:ring-slate-100",
+          selected ? "" : "hover:border-slate-300"
+        )}
+      >
+        <span className="flex text-slate-400 bg-slate-100zz rounded-md px-3zz py-2zz">
+          <span className="flex items-center flex-1 pl-2zz text-slate-900 text-lg font-mono font-extrabold">
+            {section_number} {class_number}
+          </span>
+          <Switch
+            checked={hidden}
+            onChange={setHidden}
+            className="grid place-items-center w-8 h-8 hover:text-slate-600"
+          >
+            {hidden ? <IconEyeOff /> : <IconEye />}
+          </Switch>
+
+          <SelectedButton
+            type="card"
+            checked={selected}
+            onChange={setSelected}
+          />
         </span>
-        <span className="text-slate-500 font-semibold">
-          {formatLocation(location)}
-        </span>
-        <div className="flex flex-col gap-1">
-          <TimeRange start={time_start} end={time_end} />
-          <div className="flex gap-2 flex-wrap">
-            {getDays(days).map((day) => (
-              <DayTag key={day} day={day} />
-            ))}
+
+        <div className="grid grid-cols-[7rem_1fr] gap-x-2 gap-y-8">
+          <SectionType sectionType={section_type} />
+          <span className="flex gap-1 text-slate-500">
+            <InstructorLink
+              firstName={instructor_fn}
+              lastName={instructor_ln}
+            />
+          </span>
+          <span className="text-slate-500 font-semibold">
+            {formatLocation(location)}
+          </span>
+          <div className="flex flex-col gap-1">
+            <TimeRange start={time_start} end={time_end} />
+            <div className="flex gap-2 flex-wrap">
+              {getDays(days).map((day) => (
+                <DayTag key={day} day={day} />
+              ))}
+            </div>
           </div>
         </div>
+        <div className="flex gap-2">
+          <Comment comment={comment} />
+        </div>
       </div>
-      <div className="flex gap-2">
-        <Comment comment={comment} />
-      </div>
-      {/* </div> */}
     </li>
   );
 };
@@ -567,7 +579,6 @@ const TimeRange = ({ start, end }: { start: number; end: number }) => {
 
 const SelectedButton = ({
   type = "card",
-
   checked,
   onChange,
 }: {
