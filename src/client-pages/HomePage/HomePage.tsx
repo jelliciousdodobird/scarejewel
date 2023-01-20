@@ -47,11 +47,11 @@ export default function HomePage({ terms }: HomePageProps) {
     <div className="flex flex-col gap-4 bg-gradient-to-bzz from-whitezz to-slate-100zz min-h-full">
       <Tab.Group selectedIndex={selectedTab} onChange={setSelectedTab}>
         <div className="z-10 sticky top-16 backdrop-blur-md bg-slate-200/30 border-b border-t border-slate-200/50">
-          <Tab.List className="pack-content flex gap-0 w-full h-12 py-1zz pt-1 sm:gap-4">
+          <Tab.List className="pack-content flex gap-0 w-full h-12  pt-1 sm:gap-4">
             {tabs.map(({ name, icon }) => (
               <Tab
                 key={name}
-                className="flex-grow sm:flex-grow-0 h-full rounded-lgzz overflow-hidden max-w-xszz "
+                className="flex-grow sm:flex-grow-0 h-full  overflow-hidden "
               >
                 {({ selected }) => (
                   <span

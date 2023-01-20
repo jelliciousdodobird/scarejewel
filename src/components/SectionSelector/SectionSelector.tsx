@@ -4,6 +4,7 @@ import {
   IconCheck,
   IconChevronDown,
   IconChevronUp,
+  IconCircle,
   IconCircleChevronDown,
   IconCircleChevronUp,
   IconCircleMinus,
@@ -16,6 +17,7 @@ import {
   IconMicroscope,
   IconNotes,
   IconPencilPlus,
+  IconPlus,
   IconSquare,
   IconSquareCheck,
   IconSquareRounded,
@@ -23,14 +25,18 @@ import {
   IconSquareRoundedChevronDown,
   IconSquareRoundedChevronUp,
   IconSquareRoundedMinus,
+  IconSquareRoundedPlus,
   IconYoga,
+  TablerIcon,
 } from "@tabler/icons";
 import { useQuery } from "@tanstack/react-query";
 import { PrimitiveAtom, SetStateAction, useAtom } from "jotai";
 import Link from "next/link";
 import {
+  createElement,
   Fragment,
   memo,
+  ReactNode,
   useCallback,
   useEffect,
   useMemo,
@@ -151,17 +157,18 @@ export const SectionSelector = ({
               Group {i + 1}
             </h2>
           )}
-          <ul
+          {/* <ul
             className={clsx(
               "flex flex-col gap-8 rounded-lg bg-transparent",
               "sm:gap-[1px] sm:border sm:border-slate-200 sm:bg-slate-200 sm:overflow-hidden"
             )}
-          >
-            {/* <ul className="grid grid-cols-[repeat(auto-fill,minmax(320px,1fr))] gap-8 rounded-md bg-transparent"> */}
+          > */}
+          <ul className="grid grid-cols-[repeat(auto-fill,minmax(320px,1fr))] gap-8 rounded-md bg-transparent">
             {group.map((s) => (
               <ClassEntry
                 key={s.uid}
-                type={isDesktopOrLaptop ? "row" : "card"}
+                // type={isDesktopOrLaptop ? "row" : "card"}
+                type={"card"}
                 data={s}
                 update={updateClassSectionState}
               />
@@ -223,7 +230,7 @@ export const ClassRow = ({ data, update }: BaseClassEntryProps) => {
         >
           <SectionType sectionType={section_type} />
 
-          <span className="flex items-center flex-1 lowercase text-slate-700 font-monozz font-semibold">
+          <span className="flex items-center flex-1 lowercase text-slate-700 font-semibold">
             {section_number} {class_number}
           </span>
 
@@ -305,9 +312,6 @@ export const ClassCard = ({ data, update }: BaseClassEntryProps) => {
 
   const { setHidden, setSelected } = useClassEntry(data, update);
 
-  const toggleSelected = () => setSelected(!selected);
-  const toggleHidden = () => setHidden(!hidden);
-
   const bgColor = hidden ? "bg-slate-100" : "bg-white";
   const collapse = hidden ? "overflow-hidden h-16" : "h-auto";
   const grayscale = hidden
@@ -315,66 +319,57 @@ export const ClassCard = ({ data, update }: BaseClassEntryProps) => {
     : "grayscale-0 opacity-100 ";
 
   return (
-    <li className="flex flex-col group">
-      <span className="flex text-slate-400">
+    <li
+      className={clsx(
+        "flex flex-col gap-8 p-4 flex-grow ",
+        "rounded-md border transition-[opacity_filter_background-color_box-shadow]",
+        "ring-0 ring-transparent hover:ring-[3px]",
+        selected
+          ? "border-emerald-400 hover:ring-emerald-100"
+          : "border-slate-200 hover:border-slate-300 hover:ring-slate-100",
+        bgColor,
+        grayscale,
+        collapse
+      )}
+    >
+      <span className="flex text-slate-400 bg-slate-100zz rounded-md px-3zz py-2zz">
         <span
-          className={`flex items-center flex-1 pl-2 text-slate-900 text-lg font-mono font-extrabold ${grayscale}`}
+          className={`flex items-center flex-1 pl-2zz text-slate-900 text-lg font-mono font-extrabold ${grayscale}`}
         >
           {section_number} {class_number}
         </span>
         <Switch
           checked={hidden}
           onChange={setHidden}
-          className="flex justify-center items-center w-10 h-12 hover:text-slate-600"
+          className="grid place-items-center w-8 h-8 hover:text-slate-600"
         >
           {hidden ? <IconEyeOff /> : <IconEye />}
         </Switch>
 
         <SelectedButton type="card" checked={selected} onChange={setSelected} />
       </span>
-      <div
-        className={clsx(
-          "flex-grow relative flex flex-col gap-8 p-4 rounded-md border transition-[opacity_filter_background-color_box-shadow]",
-          "ring-0 ring-transparent border-slate-200 group-hover:ring-[3px] group-hover:ring-slate-900/5  group-hover:border-slate-300",
-          bgColor,
-          grayscale,
-          collapse
-        )}
-      >
-        <div className="flex gap-2 ">
-          <div className="flex min-w-[7rem]">
-            <SectionType sectionType={section_type} />
-          </div>
-          <div className="flex flex-col items-start gap-2">
-            <span className="flex gap-1 text-slate-500">
-              <InstructorLink
-                firstName={instructor_fn}
-                lastName={instructor_ln}
-              />
-            </span>
-          </div>
-        </div>
 
-        <div className="flex gap-2">
-          <div className="flex min-w-[7rem]">
-            <span className="text-slate-500 font-semibold">
-              {formatLocation(location)}
-            </span>
+      <div className="grid grid-cols-[7rem_1fr] gap-x-2 gap-y-8">
+        <SectionType sectionType={section_type} />
+        <span className="flex gap-1 text-slate-500">
+          <InstructorLink firstName={instructor_fn} lastName={instructor_ln} />
+        </span>
+        <span className="text-slate-500 font-semibold">
+          {formatLocation(location)}
+        </span>
+        <div className="flex flex-col gap-1">
+          <TimeRange start={time_start} end={time_end} />
+          <div className="flex gap-2 flex-wrap">
+            {getDays(days).map((day) => (
+              <DayTag key={day} day={day} />
+            ))}
           </div>
-          <div className="flex flex-col gap-1">
-            <TimeRange start={time_start} end={time_end} />
-            <div className="flex gap-2 flex-wrap">
-              {getDays(days).map((day) => (
-                <DayTag key={day} day={day} />
-              ))}
-            </div>
-          </div>
-        </div>
-
-        <div className="flex gap-2">
-          <Comment comment={comment} />
         </div>
       </div>
+      <div className="flex gap-2">
+        <Comment comment={comment} />
+      </div>
+      {/* </div> */}
     </li>
   );
 };
@@ -487,10 +482,10 @@ const Comment = ({
       {isClamped && !forceShowFull && (
         <button
           type="button"
-          className="flex justify-center items-center self-end px-2 py-[0.125rem] rounded-md text-sm text-slate-400 cursor-pointer hover:bg-slate-300 hover:text-slate-700 w-min whitespace-nowrap "
+          className="flex justify-center items-center self-end px-2 py-[0.125rem]zz rounded-md text-sm text-slate-400 cursor-pointer hover:bg-slate-200 hover:text-slate-700 w-min whitespace-nowrap "
           onClick={toggleExpand}
         >
-          {isExpanded ? "- less" : "+ more"}
+          {isExpanded ? "less" : "more"}
         </button>
       )}
     </div>
@@ -510,7 +505,7 @@ export const DayTag = ({ day }: { day: ClassDay | string }) => {
     <span
       className={clsx(
         "relative grid place-items-center rounded-full px-4 py-1  capitalize text-sm",
-        "sm:px-[0.625rem] sm:py-[0.125rem] sm:rounded",
+        // "sm:px-[0.625rem] sm:py-[0.125rem] sm:rounded",
         bgColor,
         textColor
       )}
@@ -532,8 +527,8 @@ export const InstructorLink = ({
   return (
     <Link
       className={clsx(
-        "relative flex items-center gap-1 font-bold hover:underline text-slate-900",
-        "sm:font-semibold sm:text-slate-700"
+        "relative flex items-center gap-1 font-bold hover:underline text-slate-900"
+        // "sm:font-semibold sm:text-slate-700"
       )}
       target="_blank" // open in new tab/window
       href={link}
@@ -571,7 +566,8 @@ const TimeRange = ({ start, end }: { start: number; end: number }) => {
 };
 
 const SelectedButton = ({
-  type,
+  type = "card",
+
   checked,
   onChange,
 }: {
@@ -584,22 +580,150 @@ const SelectedButton = ({
       checked={checked}
       onChange={onChange}
       className={clsx(
-        "grid place-items-center",
-        type === "card" && "w-10 h-12"
+        "relative grid place-items-center w-8 h-8",
+        checked && "text-emerald-500"
       )}
     >
-      <span
-        className={clsx(
-          "grid place-items-center rounded-md border",
-          "w-5 h-5",
-          checked
-            ? "bg-emerald-500 text-white border-transparent"
-            : "bg-slate-100 text-white/0 border-slate-200 hover:border-slate-300"
-        )}
-      >
-        <IconCheck size={16} stroke={4} />
-      </span>
+      {checked ? <IconSquareRoundedCheck /> : <IconSquareRoundedPlus />}
     </Switch>
+  );
+};
+
+export type ParticleType = "plus" | "check" | "circle";
+
+export const typeToIcon: Record<ParticleType, TablerIcon> = {
+  plus: IconPlus,
+  check: IconCheck,
+  circle: IconCircle,
+};
+
+export const Particle = ({
+  type,
+  size,
+  x,
+  y,
+  color,
+  trigger,
+}: {
+  type: "plus" | "check" | "circle";
+  size: number;
+  x: number;
+  y: number;
+  color: string;
+  trigger: boolean;
+}) => {
+  // const icon = typeToIcon[type];
+
+  return (
+    <span
+      className={clsx(
+        "absolute top-1/2 left-1/2 transition-[transform] duration-500",
+        !trigger && "opacity-0",
+        "rounded-full",
+        color
+      )}
+      style={{
+        transform: trigger
+          ? `translate3d(${x}px, ${y}px, 0px)`
+          : "translate3d(-50%, -50%, 0px)",
+        width: size,
+        height: size,
+      }}
+    >
+      {/* {createElement(icon, {
+        size,
+        stroke: 4,
+        shapeRendering: "crispEdges",
+      })} */}
+    </span>
+  );
+};
+
+export const ParticleAnimation = ({ trigger }: { trigger: boolean }) => {
+  return (
+    <span
+      className={clsx(
+        "pointer-events-none",
+        // "border border-red-500",
+        "absolute top-0 left-0 w-full h-full",
+        trigger && "animate-fade-in-out"
+      )}
+    >
+      <Particle
+        trigger={trigger}
+        type="plus"
+        color="bg-emerald-100"
+        size={8}
+        x={5}
+        y={30}
+      />
+      <Particle
+        trigger={trigger}
+        type="plus"
+        color="bg-emerald-400"
+        size={5}
+        x={-30}
+        y={-20}
+      />
+      <Particle
+        trigger={trigger}
+        type="plus"
+        color="bg-emerald-300"
+        size={12}
+        x={-20}
+        y={20}
+      />
+      <Particle
+        trigger={trigger}
+        type="plus"
+        color="bg-emerald-500"
+        size={16}
+        x={15}
+        y={-20}
+      />
+
+      <Particle
+        trigger={trigger}
+        type="plus"
+        color="bg-emerald-200"
+        size={9}
+        x={10}
+        y={10}
+      />
+      <Particle
+        trigger={trigger}
+        type="plus"
+        color="bg-emerald-400"
+        size={5}
+        x={-15}
+        y={-15}
+      />
+      <Particle
+        trigger={trigger}
+        type="plus"
+        color="bg-emerald-100"
+        size={20}
+        x={-10}
+        y={10}
+      />
+      <Particle
+        trigger={trigger}
+        type="plus"
+        color="bg-emerald-400"
+        size={10}
+        x={10}
+        y={-10}
+      />
+
+      <Particle
+        trigger={trigger}
+        type="plus"
+        color="bg-emerald-500"
+        size={6}
+        x={0}
+        y={-25}
+      />
+    </span>
   );
 };
 

@@ -391,7 +391,7 @@ export const AutoCompleteInput = ({
           <Combobox.Options
             as="div"
             className={clsx(
-              "absolute z-40 top-0 left-0 p-2 pr-1 pt-12 bg-white rounded-lg backdrop-blur-smzz w-full sm:w-min min-w-[18rem] mb-32",
+              "absolute z-40 top-0 left-0 p-2 pr-1 pt-12 bg-white rounded-lg  w-full sm:w-min min-w-[18rem] mb-32",
               "border ring-[3px] appearance-none outline-none",
               glowColor
             )}

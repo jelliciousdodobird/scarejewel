@@ -15,8 +15,17 @@ module.exports = {
       fontFamily: {
         base: ["var(--font-inter)"],
       },
+      keyframes: {
+        "fade-in-out": {
+          "0%": { opacity: 0 },
+          "20%, 70%": { opacity: 1 },
+          "100%": { opacity: 0 },
+        },
+      },
       animation: {
         "ping-slow": "ping 3s cubic-bezier(0, 0, 0.2, 1) infinite",
+        "fade-in-out":
+          "fade-in-out 0.5s cubic-bezier(.13,.74,.84,.43) 1 forwards",
       },
     },
   },
