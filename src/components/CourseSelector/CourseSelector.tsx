@@ -392,19 +392,19 @@ export const AutoCompleteInput = ({
             as="div"
             className={clsx(
               "absolute z-40 top-0 left-0 p-2 pr-1 pt-12 bg-white rounded-lg  w-full sm:w-min min-w-[18rem] mb-32",
-              "border ring-[3px] appearance-none outline-none",
+              "border ring-[3px]zz appearance-none outline-none drop-shadow-md",
               glowColor
             )}
           >
-            <Combobox.Button className=" absolute top-0 right-0 flex justify-center items-center p-3 text-rose-500 hover:text-rose-700">
+            {/* <Combobox.Button className=" absolute top-0 right-0 flex justify-center items-center p-3 text-rose-500 hover:text-rose-700">
               <IconX />
-            </Combobox.Button>
+            </Combobox.Button> */}
             <ul className="flex flex-col gap-[1px] custom-scrollbar-tiny overflow-y-auto overflow-x-hidden max-h-48 pr-3">
               {filteredOptions.length === 0 && (
                 <li className="w-full">
                   <button
                     type="button"
-                    className="w-full flex justify-center items-center gap-4 px-3 py-2 whitespace-nowrap rounded text-rose-700  hover:bg-red-500 hover:text-white"
+                    className="w-full flex justify-center items-center gap-4 px-3 py-2 whitespace-nowrap rounded-md text-rose-700  bg-rose-50 hover:bg-rose-100 font-semibold hover:text-whitezz"
                     onClick={resetQuery}
                   >
                     No results. Click here to reset.
@@ -416,31 +416,21 @@ export const AutoCompleteInput = ({
                   {({ active, selected }) => (
                     <li
                       className={clsx(
-                        "flex gap-4 px-3 py-2 rounded-md cursor-pointer whitespace-nowrap",
-                        active || selected ? highlight_bg : "bg-transparent"
+                        "flex gap-4 px-3 py-[0.628rem] rounded-md cursor-pointer whitespace-nowrap",
+                        active || selected ? "bg-slate-200" : "bg-transparent"
                       )}
                     >
-                      <span
-                        className={clsx(
-                          "min-w-[2rem] font-mono font-semibold",
-                          active || selected ? "text-white" : "text-stone-800"
-                        )}
-                      >
+                      <span className="min-w-[2rem] font-mono font-semibold text-slate-900">
                         {option.label}
                       </span>
-                      <span
-                        className={clsx(
-                          " flex-1",
-                          active || selected ? "text-white" : "text-stone-600"
-                        )}
-                      >
+                      <span className="flex-1 text-slate-700">
                         {formatTitle(option.title)}
                       </span>
                       {selectedOption.id === option.id && (
                         <IconCheck
                           size={20}
                           stroke={3}
-                          className="text-white"
+                          className="text-slate-700"
                         />
                       )}
                     </li>

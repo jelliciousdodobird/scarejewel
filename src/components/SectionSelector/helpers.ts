@@ -1,4 +1,4 @@
-import { ClassDay } from "../../database/types";
+import { ClassDay, SectionType } from "../../database/types";
 import { ClassSectionWithState } from "../../state/course-cart";
 
 export const formatFirstName = (name: string) =>
@@ -52,17 +52,46 @@ export const getDays = (dayStr: string) => dayStr.split(",");
 // );
 // };
 
-export const splitIntoGroups = (data: ClassSectionWithState[]) => {
-  const groups: { [key: string]: ClassSectionWithState[] } = {};
+type SplitGroup = {
+  group_id: string;
+  uniqueSectionTypes: SectionType[];
+  classSections: ClassSectionWithState[];
+};
 
-  for (let row of data) {
-    const id = row.group_id;
-    const prevItems = groups[id] ?? [];
-    groups[id] = [...prevItems, row];
+export const splitIntoGroups = (data: ClassSectionWithState[]) => {
+  const groups: { [group_id: string]: SplitGroup } = {};
+
+  for (let classSection of data) {
+    const id = classSection.group_id;
+    const type = classSection.section_type;
+
+    const group: SplitGroup = groups[id] ?? {
+      group_id: id,
+      uniqueSectionTypes: [],
+      classSections: [],
+    };
+    const { classSections, uniqueSectionTypes } = group;
+
+    classSections.push(classSection);
+    // only add a section type if its not already there:
+    if (!uniqueSectionTypes.includes(type)) uniqueSectionTypes.push(type);
+
+    groups[id] = group;
   }
 
   return Object.values(groups);
 };
+// export const splitIntoGroups = (data: ClassSectionWithState[]) => {
+//   const groups: { [key: string]: ClassSectionWithState[] } = {};
+
+//   for (let row of data) {
+//     const id = row.group_id;
+//     const prevItems = groups[id] ?? [];
+//     groups[id] = [...prevItems, row];
+//   }
+
+//   return Object.values(groups);
+// };
 
 export const get_rmp_URL = (firstname: string, lastname: string) =>
   `https://www.ratemyprofessors.com/search/teachers?query=${firstname}%20${lastname}&sid=U2Nob29sLTE2Mg==`;

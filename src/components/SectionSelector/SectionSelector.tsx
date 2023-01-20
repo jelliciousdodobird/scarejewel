@@ -1,4 +1,5 @@
 import {
+  IconAlertCircle,
   IconBook,
   IconCaretDown,
   IconCheck,
@@ -58,7 +59,6 @@ import {
   shortToFullDayMap,
   splitIntoGroups,
 } from "./helpers";
-import { useMediaQuery } from "react-responsive";
 import clsx from "clsx";
 import { Switch } from "@headlessui/react";
 
@@ -79,10 +79,6 @@ export const SectionSelector = ({
   const dept = courseItem.selectedDept.value;
   const course_number = courseItem.selectedCourse.value;
   const queryDisabled = dept === "" || course_number === "";
-
-  const isDesktopOrLaptop = useMediaQuery({
-    query: "(min-width: 640px)",
-  });
 
   const { data, isLoading } = useQuery({
     queryKey: ["fetchSections", semester, year, dept, course_number],
@@ -151,25 +147,46 @@ export const SectionSelector = ({
   return (
     <div className="flex flex-col gap-4">
       {groups.map((group, i) => (
-        <Fragment key={group[0].group_id}>
+        <Fragment key={group.group_id}>
           {groups.length > 1 && (
-            <h2 className="sticky top-0 font-extrabold text-xl uppercase pt-4">
+            <h3 className="sticky top-0 font-extrabold text-xl uppercase pt-4">
               Group {i + 1}
-            </h2>
+            </h3>
           )}
-          {/* <ul
-            className={clsx(
-              "flex flex-col gap-8 rounded-lg bg-transparent",
-              "sm:gap-[1px] sm:border sm:border-slate-200 sm:bg-slate-200 sm:overflow-hidden"
-            )}
-          > */}
+          <span className="flex gap-4 text-sm rounded-lg p-4 bg-slate-100 text-slate-900">
+            <span className="">
+              <IconAlertCircle />
+            </span>
+
+            <span className="flex flex-col gap-4">
+              <span className="flex items-center whitespace-pre flex-wrap">
+                <span>Enrollment requires</span>
+                {group.uniqueSectionTypes.map((type, i) => (
+                  <Fragment key={type}>
+                    {group.uniqueSectionTypes.length === i + 1 && (
+                      <span className="whitespace-pre"> and</span>
+                    )}
+                    <span className="font-bold whitespace-pre"> one </span>
+                    <SectionTypeLabel size="small" sectionType={type} />
+                    {group.uniqueSectionTypes.length !== i + 1 && (
+                      <span className="whitespace-pre">
+                        {group.uniqueSectionTypes.length > 2 && ","}
+                      </span>
+                    )}
+                  </Fragment>
+                ))}
+                <span className="whitespace-pre"> within a group.</span>
+              </span>
+
+              {groups.length > 1 && <GroupMessage />}
+            </span>
+          </span>
           <ul className="grid grid-cols-[repeat(auto-fill,minmax(320px,1fr))] gap-8 rounded-md bg-transparent">
-            {group.map((s) => (
+            {group.classSections.map((cs) => (
               <ClassEntry
-                key={s.uid}
-                // type={isDesktopOrLaptop ? "row" : "card"}
-                type={"card"}
-                data={s}
+                key={cs.uid}
+                type="card"
+                data={cs}
                 update={updateClassSectionState}
               />
             ))}
@@ -228,7 +245,7 @@ export const ClassRow = ({ data, update }: BaseClassEntryProps) => {
             hidden && "[&>*]:opacity-20 [&>*]:grayscale-[80%]"
           )}
         >
-          <SectionType sectionType={section_type} />
+          <SectionTypeLabel sectionType={section_type} />
 
           <span className="flex items-center flex-1 lowercase text-slate-700 font-semibold">
             {section_number} {class_number}
@@ -312,6 +329,12 @@ export const ClassCard = ({ data, update }: BaseClassEntryProps) => {
 
   const { setHidden, setSelected } = useClassEntry(data, update);
 
+  const childGrayscale = hidden
+    ? "opacity-50 grayscale-[80%]"
+    : "opacity-100 grayscale-0";
+
+  const selectedNotHidden = selected && !hidden;
+
   return (
     <li className="flex flex-col">
       <div
@@ -325,22 +348,21 @@ export const ClassCard = ({ data, update }: BaseClassEntryProps) => {
 
           // base styles:
           "flex flex-col gap-8 p-4",
-          "rounded-md border transition-[opacity_background-color_box-shadow]",
+          "rounded-lg border transition-[opacity_background-color_box-shadow]",
           "ring-0 ring-transparent hover:ring-[3px]",
 
-          // hidden styles:
-          hidden ? "bg-slate-100" : "bg-white",
-          hidden ? "opacity-50" : "opacity-100",
-          hidden ? "grayscale-[80%]" : "grayscale-0",
-
-          // selected styles:
-          selected ? "border-emerald-400" : "border-slate-200",
-          selected ? "hover:ring-emerald-100" : "hover:ring-slate-100",
-          selected ? "" : "hover:border-slate-300"
+          hidden ? "bg-slate-100" : "bg-white", // background color
+          selectedNotHidden ? "border-emerald-400" : "border-slate-200", // border color
+          selectedNotHidden ? "hover:ring-emerald-100" : "hover:ring-slate-100" // ring color
         )}
       >
-        <span className="flex text-slate-400 bg-slate-100zz rounded-md px-3zz py-2zz">
-          <span className="flex items-center flex-1 pl-2zz text-slate-900 text-lg font-mono font-extrabold">
+        <span className="flex text-slate-400 rounded-md">
+          <span
+            className={clsx(
+              "flex items-center flex-1 lowercase text-slate-900 text-lg font-mono font-extrabold",
+              childGrayscale
+            )}
+          >
             {section_number} {class_number}
           </span>
           <Switch
@@ -358,8 +380,13 @@ export const ClassCard = ({ data, update }: BaseClassEntryProps) => {
           />
         </span>
 
-        <div className="grid grid-cols-[7rem_1fr] gap-x-2 gap-y-8">
-          <SectionType sectionType={section_type} />
+        <div
+          className={clsx(
+            "grid grid-cols-[7rem_1fr] gap-x-2 gap-y-8",
+            childGrayscale
+          )}
+        >
+          <SectionTypeLabel sectionType={section_type} />
           <span className="flex gap-1 text-slate-500">
             <InstructorLink
               firstName={instructor_fn}
@@ -378,7 +405,7 @@ export const ClassCard = ({ data, update }: BaseClassEntryProps) => {
             </div>
           </div>
         </div>
-        <div className="flex gap-2">
+        <div className={clsx("flex gap-2", childGrayscale)}>
           <Comment comment={comment} />
         </div>
       </div>
@@ -438,14 +465,61 @@ function arePropsEqual(
   return true;
 }
 
-const SectionType = ({
+export const GroupMessage = () => {
+  const [open, setOpen] = useState(false);
+  const toggleOpen = () => setOpen((v) => !v);
+  return (
+    <span className="flex flex-col gap-4 text-sm">
+      <span className="">
+        Do not pick sections from ACROSS groups.{" "}
+        <button className="font-bold" type="button" onClick={toggleOpen}>
+          {open ? "(close)" : "Why?"}
+        </button>
+      </span>
+      {open && (
+        <span className="">
+          It is considered{" "}
+          <span className="font-bold uppercase underline text-rose-600">
+            invalid
+          </span>{" "}
+          when you register on the official CSULB site. For example, you cannot
+          register for a
+          <span className="font-semibold italic uppercase"> lecture </span>
+          section from<span className="font-bold"> Group 1 </span>then a
+          <span className="font-semibold italic uppercase"> lab </span>section
+          from
+          <span className="font-bold"> Group 2 </span>. It is only allowed here
+          so that it is easier to rearrange your schedule to see what works.
+        </span>
+      )}
+    </span>
+  );
+};
+
+const SectionTypeLabel = ({
+  size = "normal",
   sectionType,
 }: {
+  size?: "small" | "normal";
   sectionType: ClassSectionWithState["section_type"];
 }) => {
+  const iconSize = size === "normal" ? 24 : 16;
+  const iconStroke = size === "normal" ? 2 : 2.3;
+  const icon = createElement(section_type_icons[sectionType], {
+    size: iconSize,
+    stroke: iconStroke,
+  });
+
   return (
-    <span className="flex items-center gap-1 rounded-md font-semibold uppercase pl-2 pr-3 py-1 w-min h-min bg-slate-200 text-slate-700 text-sm">
-      {section_type_icons[sectionType]}
+    <span
+      className={clsx(
+        "inline-flex items-center gap-1 rounded-md font-semibold uppercase w-min h-min bg-slate-200 text-slate-700",
+        size === "normal" && "text-sm pl-2 pr-3 py-1",
+        size === "small" &&
+          "text-xs pl-[0.325rem] pr-2 py-1 border border-slate-300"
+      )}
+    >
+      {icon}
       {sectionType}
     </span>
   );
@@ -738,11 +812,11 @@ export const ParticleAnimation = ({ trigger }: { trigger: boolean }) => {
   );
 };
 
-export const section_type_icons: Record<SectionType, React.ReactNode> = {
-  lab: <IconMicroscope />,
-  lec: <IconNotes />,
-  sem: <IconBook />,
-  sup: <IconPencilPlus />,
-  act: <IconYoga />,
-  add: <IconLayersLinked />,
+export const section_type_icons: Record<SectionType, TablerIcon> = {
+  lab: IconMicroscope,
+  lec: IconNotes,
+  sem: IconBook,
+  sup: IconPencilPlus,
+  act: IconYoga,
+  add: IconLayersLinked,
 };

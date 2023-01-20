@@ -7,7 +7,7 @@
     @apply mx-auto max-w-6xl px-4;
   }
   .custom-scrollbar-tiny {
-    @apply scrollbar-thin scrollbar-track-transparent scrollbar-thumb-stone-400 hover:scrollbar-track-stone-200 hover:scrollbar-thumb-stone-900;
+    @apply scrollbar-thin scrollbar-track-transparent scrollbar-thumb-slate-200 hover:scrollbar-track-slate-100 hover:scrollbar-thumb-slate-300;
   }
 }
 
