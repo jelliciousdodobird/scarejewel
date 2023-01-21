@@ -170,7 +170,7 @@ export const CourseSelector = memo(function CourseSelector({
           >
             <Disclosure.Button
               className={clsx(
-                "grid place-items-center rounded-md pl-1 pr-2",
+                "grid place-items-center rounded-md pl-1zz pr-2zz px-1 mr-1",
                 ringStyle,
                 activeTextColor
               )}
@@ -267,8 +267,8 @@ const ActionDropdown = ({
       <div className="relative">
         <Popover.Panel
           className={clsx(
-            "absolute right-0 top-0 flex flex-col gap-4 bg-white p-4 mt-4 text-slate-900",
-            "rounded-lg border border-slate-200 drop-shadow-md"
+            "absolute right-0 top-0 flex flex-col gap-4 p-4 mt-4 text-slate-900",
+            "rounded-lg bg-white borderzz border-slate-200zz drop-shadow-mdzz shadow-lg ring-1 ring-black ring-opacity-5"
           )}
         >
           {({ close }) => (

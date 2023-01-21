@@ -25,8 +25,8 @@ export const TermSelect = ({
     <Listbox value={selectedOption} onChange={onChange} by="id">
       {({ open }) => (
         <div className="relative flex flex-col">
-          <Listbox.Button className="flex justify-center items-center gap-2 h-10 pl-4 pr-[2px] py-1 text-slate-400 hover:bg-slate-50 font-semibold rounded-lg bg-white  ring-1 ring-black ring-opacity-5">
-            <span className="flex font-bold text-slate-900">
+          <Listbox.Button className="flex justify-center items-center gap-2 h-10 pl-4 pr-[2px] py-1 text-slate-400 hover:bg-slate-50 font-semibold rounded-lg bg-white ring-1 ring-black ring-opacity-5">
+            <span className="flex font-extrabold text-slate-900 uppercase">
               {selectedOption.value.semester}
             </span>
             <span className="flex  font-bold text-slate-400">
@@ -43,28 +43,27 @@ export const TermSelect = ({
             <div
               className={clsx(
                 "absolute top-0 left-0 mt-2", // positioning
-                // "p-2 rounded-lg bg-white border border-slate-200 shadow-xl", // appearance
-                "p-2 rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5",
-                "pr-[2px]" // makes space so that the scrollbar is not flush with the right of this container
+                "p-2 rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5", // appearance
+                "pr-1" // makes space so that the scrollbar is not flush with the right of this container
               )}
             >
               <ul
                 className={clsx(
-                  "pr-[calc(8px+2px)]", // makes space so that the left of the scrollbar is not flush with the options,
-                  "overflow-x-hidden overflow-y-auto max-h-48 custom-scrollbar-tiny", // scrollbar stuff
-                  "flex flex-col"
+                  "pr-3", // makes space so that the left of the scrollbar is not flush with the options,
+                  "overflow-x-hidden overflow-y-auto max-h-[180px] custom-scrollbar-tiny", // scrollbar stuff
+                  "flex flex-col gap-[1px]"
                 )}
               >
                 {options.map((opt) => (
                   <Listbox.Option as={Fragment} key={opt.id} value={opt}>
-                    {({ active }) => (
+                    {({ active, selected }) => (
                       <li
                         className={clsx(
                           "flex px-4 py-2 rounded cursor-pointer",
-                          active ? "bg-slate-200" : "bg-transparent"
+                          active || selected ? "bg-slate-100" : "bg-transparent"
                         )}
                       >
-                        <span className="flex text-sm font-bold min-w-[5rem]">
+                        <span className="flex text-sm font-bold uppercase min-w-[5rem]">
                           {opt.value.semester}
                         </span>
                         <span className="flex text-sm font-bold text-slate-400">
