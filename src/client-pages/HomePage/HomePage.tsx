@@ -1,15 +1,16 @@
 "use client";
 
-import { Listbox, Tab } from "@headlessui/react";
+import { Tab } from "@headlessui/react";
 import { nanoid } from "nanoid";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { PrettyColor } from "../../utils/colors";
+import { ElementType, useEffect, useMemo, useRef, useState } from "react";
+
 import { CourseSelector } from "../../components/CourseSelector/CourseSelector";
-import { ThemeSwitch } from "../../components/ThemeSwitch/ThemeSwitch";
-import { ClassSection, Semester, Term } from "../../database/types";
+
+import { Term } from "../../database/types";
 import { getRandomPrettyColor } from "../../utils/util";
 import { PartialBy } from "../../utils/types";
 import {
+  IconCalendar,
   IconCalendarEvent,
   IconPlaylistAdd,
   IconPlus,
@@ -29,91 +30,90 @@ import {
   TermSelect,
 } from "../../components/TermSelect/TermSelect";
 import clsx from "clsx";
+import { Portal } from "../../components/Portal/Portal";
 
 export type HomePageProps = {
   terms: Term[];
 };
 
-const tabs = [
-  { name: "Weekly View", icon: <IconCalendarEvent /> },
-  { name: "Edit Courses", icon: <IconPlaylistAdd /> },
-];
-
 export default function HomePage({ terms }: HomePageProps) {
-  const [selectedTab, setSelectedTab] = useState(0);
-  // const toggleTabs = () => setSelectedTab((v) => (v === 0 ? 1 : 0));
+  const [showWeekly, setShowWeekly] = useState(false);
+  const toggleWeekly = () => setShowWeekly((v) => !v);
 
   return (
-    <div className="flex flex-col gap-4 bg-gradient-to-bzz from-whitezz to-slate-100zz min-h-full">
-      <Tab.Group selectedIndex={selectedTab} onChange={setSelectedTab}>
-        <div className="z-10 sticky top-16 backdrop-blur-md bg-slate-200/30 border-b border-t border-slate-200/50">
-          <Tab.List className="pack-content flex gap-0 w-full h-12  pt-1 sm:gap-4">
-            {tabs.map(({ name, icon }) => (
-              <Tab
-                key={name}
-                className="flex-grow sm:flex-grow-0 h-full  overflow-hidden "
-              >
-                {({ selected }) => (
-                  <span
-                    className={clsx(
-                      "flex justify-center items-center gap-1 h-full font-semibold text-sm whitespace-nowrap px-2",
-                      selected ? "text-indigo-500" : "text-slate-500",
-                      // selected ? "text-white" : "text-slate-500",
-                      // selected ? "bg-indigo-500" : "bg-transparent",
-                      selected
-                        ? "border-b-[3px] border-indigo-500"
-                        : "border-b-[3px] border-transparent"
-                    )}
-                  >
-                    {icon}
-                    {name}
-                  </span>
-                )}
-              </Tab>
-            ))}
-          </Tab.List>
+    <div className="flex flex-col gap-4 bg-gradient-to-bzz from-whitezz to-slate-100zz min-h-full justify-betweenzz">
+      <CourseListPanel terms={terms} />
+
+      <Portal portalToTag="main">
+        <div className="z-10 sticky bottom-0 flex justify-end pack-content pb-4 h-min w-full pointer-events-none">
+          <button
+            type="button"
+            className="rounded-full w-min h-min p-4 bg-indigo-500 text-white pointer-events-auto shadow-lg"
+            onClick={toggleWeekly}
+          >
+            <IconCalendar />
+          </button>
         </div>
-        <Tab.Panels className="z-0 relative">
-          <Tab.Panel>
-            <WeeklyPanel />
-          </Tab.Panel>
-          <Tab.Panel>
-            <CourseListPanel terms={terms} />
-          </Tab.Panel>
-        </Tab.Panels>
-      </Tab.Group>
-      {/* <div className="z-10 sticky bottom-0 flex justify-end w-full pack-content py-2 pointer-events-none">
-        <button
-          type="button"
-          className="bg-sky-500 pointer-events-auto"
-          onClick={toggleTabs}
-        >
-          TOGGLE
-        </button>
-      </div> */}
+      </Portal>
     </div>
   );
 }
 
-const WeeklyPanel = () => {
-  // need to make sure we're mounted so we can use the localstorage in the courseItemsAtomAtom
+// const TabNav = ({ terms }: HomePageProps) => {
+//   const [selectedTab, setSelectedTab] = useState(0);
 
-  return (
-    <div className="relative isolate">
-      {/* <div className="-z-10 absolute -top-16 w-full h-[calc(100%+4rem)] bg-gradient-to-b from-white to-slate-100 overflow-hidden"> */}
-      {/* <div className="relative pack-content flex flex-col w-full h-full ">
-            <div className="absolute rounded-full blur-xl w-[500px] h-[500px] bg-sky-300     -right-20 -bottom-20"></div>
-            <div className="absolute rounded-full blur-xl w-[600px] h-[600px] bg-emerald-300 -left-10 right-0 "></div>
-            <div className="absolute rounded-full blur-xl w-[400px] h-[400px] bg-amber-300   left-[20%] bottom-0"></div>
-            <div className="absolute rounded-full blur-xl w-[500px] h-[500px] bg-rose-300    left-[50%]"></div>
-          </div> */}
-      {/* </div> */}
-      <div className="pack-content flex flex-col py-8">
-        <WeeklyPreview />
-      </div>
-    </div>
-  );
-};
+//   return (
+//     <div className="flex flex-col gap-4 bg-gradient-to-bzz from-whitezz to-slate-100zz min-h-full">
+//       <Tab.Group selectedIndex={selectedTab} onChange={setSelectedTab}>
+//         <div className="z-10 sticky top-16 backdrop-blur-md bg-slate-200/30 border-b border-t border-slate-200/50">
+//           <Tab.List className="pack-content flex gap-0 w-full h-12  pt-1 sm:gap-4">
+//             {tabs.map(({ name, icon }) => (
+//               <Tab
+//                 key={name}
+//                 className="flex-grow sm:flex-grow-0 h-full  overflow-hidden "
+//               >
+//                 {({ selected }) => (
+//                   <span
+//                     className={clsx(
+//                       "flex justify-center items-center gap-1 h-full font-semibold text-sm whitespace-nowrap px-2",
+//                       selected ? "text-indigo-500" : "text-slate-500",
+//                       selected
+//                         ? "border-b-[3px] border-indigo-500"
+//                         : "border-b-[3px] border-transparent"
+//                     )}
+//                   >
+//                     {icon}
+//                     {name}
+//                   </span>
+//                 )}
+//               </Tab>
+//             ))}
+//           </Tab.List>
+//         </div>
+//         <Tab.Panels className="z-0 relative">
+//           <Tab.Panel>
+//             <WeeklyPanel />
+//           </Tab.Panel>
+//           <Tab.Panel>
+//             <CourseListPanel terms={terms} />
+//           </Tab.Panel>
+//         </Tab.Panels>
+//       </Tab.Group>
+//     </div>
+//   );
+// };
+
+// const WeeklyPanel = () => {
+//   // need to make sure we're mounted so we can use the localstorage in the courseItemsAtomAtom
+
+//   return (
+//     <div className="relative isolate">
+//       <div className="pack-content flex flex-col py-8">
+//         <WeeklyPreview />
+//       </div>
+//     </div>
+//   );
+// };
 
 const CourseListPanel = ({ terms }: { terms: Term[] }) => {
   const mounted = useHasMounted(); // need to make sure we're mounted so we can use the localstorage in the courseItemsAtomAtom
@@ -141,7 +141,7 @@ const CourseListPanel = ({ terms }: { terms: Term[] }) => {
 
   return (
     <div className="pack-content w-full flex flex-col gap-4">
-      <div className="relative z-10 flex justify-between">
+      <div className="pack-contentzz w-full relative z-10 flex justify-between">
         <TermSelect
           options={termOptions}
           onChange={setSelectedTermOption}
@@ -163,7 +163,7 @@ const CourseListPanel = ({ terms }: { terms: Term[] }) => {
         ))}
       </ul>
 
-      <div className="min-h-[20rem]"></div>
+      {/* <div className="min-h-[20rem]"></div> */}
     </div>
   );
 };

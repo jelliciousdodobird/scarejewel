@@ -16,6 +16,7 @@ type RootLayoutProps = {
   children: React.ReactNode;
 };
 
+// style={{ position: "-webkit-sticky" }}
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html

@@ -156,14 +156,14 @@ export const CourseSelector = memo(function CourseSelector({
     <Disclosure
       defaultOpen
       as="li"
-      className="relative flex flex-col gap-4 "
+      className="relative flex flex-col gap-8"
       style={{ zIndex: 20 - index }}
     >
       {({ open }) => (
         <>
           <div
             className={clsx(
-              "sticky z-10 top-[calc(4rem+3rem+5px)] flex gap-0 w-full rounded-lg p-2  text-sm font-medium",
+              "sticky z-10 top-[calc(4rem)] flex gap-0 w-full rounded-lg p-2 text-sm font-medium",
               textColor,
               bgc
             )}
@@ -213,7 +213,7 @@ export const CourseSelector = memo(function CourseSelector({
             />
           </div>
 
-          <Disclosure.Panel className="relative z-0">
+          <Disclosure.Panel className="relative z-0 px-2">
             <SectionSelector
               semester={semester}
               year={year}

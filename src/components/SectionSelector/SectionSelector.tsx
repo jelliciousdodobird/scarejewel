@@ -145,11 +145,11 @@ export const SectionSelector = ({
   const groups = splitIntoGroups(courseItem.availableSections);
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-8">
       {groups.map((group, i) => (
         <Fragment key={group.group_id}>
           {groups.length > 1 && (
-            <h3 className="sticky top-0 font-extrabold text-xl uppercase pt-4">
+            <h3 className="sticky top-0 font-extrabold text-xl uppercase pt-4zz">
               Group {i + 1}
             </h3>
           )}
@@ -665,7 +665,7 @@ const SelectedButton = ({
       checked={checked}
       onChange={onChange}
       className={clsx(
-        "relative grid place-items-center w-8 h-8",
+        "relative grid place-items-center w-8 h-8 hover:text-emerald-500",
         checked && "text-emerald-500"
       )}
     >
