@@ -1,6 +1,13 @@
 "use client";
 
-import { ElementType, useEffect, useRef } from "react";
+import {
+  createElement,
+  ElementType,
+  forwardRef,
+  Fragment,
+  useEffect,
+  useRef,
+} from "react";
 import { createPortal } from "react-dom";
 import { useHasMounted } from "../../hooks/useHasMounted";
 
@@ -21,51 +28,60 @@ interface PortalWithTag extends BasePortalProps {
   portalToId?: never;
 }
 
-export const Portal = ({
-  children,
-  portalToId,
-  portalToTag,
-  disableScroll = false,
-  backdrop = false,
-  close,
-}: PortalWithId | PortalWithTag) => {
-  const mounted = useHasMounted();
-  const pageElement = useRef<Element>(null!);
+type PortalProps = PortalWithId | PortalWithTag;
 
-  // @to-do: Create an element to wrap children to provide a backdrop:
-  const renderElement = backdrop ? children : children;
+export const Portal = forwardRef<HTMLDivElement, PortalProps>(
+  (
+    {
+      children,
+      portalToId,
+      portalToTag,
+      disableScroll = false,
+      backdrop = false,
+      close,
+    },
+    ref
+  ) => {
+    const mounted = useHasMounted();
 
-  useEffect(() => {
-    // *NOTE it just happens that both the scrollElement / safeElement is the body element.
-    // They can easily be other elements. But for this project it makes the most sense.
-    const scrollElement = document.body; // the main scrolling containing
-    const safeElement = document.body; // the safe element is the body element
+    const pageElement = useRef<Element>(null!);
 
-    let element = safeElement;
+    // @to-do: Create an element to wrap children to provide a backdrop:
+    const renderElement = backdrop ? children : children;
 
-    if (portalToTag)
-      element = document.querySelector(portalToTag.toString()) ?? safeElement;
-    else if (portalToId)
-      element = document.getElementById(portalToId) ?? safeElement;
+    const portalElement = mounted ? (
+      createPortal(renderElement, pageElement.current)
+    ) : (
+      <></>
+    );
 
-    pageElement.current = element;
+    useEffect(() => {
+      // *NOTE it just happens that both the scrollElement / safeElement is the body element.
+      // They can easily be other elements. But for this project it makes the most sense.
+      const scrollElement = document.body; // the main scrolling containing
+      const safeElement = document.body; // the safe element is the body element
 
-    // @to-do:
-    // This can potentially cause style issues because it does not take into account
-    // the previous overflow style that was applied to the scrollElement.
-    //
-    // Fixable in two ways:
-    //    Method 1 (less invasive):
-    //        1. Make a css class with !important on the overflow styles (cus specificity issues).
-    //        2. Add/remove that css class on mount/dismount, so that we don't override previous styles.
-    //    Method 2 (more invasive):
-    //        1. Use computed styles to save the previous overflow styles.
-    //        2. Apply that previous overflow style on dismount.
-    if (disableScroll) scrollElement.style.overflow = "hidden";
-    return () => {
-      if (disableScroll) scrollElement.style.overflow = "auto";
-    };
-  }, []);
+      let element = safeElement;
 
-  return mounted ? createPortal(renderElement, pageElement.current) : null;
-};
+      if (portalToTag)
+        element = document.querySelector(portalToTag.toString()) ?? safeElement;
+      else if (portalToId)
+        element = document.getElementById(portalToId) ?? safeElement;
+
+      pageElement.current = element;
+
+      // using tailwind css to hide scrollbars:
+      if (disableScroll) scrollElement.classList.add("!overflow-hidden");
+      return () => {
+        if (disableScroll) scrollElement.classList.remove("!overflow-hidden");
+      };
+    }, []);
+
+    useEffect(() => {
+      console.log("PORTAL");
+    });
+
+    // if (ref) return <div ref={ref}>{mounted && portalElement}</div>;
+    return portalElement;
+  }
+);

@@ -1,22 +1,19 @@
 "use client";
 
-import { Tab } from "@headlessui/react";
+import { Popover, Transition } from "@headlessui/react";
 import { nanoid } from "nanoid";
-import { ElementType, useEffect, useMemo, useRef, useState } from "react";
+import { Fragment, useMemo } from "react";
 
 import { CourseSelector } from "../../components/CourseSelector/CourseSelector";
 
 import { Term } from "../../database/types";
 import { getRandomPrettyColor } from "../../utils/util";
-import { PartialBy } from "../../utils/types";
 import {
-  IconCalendar,
   IconCalendarEvent,
-  IconPlaylistAdd,
   IconPlus,
-  IconSelector,
+  IconX,
 } from "@tabler/icons";
-import { atom, useAtom, useAtomValue, useSetAtom } from "jotai";
+import { useAtom} from "jotai";
 import {
   courseItemsAtomAtom,
   selectedTermOptionAtom,
@@ -37,83 +34,70 @@ export type HomePageProps = {
 };
 
 export default function HomePage({ terms }: HomePageProps) {
-  const [showWeekly, setShowWeekly] = useState(false);
-  const toggleWeekly = () => setShowWeekly((v) => !v);
-
   return (
-    <div className="flex flex-col gap-4 bg-gradient-to-bzz from-whitezz to-slate-100zz min-h-full justify-betweenzz">
+    <div className="relative flex flex-col gap-4 bg-gradient-to-bzz from-whitezz to-slate-100zz min-h-full justify-betweenzz">
       <CourseListPanel terms={terms} />
-
-      <Portal portalToTag="main">
-        <div className="z-10 sticky bottom-0 flex justify-end pack-content pb-4 h-min w-full pointer-events-none">
-          <button
-            type="button"
-            className="rounded-full w-min h-min p-4 bg-indigo-500 text-white pointer-events-auto shadow-lg"
-            onClick={toggleWeekly}
-          >
-            <IconCalendar />
-          </button>
-        </div>
-      </Portal>
+      <WeeklySidebar />
     </div>
   );
 }
 
-// const TabNav = ({ terms }: HomePageProps) => {
-//   const [selectedTab, setSelectedTab] = useState(0);
-
-//   return (
-//     <div className="flex flex-col gap-4 bg-gradient-to-bzz from-whitezz to-slate-100zz min-h-full">
-//       <Tab.Group selectedIndex={selectedTab} onChange={setSelectedTab}>
-//         <div className="z-10 sticky top-16 backdrop-blur-md bg-slate-200/30 border-b border-t border-slate-200/50">
-//           <Tab.List className="pack-content flex gap-0 w-full h-12  pt-1 sm:gap-4">
-//             {tabs.map(({ name, icon }) => (
-//               <Tab
-//                 key={name}
-//                 className="flex-grow sm:flex-grow-0 h-full  overflow-hidden "
-//               >
-//                 {({ selected }) => (
-//                   <span
-//                     className={clsx(
-//                       "flex justify-center items-center gap-1 h-full font-semibold text-sm whitespace-nowrap px-2",
-//                       selected ? "text-indigo-500" : "text-slate-500",
-//                       selected
-//                         ? "border-b-[3px] border-indigo-500"
-//                         : "border-b-[3px] border-transparent"
-//                     )}
-//                   >
-//                     {icon}
-//                     {name}
-//                   </span>
-//                 )}
-//               </Tab>
-//             ))}
-//           </Tab.List>
-//         </div>
-//         <Tab.Panels className="z-0 relative">
-//           <Tab.Panel>
-//             <WeeklyPanel />
-//           </Tab.Panel>
-//           <Tab.Panel>
-//             <CourseListPanel terms={terms} />
-//           </Tab.Panel>
-//         </Tab.Panels>
-//       </Tab.Group>
-//     </div>
-//   );
-// };
-
-// const WeeklyPanel = () => {
-//   // need to make sure we're mounted so we can use the localstorage in the courseItemsAtomAtom
-
-//   return (
-//     <div className="relative isolate">
-//       <div className="pack-content flex flex-col py-8">
-//         <WeeklyPreview />
-//       </div>
-//     </div>
-//   );
-// };
+const WeeklySidebar = () => {
+  return (
+    <Popover as={Fragment}>
+      <Portal portalToTag="body">
+        {/* Need both divs since we're using position: fixed instead of sticky. Sticky has issues with chrome on android. */}
+        <div className="z-50 fixed bottom-0 pb-4 h-min w-full sm:w-[calc(100%-1rem)] pointer-events-none ">
+          <div className="flex justify-end pack-content w-full">
+            <Popover.Button
+              type="button"
+              className="rounded-full w-min h-min p-4 bg-indigo-500 text-white pointer-events-auto shadow-lg "
+            >
+              {({ open }) => (open ? <IconX /> : <IconCalendarEvent />)}
+            </Popover.Button>
+          </div>
+        </div>
+      </Portal>
+      <Portal portalToTag="body">
+        <Popover.Panel
+          static
+          className="z-40 fixed top-0 left-0 w-full h-full pointer-events-none"
+        >
+          {({ open, close }) => (
+            <div
+              className={clsx(
+                "relative w-full h-full max-h-full overflow-x-hidden transition-[backdrop-filter_background-color]",
+                open ? "bg-slate-500/10" : "bg-slate-500/0",
+                open ? "backdrop-blur-md" : "backdrop-blur-0",
+                open ? "overflow-y-auto" : "overflow-y-hidden",
+                open ? "pointer-events-auto" : "pointer-events-none"
+              )}
+            >
+              <div
+                className="absolute top-0 left-0 w-full h-full"
+                onClick={() => close()}
+              />
+              <Transition
+                show={open}
+                as={Fragment}
+                enter="transition duration-250 ease-linear"
+                enterFrom="transform translate-x-[100%]"
+                enterTo="transform translate-x-0"
+                leave="transition duration-250 ease-linear"
+                leaveFrom="transform translate-x-0"
+                leaveTo="transform translate-x-[100%]"
+              >
+                <div className="pointer-events-none pack-content flex flex-col py-8 [&>*]:pointer-events-auto">
+                  <WeeklyPreview />
+                </div>
+              </Transition>
+            </div>
+          )}
+        </Popover.Panel>
+      </Portal>
+    </Popover>
+  );
+};
 
 const CourseListPanel = ({ terms }: { terms: Term[] }) => {
   const mounted = useHasMounted(); // need to make sure we're mounted so we can use the localstorage in the courseItemsAtomAtom
@@ -162,8 +146,6 @@ const CourseListPanel = ({ terms }: { terms: Term[] }) => {
           />
         ))}
       </ul>
-
-      {/* <div className="min-h-[20rem]"></div> */}
     </div>
   );
 };

@@ -123,7 +123,7 @@ export function WeeklyPreview({}: WeeklyPreviewProps) {
         >
           {showFullView ? <IconArrowsMinimize /> : <IconArrowsMaximize />}
         </button>
-        <div className="relative flex flex-col w-full bg-white">
+        <div className="relative flex flex-col w-full bg-white min-w-[3rem]">
           {timeSlots.map((time, i) => (
             <div
               key={time}
