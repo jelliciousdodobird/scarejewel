@@ -8,12 +8,8 @@ import { CourseSelector } from "../../components/CourseSelector/CourseSelector";
 
 import { Term } from "../../database/types";
 import { getRandomPrettyColor } from "../../utils/util";
-import {
-  IconCalendarEvent,
-  IconPlus,
-  IconX,
-} from "@tabler/icons";
-import { useAtom} from "jotai";
+import { IconCalendarEvent, IconPlus, IconX } from "@tabler/icons";
+import { useAtom } from "jotai";
 import {
   courseItemsAtomAtom,
   selectedTermOptionAtom,
@@ -35,7 +31,7 @@ export type HomePageProps = {
 
 export default function HomePage({ terms }: HomePageProps) {
   return (
-    <div className="relative flex flex-col gap-4 bg-gradient-to-bzz from-whitezz to-slate-100zz min-h-full justify-betweenzz">
+    <div className="relative flex flex-col gap-4 bg-gradient-to-bzz from-whitezz to-slate-100zz min-h-full py-8">
       <CourseListPanel terms={terms} />
       <WeeklySidebar />
     </div>
