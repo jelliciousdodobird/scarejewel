@@ -121,7 +121,7 @@ const CourseListPanel = ({ terms }: { terms: Term[] }) => {
 
   return (
     <div className="pack-content w-full flex flex-col gap-4">
-      <div className="pack-contentzz w-full relative z-10 flex justify-between">
+      <div className="pack-contentzz w-full relative z-10 flex justify-between gap-4">
         <TermSelect
           options={termOptions}
           onChange={setSelectedTermOption}
@@ -169,11 +169,11 @@ const AddButton = ({ addLimit = 10 }: { addLimit?: number }) => {
   return (
     <button
       type="button"
-      className="flex justify-center items-center gap-2 rounded-lg p-2 pr-3 bg-indigo-500 text-white font-semibold disabled:cursor-not-allowed"
+      className="flex justify-center items-center gap-2  w-min h-fullzz px-2 sm:pr-3 h-10 rounded-lg p-2zz pr-3zz bg-indigo-500 text-white font-semibold disabled:cursor-not-allowed"
       onClick={addCourseItem}
     >
       <IconPlus />
-      Add Course
+      <span className="hidden sm:flex whitespace-nowrap">Add Course</span>
     </button>
   );
 };

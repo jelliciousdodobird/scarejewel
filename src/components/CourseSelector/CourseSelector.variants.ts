@@ -15,16 +15,28 @@ export const bg_color_base: PrettyColorMap = {
 };
 
 export const bg_color_highlight: PrettyColorMap = {
-  yellow: "bg-yellow-500",
-  cyan: "bg-cyan-500",
-  emerald: "bg-emerald-500",
-  fuchsia: "bg-fuchsia-500",
-  indigo: "bg-indigo-500",
-  lime: "bg-lime-500",
-  orange: "bg-orange-500",
-  rose: "bg-rose-500",
-  sky: "bg-sky-500",
-  violet: "bg-violet-500",
+  yellow: "bg-yellow-100",
+  cyan: "bg-cyan-100",
+  emerald: "bg-emerald-100",
+  fuchsia: "bg-fuchsia-100",
+  indigo: "bg-indigo-100",
+  lime: "bg-lime-100",
+  orange: "bg-orange-100",
+  rose: "bg-rose-100",
+  sky: "bg-sky-100",
+  violet: "bg-violet-100",
+};
+export const bg_color_highlight_hover: PrettyColorMap = {
+  yellow: "hover:bg-yellow-100",
+  cyan: "hover:bg-cyan-100",
+  emerald: "hover:bg-emerald-100",
+  fuchsia: "hover:bg-fuchsia-100",
+  indigo: "hover:bg-indigo-100",
+  lime: "hover:bg-lime-100",
+  orange: "hover:bg-orange-100",
+  rose: "hover:bg-rose-100",
+  sky: "hover:bg-sky-100",
+  violet: "hover:bg-violet-100",
 };
 
 export const bg_color_hover: PrettyColorMap = {
