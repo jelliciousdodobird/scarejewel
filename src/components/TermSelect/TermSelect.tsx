@@ -62,7 +62,7 @@ export const TermSelect = ({
                     {({ active, selected }) => (
                       <li
                         className={clsx(
-                          "flex items-center px-4 py-2zz min-h-[2.5rem] rounded cursor-pointer text-sm",
+                          "flex items-center px-4 min-h-[2.5rem] rounded cursor-pointer text-sm",
                           selected ? "font-bold" : "font-normal",
                           active || selected
                             ? "bg-indigo-50"

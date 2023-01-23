@@ -14,7 +14,7 @@ import { useHasMounted } from "../../hooks/useHasMounted";
 interface BasePortalProps {
   children: React.ReactNode;
   disableScroll?: boolean;
-  backdrop?: boolean;
+  disabled?: boolean;
   close?: () => void;
 }
 
@@ -37,23 +37,13 @@ export const Portal = forwardRef<HTMLDivElement, PortalProps>(
       portalToId,
       portalToTag,
       disableScroll = false,
-      backdrop = false,
+      disabled = false,
       close,
     },
     ref
   ) => {
     const mounted = useHasMounted();
-
     const pageElement = useRef<Element>(null!);
-
-    // @to-do: Create an element to wrap children to provide a backdrop:
-    const renderElement = backdrop ? children : children;
-
-    const portalElement = mounted ? (
-      createPortal(renderElement, pageElement.current)
-    ) : (
-      <></>
-    );
 
     useEffect(() => {
       // *NOTE it just happens that both the scrollElement / safeElement is the body element.
@@ -77,11 +67,11 @@ export const Portal = forwardRef<HTMLDivElement, PortalProps>(
       };
     }, []);
 
-    useEffect(() => {
-      console.log("PORTAL");
-    });
-
     // if (ref) return <div ref={ref}>{mounted && portalElement}</div>;
-    return portalElement;
+    // return portalElement;
+
+    if (disabled) return <>{children}</>;
+    if (mounted) return createPortal(children, pageElement.current);
+    return <></>;
   }
 );

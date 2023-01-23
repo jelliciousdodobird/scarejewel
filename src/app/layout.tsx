@@ -24,13 +24,13 @@ export default function RootLayout({ children }: RootLayoutProps) {
       className={customFonts}
       suppressHydrationWarning // see https://github.com/pacocoursey/next-themes/issues/152#issuecomment-1364280564 for details
     >
-      <body className="bg-white dark:bg-black">
+      <body className="bg-white dark:bg-black isolate">
         <ThemeProviders>
           <ReactQueryProvider>
-            <header className="sticky top-0 z-40 flex flex-col w-full">
+            <header className="sticky top-0 flex flex-col w-full">
               <Navbar />
             </header>
-            <main className="flex-1">{children}</main>
+            <main className="isolate -z-10 flex-1">{children}</main>
           </ReactQueryProvider>
         </ThemeProviders>
       </body>

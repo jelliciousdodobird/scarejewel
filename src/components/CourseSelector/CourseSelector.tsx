@@ -390,7 +390,7 @@ export const AutoCompleteInput = ({
             as="div"
             className={clsx(
               "absolute z-40 top-0 left-0 p-2 pr-1 pt-12 bg-white rounded-md  w-full sm:w-min min-w-[18rem] mb-32",
-              "borderzz  appearance-none outline-none  shadow-lg ring-1 ring-black ring-opacity-5"
+              "appearance-none outline-none  shadow-lg ring-1 ring-black ring-opacity-5"
             )}
           >
             <ul className="flex flex-col gap-[1px] custom-scrollbar-tiny overflow-y-auto overflow-x-hidden max-h-[calc(5*2.5rem+4px)] pr-3">
@@ -422,7 +422,7 @@ export const AutoCompleteInput = ({
                       <span className="min-w-[2rem] font-mono font-bold">
                         {option.label}
                       </span>
-                      <span className="flex-1 text-slate-900zz">
+                      <span className="flex-1">
                         {formatTitle(option.title)}
                       </span>
                       {selected && <IconCheck size={20} stroke={3} />}
