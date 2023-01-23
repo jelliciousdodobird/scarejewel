@@ -25,3 +25,16 @@ export const icon_bg_color: PrettyColorMap = {
   sky: "bg-sky-100",
   violet: "bg-violet-100",
 };
+
+export const ring_highlight: PrettyColorMap = {
+  yellow: "ring-yellow-500",
+  cyan: "ring-cyan-500",
+  emerald: "ring-emerald-500",
+  fuchsia: "ring-fuchsia-500",
+  indigo: "ring-indigo-500",
+  lime: "ring-lime-500",
+  orange: "ring-orange-500",
+  rose: "ring-rose-500",
+  sky: "ring-sky-500",
+  violet: "ring-violet-500",
+};

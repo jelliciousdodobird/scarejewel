@@ -5,7 +5,6 @@ import { IconArrowsMaximize, IconArrowsMinimize } from "@tabler/icons";
 import clsx from "clsx";
 import { atom, useAtom, useSetAtom } from "jotai";
 import { createElement, Fragment, useState } from "react";
-import { ClassDay, ClassSection } from "../../database/types";
 import { useHasMounted } from "../../hooks/useHasMounted";
 import { useLastValidValue } from "../../hooks/useLastValidValue";
 import {
@@ -13,7 +12,7 @@ import {
   selectedSectionsAtom,
   weeklyFullViewAtom,
 } from "../../state/course-cart";
-import { formatTime, roundToNearestMultipleOf } from "../../utils/util";
+import { DayName, dayNameMap } from "../../utils/types";
 import { Backdrop } from "../Backdrop/Backdrop";
 import { ClassSectionItem } from "../ClassSectionItem/ClassSectionItem";
 import { section_type_icons } from "../ClassSectionItem/ClassSectionItem.helper";
@@ -22,16 +21,15 @@ import {
   text_color,
 } from "../CourseSelector/CourseSelector.variants";
 import { Portal } from "../Portal/Portal";
-import { icon_bg_color, icon_text_color } from "./WeeklyPreview.variants";
+import { hourOnly, roundToNearestHour } from "./WeeklyPreview.helpers";
+import {
+  icon_bg_color,
+  icon_text_color,
+  ring_highlight,
+} from "./WeeklyPreview.variants";
 
 const one_hour = 60;
 const twenty_four_hours = one_hour * 24;
-
-type DayName = {
-  short: ClassDay;
-  medium: string;
-  long: string;
-};
 
 type DayColumn = {
   day: DayName;
@@ -39,19 +37,9 @@ type DayColumn = {
   show: boolean;
 };
 
-const dayNameMap: Record<ClassDay, DayName> = {
-  m: { short: "m", medium: "mon", long: "monday" },
-  tu: { short: "tu", medium: "tue", long: "tuesday" },
-  w: { short: "w", medium: "wed", long: "wednesday" },
-  th: { short: "th", medium: "thu", long: "thursday" },
-  f: { short: "f", medium: "fri", long: "friday" },
-  sa: { short: "sa", medium: "sat", long: "saturday" },
-  s: { short: "s", medium: "sun", long: "sunday" },
-};
-
 export type WeeklyPreviewProps = {};
 
-export function WeeklyPreview({}: WeeklyPreviewProps) {
+export const WeeklyPreview = ({}: WeeklyPreviewProps) => {
   const mounted = useHasMounted();
 
   const [showFullView, setShowFullView] = useAtom(weeklyFullViewAtom);
@@ -73,38 +61,41 @@ export function WeeklyPreview({}: WeeklyPreviewProps) {
   const startTimeOffset = roundToNearestHour(earliestTime - one_hour);
   const endTimeOffset = roundToNearestHour(latestTime + one_hour);
 
-  const monday = sections.filter(({ days }) =>
-    days.toLowerCase().includes("m")
-  );
-  const tuesday = sections.filter(({ days }) =>
-    days.toLowerCase().includes("tu")
-  );
-  const wednesday = sections.filter(({ days }) =>
-    days.toLowerCase().includes("w")
-  );
-  const thursday = sections.filter(({ days }) =>
-    days.toLowerCase().includes("th")
-  );
-  const friday = sections.filter(({ days }) =>
-    days.toLowerCase().includes("f")
-  );
-  const saturday = sections.filter(({ days }) =>
-    days.toLowerCase().includes("sa")
-  );
+  let days: DayColumn[] = [
+    { day: dayNameMap["m"], sections: [], show: true },
+    { day: dayNameMap["tu"], sections: [], show: true },
+    { day: dayNameMap["w"], sections: [], show: true },
+    { day: dayNameMap["th"], sections: [], show: true },
+    { day: dayNameMap["f"], sections: [], show: true },
+    { day: dayNameMap["sa"], sections: [], show: true },
+  ];
 
-  const showSaturday = saturday.length !== 0 || showFullView;
+  sections.forEach((section) => {
+    days.forEach((column) => {
+      const { day, sections } = column;
+      const d = day.short;
+      if (section.days.toLowerCase().includes(d)) sections.push(section);
 
-  const days: DayColumn[] = [
-    { day: dayNameMap["m"], sections: monday, show: true },
-    { day: dayNameMap["tu"], sections: tuesday, show: true },
-    { day: dayNameMap["w"], sections: wednesday, show: true },
-    { day: dayNameMap["th"], sections: thursday, show: true },
-    { day: dayNameMap["f"], sections: friday, show: true },
-    { day: dayNameMap["sa"], sections: saturday, show: showSaturday },
-  ].filter(({ show }) => show);
+      // most student don't have saturday classes so we only want
+      // to show saturday if the calendar is expanded (showFullView)
+      // or if they do have a saturday class (sections.length !== 0)
+      if (d === "sa") column.show = showFullView || sections.length !== 0;
+    });
+  });
+
+  days = days
+    .filter(({ show }) => show)
+    .map((column) => ({
+      ...column,
+      sections: [...column.sections].sort((a, b) => {
+        if (a.time_start - b.time_start > 0) return 1;
+        else if (a.time_start - b.time_start < 0) return -1;
+
+        return b.time_end - a.time_end;
+      }),
+    }));
 
   const block = 60; // each block is 60 minutes
-
   const endTime = showFullView ? twenty_four_hours : endTimeOffset;
   const startTime = showFullView ? 0 : Math.min(startTimeOffset, endTime);
 
@@ -117,10 +108,7 @@ export function WeeklyPreview({}: WeeklyPreviewProps) {
 
   return (
     <>
-      <div
-        className="relative flex gap-[1px] bg-slate-100 rounded-md overflow-hidden large border border-slate-100"
-        id="weekly-schedule"
-      >
+      <div className="relative flex gap-[1px] bg-slate-100 rounded-md overflow-hidden large border border-slate-100">
         <div className="flex flex-col">
           <button
             type="button"
@@ -177,7 +165,7 @@ export function WeeklyPreview({}: WeeklyPreviewProps) {
       <OpenSesame />
     </>
   );
-}
+};
 
 export const selectedSectionAtom = atom<ClassSectionWithState | null>(null);
 
@@ -207,42 +195,61 @@ const TimeItem = ({ data, startOffset }: TimeItemProps) => {
   const textColor = text_color[color];
   const iconColor = icon_text_color[color];
   const iconBgColor = icon_bg_color[color];
+  const ringHighlight = ring_highlight[color];
 
   // dynamic values to be used in styles:
   const height = time_end - time_start;
   const posY = time_start - startOffset;
-  const icon = createElement(section_type_icons[section_type], { size: 16 });
+  const icon = createElement(section_type_icons[section_type], {
+    className: "w-4 h-4 sm:w-6 sm:h-6",
+  });
 
   return (
     <button
       type="button"
       className={clsx(
-        "absolute rounded p-1 sm:p-2 mix-blend-multiply w-full text-sm",
-        bgColor,
-        textColor
+        "group absolute flex rounded overflow-hidden w-full outline-none appearance-none",
+        "ring-0 focus:ring-2 hover:ring-2 focus:z-10 hover:z-10 ",
+        ringHighlight
       )}
       style={{ height, top: posY }}
       onClick={choose}
     >
-      <div className="w-full h-full overflow-hidden flex flex-col gap-3 sm:gap-2">
-        <span className="flex gap-2 flex-col sm:flex-row items-center flex-wrapzz text-smz font-semibold w-min h-min">
-          <span
-            className={clsx(
-              "rounded p-1 grid place-items-center",
-              iconBgColor,
-              iconColor
-            )}
-          >
-            {icon}
+      <div
+        className={clsx(
+          "w-full h-full p-1 sm:p-2 text-xs overflow-hidden",
+          bgColor,
+          textColor
+        )}
+      >
+        <div className="w-full h-full overflow-hidden flex gap-3 sm:gap-2">
+          <span className="flex gap-2 flex-col sm:flex-row items-center font-semibold w-min h-min">
+            <span
+              className={clsx(
+                "rounded h-6 w-6 sm:h-10  sm:w-10 grid place-items-center",
+                iconBgColor,
+                iconColor
+              )}
+            >
+              {icon}
+            </span>
+            <div className="flex flex-col gap-3 sm:gap-0">
+              <span className="text-left whitespace-nowrap [writing-mode:vertical-lr] sm:[writing-mode:horizontal-tb] font-bold">
+                {dept_abbr} {course_number.toLowerCase()}
+              </span>
+              <span className="text-left whitespace-nowrap [writing-mode:vertical-lr] sm:[writing-mode:horizontal-tb] font-mono lowercase">
+                {class_number ? class_number : section_number}
+              </span>
+            </div>
           </span>
-          <span className="whitespace-nowrap [writing-mode:vertical-lr] sm:[writing-mode:horizontal-tb] ">
-            {dept_abbr} {course_number.toLowerCase()}
-          </span>
-          <span className="text-basezz whitespace-nowrap [writing-mode:vertical-lr] sm:[writing-mode:horizontal-tb] font-monozz font-bold lowercase">
-            ({class_number ? class_number : section_number})
-          </span>
-        </span>
+        </div>
       </div>
+      <span
+        className={clsx(
+          "min-w-[1rem] h-full mix-blend-multiply group-hover:bg-opacity-50 group-focus:bg-opacity-50",
+          bgColor
+        )}
+      ></span>
     </button>
   );
 };
@@ -282,11 +289,3 @@ export const OpenSesame = () => {
     </Portal>
   );
 };
-
-function roundToNearestHour(n: number) {
-  return roundToNearestMultipleOf(60, n);
-}
-
-function hourOnly(time: number) {
-  return formatTime(time).replace(":00", "");
-}

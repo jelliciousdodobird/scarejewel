@@ -16,8 +16,9 @@ import {
   useRef,
   useState,
 } from "react";
-import { ClassDay } from "../../database/types";
+import { ClassDay, isClassDays } from "../../database/types";
 import { ClassSectionWithState } from "../../state/course-cart";
+import { dayNameMap } from "../../utils/types";
 import { formatTime } from "../../utils/util";
 import {
   bg_color_base,
@@ -31,7 +32,6 @@ import {
   getDays,
   get_rmp_URL,
   section_type_icons,
-  shortToFullDayMap,
 } from "./ClassSectionItem.helper";
 import { day_bg_color, day_text_color } from "./ClassSectionItem.variants";
 
@@ -429,18 +429,15 @@ const Comment = ({
 };
 
 export const DayTag = ({ day }: { day: ClassDay | string }) => {
-  // if day is an empty string, we'll use sunday's colors
-  // and force the text to be something else
-  const empty = day === "";
-  const key = empty ? "s" : (day as ClassDay);
-  const text = empty ? "Async" : shortToFullDayMap[key];
+  const key = isClassDays(day) ? day : "na";
+  const text = dayNameMap[key].medium;
   const textColor = day_text_color[key];
   const bgColor = day_bg_color[key];
 
   return (
     <span
       className={clsx(
-        "relative grid place-items-center rounded-full px-4 py-1  capitalize text-sm",
+        "relative grid place-items-center rounded-full px-4 py-1 capitalize text-sm",
         // "sm:px-[0.625rem] sm:py-[0.125rem] sm:rounded",
         bgColor,
         textColor
@@ -476,7 +473,10 @@ const InstructorLink = ({
 };
 
 const TimeRange = ({ start, end }: { start: number; end: number }) => {
-  if (start === end) return <span className="flex gap-2">TBA</span>;
+  if (start === 0 && start === end)
+    return <span className="flex gap-2 font-bold">TBA</span>;
+  if (start === -1 && start === end)
+    return <span className="flex gap-2 font-bold">{"N/A"}</span>;
 
   const startTime = formatTime(start);
   const startTimePre = startTime.replace(/(am|pm)/gi, "");

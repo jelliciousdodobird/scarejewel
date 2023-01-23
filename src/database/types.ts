@@ -7,7 +7,17 @@ export const validSectionTypes = [
   "act",
   "add",
 ] as const;
-export const validClassDays = ["s", "m", "tu", "w", "th", "f", "sa"] as const;
+export const validClassDays = [
+  "su",
+  "m",
+  "tu",
+  "w",
+  "th",
+  "f",
+  "sa",
+  "na",
+  "tba",
+] as const;
 export const validSectionKeys = [
   "section_number",
   "class_number",
