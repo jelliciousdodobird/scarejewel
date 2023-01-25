@@ -1,3 +1,4 @@
+const colors = require("tailwindcss/colors");
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: "class",
@@ -12,6 +13,9 @@ module.exports = {
       mono: ["var(--font-fira_code)"], // overriding mono
     },
     extend: {
+      colors: {
+        primary: colors.indigo,
+      },
       fontFamily: {
         base: ["var(--font-inter)"],
       },
@@ -21,20 +25,11 @@ module.exports = {
           "20%, 70%": { opacity: 1 },
           "100%": { opacity: 0 },
         },
-        "rotate-gradient-glow": {
-          from: {
-            transform: "scale(3) rotateZ(0deg)",
-          },
-          to: {
-            transform: "scale(3) rotateZ(360deg)",
-          },
-        },
       },
       animation: {
         "ping-slow": "ping 3s cubic-bezier(0, 0, 0.2, 1) infinite",
         "fade-in-out":
           "fade-in-out 0.5s cubic-bezier(.13,.74,.84,.43) 1 forwards",
-        "rotate-gradient-glow": "rotate-gradient-glow 2000ms linear infinite",
       },
     },
   },

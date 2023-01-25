@@ -44,6 +44,7 @@ import { SelectedSnapshot } from "../../components/SelectedSnapshot/SelectedSnap
 import { SetStateAction } from "jotai/vanilla";
 import { CourseItemsSkeleton } from "./HomePage.skeleton";
 import { HeroSection } from "../../components/HeroSection/HeroSection";
+import { Instructions } from "../../components/Instructions/Instructions";
 
 export type HomePageProps = {
   terms: Term[];
@@ -53,6 +54,7 @@ export default function HomePage({ terms }: HomePageProps) {
   return (
     <div className="relative flex flex-col gap-8 bg-gradient-to-bzz from-whitezz to-slate-100zz min-h-full py-8">
       <HeroSection />
+      <Instructions />
       <SelectedSnapshot />
       <CourseListPanel terms={terms} />
       <WeeklySidebar />

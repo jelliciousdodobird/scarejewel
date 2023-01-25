@@ -280,7 +280,7 @@ const HelpMessage = ({
         ))}
       </div>
       <span className="text-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 font-extrabold text-4xl text-slate-400">
-        Get started by picking a
+        To pick a course, first select a
         <button
           type="button"
           className={clsx(

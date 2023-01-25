@@ -3,6 +3,7 @@ import { ThemeProviders } from "../components/ThemeProviders/ThemeProviders";
 import { Fira_Code, Inter } from "@next/font/google";
 import { Navbar } from "../components/Navbar/Navbar";
 import ReactQueryProvider from "../components/ReactQueryProvider/ReactQueryProvider";
+import { Footer } from "../components/Footer/Footer";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const firacode = Fira_Code({
@@ -31,6 +32,9 @@ export default function RootLayout({ children }: RootLayoutProps) {
               <Navbar />
             </header>
             <main className="isolate -z-10 flex-1">{children}</main>
+            <footer className="isolate -z-20">
+              <Footer />
+            </footer>
           </ReactQueryProvider>
         </ThemeProviders>
       </body>

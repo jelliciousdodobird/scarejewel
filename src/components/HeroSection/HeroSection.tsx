@@ -4,15 +4,15 @@ import { PrettyColor } from "../../utils/colors";
 
 export const HeroSection = () => {
   return (
-    <div className="overflow-hiddenzz relative w-full pack-content bg-indigo-50zz rounded-xlzz">
-      <div className="overflow-hidden isolatezz flex gap-8zz relative group flex-col-reverse sm:flex-col-reverse md:flex-row bg-gradient-to-t md:bg-gradient-to-r from-white to-indigo-50 rounded-3xl">
-        <div className="z-10 isolate relative max-w-[550px]zz w-full backdrop-blur-xlzz p-4 md:p-8 md:pl-0 flex flex-col gap-6 borderzz border-black/5zz rounded-2xl [backdrop-filter:grayscale(100%)_hue-rotate(120deg)]zz">
+    <div className="w-full pack-content">
+      <div className="overflow-hidden flex relative group flex-col-reverse sm:flex-col-reverse md:flex-row bg-gradient-to-t md:bg-gradient-to-r from-transparent to-indigo-50 rounded-3xl">
+        <div className="z-10 isolate relative w-full p-4 md:p-8 md:pl-0 flex flex-col gap-6 rounded-2xl">
           <h1 className="w-full font-extrabold text-6xl">{"Yotëi"}</h1>
           <p className="flex gap-4 items-center">
             <span className="font-bold text-2xl">{"yo·tei"}</span>
             <span className="font-light text-2xl">{"/yoh teh/"}</span>
           </p>
-          <div className="grid grid-cols-[5rem_1fr] gap-8 ring-1zz ring-slate-100 text-xl items-centerzz max-w-[550px]zz">
+          <div className="grid grid-cols-[5rem_1fr] gap-8 text-xl">
             <span className="grid place-items-center bg-slate-200 text-slate-500 h-8 px-2 rounded-lg font-semibold text-lg italic">
               origin
             </span>
@@ -49,7 +49,7 @@ export const HeroSection = () => {
                   {"3   "}
                 </span>
                 <span className="text-indigo-700zz font-semibold">
-                  {"a webapp to help CSULB students arrange their schedules: "}
+                  {"a web app to help CSULB students arrange their schedules: "}
                 </span>
                 <span className="text-neutral-700zz italic font-light">
                   {"the perfect plan for your next semester."}
@@ -61,7 +61,7 @@ export const HeroSection = () => {
         <div className="overflow-hidden z-0 relative w-full flex-grow min-h-[500px]">
           <div
             className={clsx(
-              "absolute bottom-[-100px] zztop-[-400px] left-[200px] [perspective:5000px]",
+              "absolute bottom-[-100px] left-[200px] [perspective:5000px]",
               "grid place-items-center [&>*]:row-span-full [&>*]:col-span-full", // used to stack all child elements on top of each other
               "[&>*]:transition-[transform] [&>*]:duration-300"
             )}
