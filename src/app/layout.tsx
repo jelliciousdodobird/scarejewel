@@ -17,7 +17,6 @@ type RootLayoutProps = {
   children: React.ReactNode;
 };
 
-// style={{ position: "-webkit-sticky" }}
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html
@@ -25,7 +24,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
       className={customFonts}
       suppressHydrationWarning // see https://github.com/pacocoursey/next-themes/issues/152#issuecomment-1364280564 for details
     >
-      <body className="bg-white dark:bg-black isolate">
+      <body className="isolate bg-white dark:bg-slate-800">
         <ThemeProviders>
           <ReactQueryProvider>
             <header className="sticky top-0 flex flex-col w-full">

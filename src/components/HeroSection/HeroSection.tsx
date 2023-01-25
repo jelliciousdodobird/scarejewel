@@ -1,6 +1,6 @@
-import { IconChevronDown } from "@tabler/icons";
+import { IconArrowBadgeRight, IconChevronDown } from "@tabler/icons";
 import clsx from "clsx";
-import { PrettyColor } from "../../utils/colors";
+import Link from "next/link";
 
 export const HeroSection = () => {
   return (
@@ -122,12 +122,35 @@ export const HeroSection = () => {
               </span>
             </div>
           </div>
-          <button
-            type="button"
-            className="absolute bottom-12 right-12 rounded-full py-2 px-5 h-min w-min whitespace-nowrap ring-2 ring-indigo-50 text-lg font-semibold text-opacity-100 bg-indigo-500 text-white"
-          >
-            Get Started
-          </button>
+          {/* 
+              Instead of just settling for animating the scale of the button cus it blurs the borders, 
+              we use padding to animate the size of the button. 
+              However since we want the button to scale from the center (so the text of the button doesn't shift), 
+              we wrap the button with a flex container that can center the button based on its box dimension.
+              This means we have to use height and width on that flex container to position the button (after the absolute positioning).
+              All this complexity just cus of the blurriness caused from transform:scale().
+          */}
+          <div className="absolute bottom-0 right-0 h-44 w-48 md:w-64 md:h-40 flex justify-center items-center pointer-events-none [&>*]:pointer-events-auto">
+            <Link
+              href="/plan"
+              className={clsx(
+                "relative group/hero-btn h-min w-min font-semibold text-lg text-opacity-100 text-white",
+                "transition-[padding] duration-200",
+                "      py-2       pl-5       pr-2", // note that difference between the normal and hover padding values
+                "hover:py-3 hover:pl-8 hover:pr-5"
+              )}
+            >
+              <span
+                className={clsx(
+                  "absolute top-0 left-0 w-full h-full rounded-full ring-[2px] ring-indigo-50",
+                  "bg-gradient-to-r from-emerald-500 via-primary-500 to-rose-500 animate-gradient-x group-hover/hero-btn:animate-gradient-x-fast" // gradient animation
+                )}
+              ></span>
+              <span className="isolate flex items-center gap-1 whitespace-nowrap uppercasezz">
+                Start Plan <IconArrowBadgeRight />
+              </span>
+            </Link>
+          </div>
         </div>
       </div>
     </div>

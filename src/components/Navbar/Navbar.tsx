@@ -4,29 +4,34 @@ import { Logo } from "../Logo/Logo";
 import { ThemeSwitch } from "../ThemeSwitch/ThemeSwitch";
 
 const links = [
-  { label: "home", path: "/", color: "#555468" },
-  { label: "schedule", path: "/schedule", color: "#555468" },
+  { label: "plan", path: "/plan" },
+  { label: "week", path: "/week" },
+  { label: "about", path: "/about" },
 ];
 
 export const Navbar = () => {
   return (
-    <nav
+    <div
       className={clsx(
-        "bg-white dark:bg-black backdrop-blur-mdzz",
+        "bg-white/80 dark:bg-slate-900/80 backdrop-blur-md",
         "border-b border-black/[7%]"
       )}
     >
-      <div className="h-16 pack-content flex justify-between items-center w-full">
+      <div className="flex justify-between items-center h-16 pack-content">
         <ThemeSwitch />
-        <Logo />
-        <ul className="flex items-center gap-4 h-full">
-          {links.map((link) => (
-            <li key={link.label} className="capitalize font">
-              <Link href={link.path}>{link.label}</Link>
-            </li>
-          ))}
-        </ul>
+        <Link href="/">
+          <Logo />
+        </Link>
+        <nav className="">
+          <ul className="flex items-center gap-4 h-full">
+            {links.map((link) => (
+              <li key={link.label} className="capitalize font">
+                <Link href={link.path}>{link.label}</Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
       </div>
-    </nav>
+    </div>
   );
 };

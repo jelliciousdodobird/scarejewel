@@ -4,7 +4,7 @@ export const Instructions = () => {
   return (
     <div className="w-full pack-content">
       <div className="grid grid-cols-[repeat(auto-fill,minmax(min(320px,100%),1fr))] gap-8">
-        <div className="w-full min-h-[20rem] rounded-3xl p-6 flex flex-col gap-6 zzbg-emerald-100 text-emerald-900 bg-gradient-to-tl from-transparent to-emerald-100">
+        <div className="w-full min-h-[20rem] rounded-3xl p-6 flex flex-col gap-6 bg-emerald-100 text-emerald-900">
           <span className="flex gap-6 ">
             <span className="min-w-[5rem] min-h-[5rem] rounded-3xl font-extrabold text-4xl bg-emerald-300 text-white grid place-items-center">
               1
@@ -32,7 +32,7 @@ export const Instructions = () => {
           </span>
         </div>
 
-        <div className="w-full min-h-[20rem] rounded-3xl p-6 flex flex-col gap-6 zzbg-yellow-100 text-yellow-900 bg-gradient-to-tl from-transparent to-yellow-100">
+        <div className="w-full min-h-[20rem] rounded-3xl p-6 flex flex-col gap-6 bg-yellow-100 text-yellow-900">
           <span className="flex gap-6 ">
             <span className="min-w-[5rem] min-h-[5rem] rounded-3xl font-extrabold text-4xl bg-yellow-300 text-white grid place-items-center">
               2
@@ -60,7 +60,7 @@ export const Instructions = () => {
           </span>
         </div>
 
-        <div className="w-full min-h-[20rem] rounded-3xl p-6 flex flex-col gap-6 zzbg-rose-100 text-rose-900 bg-gradient-to-tl from-transparent to-rose-100">
+        <div className="w-full min-h-[20rem] rounded-3xl p-6 flex flex-col gap-6 bg-rose-100 text-rose-900">
           <span className="flex gap-6 ">
             <span className="min-w-[5rem] min-h-[5rem] rounded-3xl font-extrabold text-4xl bg-rose-300 text-white grid place-items-center ">
               3

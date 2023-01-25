@@ -25,11 +25,47 @@ module.exports = {
           "20%, 70%": { opacity: 1 },
           "100%": { opacity: 0 },
         },
+        "gradient-y": {
+          "0%, 100%": {
+            "background-size": "400% 400%",
+            "background-position": "center top",
+          },
+          "50%": {
+            "background-size": "200% 200%",
+            "background-position": "center center",
+          },
+        },
+        "gradient-x": {
+          "0%, 100%": {
+            "background-size": "200% 200%",
+            "background-position": "left center",
+          },
+          "50%": {
+            "background-size": "200% 200%",
+            "background-position": "right center",
+          },
+        },
+        "gradient-xy": {
+          "0%, 100%": {
+            "background-size": "400% 400%",
+            "background-position": "left center",
+          },
+          "50%": {
+            "background-size": "200% 200%",
+            "background-position": "right center",
+          },
+        },
       },
       animation: {
         "ping-slow": "ping 3s cubic-bezier(0, 0, 0.2, 1) infinite",
         "fade-in-out":
           "fade-in-out 0.5s cubic-bezier(.13,.74,.84,.43) 1 forwards",
+        "gradient-x": "gradient-x 5s ease infinite",
+        "gradient-y": "gradient-y 5s ease infinite",
+        "gradient-xy": "gradient-xy 5s ease infinite",
+        "gradient-x-fast": "gradient-x 2s ease infinite",
+        "gradient-y-fast": "gradient-y 2s ease infinite",
+        "gradient-xy-fast": "gradient-xy 2s ease infinite",
       },
     },
   },
