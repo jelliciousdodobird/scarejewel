@@ -7,6 +7,7 @@ import {
   IconSquareRoundedPlus,
 } from "@tabler/icons";
 import clsx from "clsx";
+import { useAtom, useSetAtom } from "jotai";
 import Link from "next/link";
 import {
   createElement,

@@ -73,3 +73,23 @@ export const selectedSectionsAtom: Atom<ClassSectionWithState[]> = atom(
 );
 
 export const weeklyFullViewAtom = atomWithStorage("weeklyShowFullView", false);
+
+export const selectedSectionsSnapshotAtom = atom<ClassSectionWithState[]>([]);
+
+export const selectedSectionsHasChanged = atom((get) => {
+  const newState = get(selectedSectionsAtom);
+  const oldState = get(selectedSectionsSnapshotAtom);
+
+  if (newState.length !== oldState.length) return true;
+
+  const newStateIds = newState
+    .map(({ uid }) => uid)
+    .sort()
+    .join();
+  const oldStateIds = oldState
+    .map(({ uid }) => uid)
+    .sort()
+    .join();
+
+  return newStateIds !== oldStateIds;
+});

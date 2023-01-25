@@ -3,14 +3,16 @@
 import { Transition } from "@headlessui/react";
 import { IconArrowsMaximize, IconArrowsMinimize } from "@tabler/icons";
 import clsx from "clsx";
-import { atom, useAtom, useSetAtom } from "jotai";
-import { createElement, Fragment, useState } from "react";
+import { atom, useAtom, useAtomValue, useSetAtom } from "jotai";
+import { createElement, Fragment, useEffect, useState } from "react";
 import { useHasMounted } from "../../hooks/useHasMounted";
 import { useLastValidValue } from "../../hooks/useLastValidValue";
 import {
   ClassSectionWithState,
+  selectedSectionsSnapshotAtom,
   selectedSectionsAtom,
   weeklyFullViewAtom,
+  selectedSectionsHasChanged,
 } from "../../state/course-cart";
 import { DayName, dayNameMap } from "../../utils/types";
 import { Backdrop } from "../Backdrop/Backdrop";
@@ -21,6 +23,7 @@ import {
   text_color,
 } from "../CourseSelector/CourseSelector.variants";
 import { Portal } from "../Portal/Portal";
+import { SelectedSnapshot } from "../SelectedSnapshot/SelectedSnapshot";
 import { hourOnly, roundToNearestHour } from "./WeeklyPreview.helpers";
 import {
   icon_bg_color,
@@ -43,7 +46,13 @@ export const WeeklyPreview = ({}: WeeklyPreviewProps) => {
   const mounted = useHasMounted();
 
   const [showFullView, setShowFullView] = useAtom(weeklyFullViewAtom);
-  const [sections, setSections] = useAtom(selectedSectionsAtom);
+  const sections = useAtomValue(selectedSectionsAtom);
+  // const setSelectedSnapshot = useSetAtom(selectedSectionsSnapshotAtom);
+
+  // useEffect(() => {
+  //   // take a snapshot of the current selected sections
+  //   setSelectedSnapshot(sections);
+  // }, []);
 
   if (!mounted) return null;
   if (sections.length === 0) return null;
@@ -108,6 +117,7 @@ export const WeeklyPreview = ({}: WeeklyPreviewProps) => {
 
   return (
     <>
+      <SelectedSnapshot />
       <div className="relative flex gap-[1px] bg-slate-100 rounded-md overflow-hidden large border border-slate-100">
         <div className="flex flex-col">
           <button

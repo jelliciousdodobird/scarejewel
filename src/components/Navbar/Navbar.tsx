@@ -1,4 +1,7 @@
+import clsx from "clsx";
 import Link from "next/link";
+import { Logo } from "../Logo/Logo";
+import { ThemeSwitch } from "../ThemeSwitch/ThemeSwitch";
 
 const links = [
   { label: "home", path: "/", color: "#555468" },
@@ -7,14 +10,23 @@ const links = [
 
 export const Navbar = () => {
   return (
-    <nav className="w-full h-16 bg-white/50 dark:bg-black/50 backdrop-blur-md">
-      <ul className="pack-content flex items-center gap-4 h-full">
-        {links.map((link) => (
-          <li key={link.label} className="uppercase font-semibold">
-            <Link href={link.path}>{link.label}</Link>
-          </li>
-        ))}
-      </ul>
+    <nav
+      className={clsx(
+        "bg-white dark:bg-black backdrop-blur-mdzz",
+        "border-b border-black/[7%]"
+      )}
+    >
+      <div className="h-16 pack-content flex justify-between items-center w-full">
+        <ThemeSwitch />
+        <Logo />
+        <ul className="flex items-center gap-4 h-full">
+          {links.map((link) => (
+            <li key={link.label} className="capitalize font">
+              <Link href={link.path}>{link.label}</Link>
+            </li>
+          ))}
+        </ul>
+      </div>
     </nav>
   );
 };

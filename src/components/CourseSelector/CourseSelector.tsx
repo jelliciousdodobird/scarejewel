@@ -14,9 +14,12 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { PrimitiveAtom, useAtom, useSetAtom } from "jotai";
 import {
+  ForwardedRef,
+  forwardRef,
   Fragment,
   memo,
   ReactNode,
+  RefObject,
   useEffect,
   useMemo,
   useRef,
@@ -37,8 +40,9 @@ import {
   bg_color_highlight,
   text_color_active,
   bg_color_hover,
-  glow,
+  // glow,
   bg_color_highlight_hover,
+  helper_hover_text,
 } from "./CourseSelector.variants";
 import { fetchDistinctCourseIds, fetchDistinctDepts } from "../../database/api";
 import clsx from "clsx";
@@ -66,6 +70,12 @@ export const CourseSelector = memo(function CourseSelector({
   courseItemAtom,
   index,
 }: CourseSelectorProps) {
+  const deptRef = useRef<HTMLInputElement>(null!);
+  const courseCodeRef = useRef<HTMLInputElement>(null!);
+
+  const focusDeptInput = () => deptRef?.current?.focus();
+  const focusCourseCodeInput = () => courseCodeRef?.current?.focus();
+
   const [courseItem, setCourseItem] = useAtom(courseItemAtom);
 
   const { data: distinctDepts } = useQuery({
@@ -149,6 +159,7 @@ export const CourseSelector = memo(function CourseSelector({
   const textColor = text_color[color];
   const ringColor = ring_color[color];
   const highlightBgColor = bg_color_highlight_hover[color];
+  // const helperTextHover = helper_hover_text[color];
 
   // repeated styles:
   const ringStyle = `${ringColor} ring-0 focus-visible:ring-2 ring-inset appearance-none outline-none`;
@@ -157,21 +168,22 @@ export const CourseSelector = memo(function CourseSelector({
     <Disclosure
       defaultOpen
       as="li"
-      className="relative flex flex-col gap-8"
+      className="relative flex flex-col gap-4"
       style={{ zIndex: 20 - index }}
     >
       {({ open }) => (
         <>
           <div
             className={clsx(
-              "sticky z-10 top-[calc(4rem)] flex gap-0 w-full rounded-lg p-2 text-sm font-medium",
+              "sticky z-10 top-[calc(4rem+0.5rem)] flex gap-0 w-full rounded-3xl rounded-trzz p-2 text-sm font-medium",
+
               textColor,
               bgc
             )}
           >
             <Disclosure.Button
               className={clsx(
-                "grid place-items-center rounded-md px-1 mr-1",
+                "grid place-items-center rounded-full px-1 mr-1",
                 ringStyle,
                 highlightBgColor
               )}
@@ -185,6 +197,7 @@ export const CourseSelector = memo(function CourseSelector({
               />
             </Disclosure.Button>
             <AutoCompleteInput
+              ref={deptRef}
               options={deptOptions}
               selectedOption={courseItem.selectedDept}
               onChange={updateSelectedDept}
@@ -192,6 +205,7 @@ export const CourseSelector = memo(function CourseSelector({
               color={color}
             />
             <AutoCompleteInput
+              ref={courseCodeRef}
               options={courseOptions}
               selectedOption={courseItem.selectedCourse}
               onChange={updateSelectedCourse}
@@ -205,7 +219,7 @@ export const CourseSelector = memo(function CourseSelector({
                 ringStyle
               )}
             >
-              {title || "Pick a department THEN a course code"}
+              {title}
             </Disclosure.Button>
 
             <ActionDropdown
@@ -214,12 +228,22 @@ export const CourseSelector = memo(function CourseSelector({
             />
           </div>
 
-          <Disclosure.Panel className="relative z-0 px-2">
-            <SectionSelector
-              semester={semester}
-              year={year}
-              courseItemAtom={courseItemAtom}
-            />
+          <Disclosure.Panel className="relative z-0 px-4">
+            {courseItem.selectedDept.value !== "" &&
+            courseItem.selectedCourse.value !== "" ? (
+              <SectionSelector
+                semester={semester}
+                year={year}
+                courseItemAtom={courseItemAtom}
+              />
+            ) : (
+              <HelpMessage
+                deptInputRef={deptRef}
+                courseCodeInputRef={courseCodeRef}
+                color={color}
+                disableCourseCode={courseItem.selectedDept.value === ""}
+              />
+            )}
           </Disclosure.Panel>
         </>
       )}
@@ -227,6 +251,63 @@ export const CourseSelector = memo(function CourseSelector({
   );
 },
 arePropsEqual);
+
+const HelpMessage = ({
+  disableCourseCode,
+  color,
+  deptInputRef,
+  courseCodeInputRef,
+}: {
+  disableCourseCode: boolean;
+  color: PrettyColor;
+  deptInputRef: RefObject<HTMLInputElement>;
+  courseCodeInputRef: RefObject<HTMLInputElement>;
+}) => {
+  const helperTextHover = helper_hover_text[color];
+  const focusDeptInput = () => deptInputRef?.current?.focus();
+  const focusCourseCodeInput = () => courseCodeInputRef?.current?.focus();
+
+  return (
+    <div className="relative">
+      <div
+        className={clsx(
+          "text-xl w-full rounded-xl flex gap-4",
+          " [&>*]:hidden [&>*:first-child]:flex sm:[&>*:not(:last-child)]:flex md:[&>*]:flex"
+        )}
+      >
+        {[...Array(3).keys()].map((i) => (
+          <div key={i} className="h-80 w-full bg-slate-100 rounded-2xl"></div>
+        ))}
+      </div>
+      <span className="text-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 font-extrabold text-4xl text-slate-400">
+        Get started by picking a
+        <button
+          type="button"
+          className={clsx(
+            "inline whitespace-pre text-slate-600",
+            helperTextHover
+          )}
+          onClick={focusDeptInput}
+        >
+          {" department "}
+        </button>
+        then a
+        <button
+          type="button"
+          className={clsx(
+            "inline whitespace-pre text-slate-600 disabled:cursor-not-allowed",
+            helperTextHover
+          )}
+          onClick={focusCourseCodeInput}
+          disabled={disableCourseCode}
+        >
+          {" course code"}
+        </button>
+        .
+      </span>
+    </div>
+  );
+};
 
 const ActionDropdown = ({
   buttonStyle = "",
@@ -256,7 +337,7 @@ const ActionDropdown = ({
     <Popover as="div" className="relative flex flex-col">
       <Popover.Button
         className={clsx(
-          "grid place-items-center h-full w-full rounded-md ",
+          "grid place-items-center h-full w-full rounded-full",
           buttonStyle
         )}
       >
@@ -300,7 +381,7 @@ const fuzzy = (str: string) => str.toLowerCase().replace(/[^a-z0-9]/g, "");
 const fuzzyCompare = (searchTerm: string, comparedTerm: string) =>
   fuzzy(comparedTerm).includes(fuzzy(searchTerm));
 
-interface ComboerProps {
+interface AutoCompleteProps {
   options: ComboOption[];
   selectedOption: ComboOption;
   onChange: (opt: ComboOption) => void;
@@ -309,134 +390,146 @@ interface ComboerProps {
   color?: PrettyColor;
 }
 
-export const AutoCompleteInput = ({
-  options,
-  selectedOption,
-  onChange,
-  disabled = false,
-  placeholder = "",
-  color = "sky",
-}: ComboerProps) => {
-  const inputRef = useRef<HTMLInputElement>(null!);
-  const buttonRef = useRef<HTMLButtonElement>(null!);
+export const AutoCompleteInput = forwardRef<
+  HTMLInputElement,
+  AutoCompleteProps
+>(
+  (
+    {
+      options,
+      selectedOption,
+      onChange,
+      disabled = false,
+      placeholder = "",
+      color = "sky",
+    },
+    inputRef
+  ) => {
+    // const inputRef = useRef<HTMLInputElement>(null!);
+    const buttonRef = useRef<HTMLButtonElement>(null!);
 
-  const [query, setQuery] = useState("");
-  const resetQuery = () => {
-    setQuery("");
-    inputRef?.current?.focus();
-  };
-  const clickButton = (opened: boolean) =>
-    !opened && buttonRef.current?.click();
+    const [query, setQuery] = useState("");
+    const resetQuery = () => {
+      setQuery("");
 
-  const filteredOptions =
-    query === ""
-      ? options
-      : options.filter(
-          (opt) =>
-            fuzzyCompare(query, opt.value) || fuzzyCompare(query, opt.title)
-        );
+      if (inputRef != null && typeof inputRef !== "function")
+        inputRef?.current?.focus();
+    };
+    const clickButton = (opened: boolean) =>
+      !opened && buttonRef.current?.click();
 
-  // style tokens:
-  const highlightBgColor = bg_color_highlight[color];
-  const highlightTextColor = text_color[color];
-  const hoverBgColor = bg_color_highlight_hover[color];
-  const placeholderTextColor = placeholder_text_color[color];
+    const filteredOptions =
+      query === ""
+        ? options
+        : options.filter(
+            (opt) =>
+              fuzzyCompare(query, opt.value) || fuzzyCompare(query, opt.title)
+          );
 
-  return (
-    <Combobox
-      disabled={disabled}
-      value={selectedOption}
-      onChange={onChange}
-      by="id"
-    >
-      {({ open }) => (
-        <>
-          <div className="relative">
-            <Combobox.Input
-              ref={inputRef}
-              autoComplete="off"
-              placeholder={placeholder}
-              className={clsx(
-                "relative z-50 flex justify-between px-3 h-8 w-full max-w-[62px] min-w-[62px] rounded-md text-base font-mono font-semibold caret-black disabled:cursor-not-allowed ",
-                hoverBgColor,
-                `${placeholderTextColor} placeholder:text-base placeholder:uppercase appearance-none outline-none focus:outline-none`,
-                open ? highlightBgColor : "bg-transparent"
-              )}
-              displayValue={(dept: ComboOption) => (open ? query : dept.value)}
-              onChange={(e) => setQuery(e.target.value)}
-              onFocus={() => clickButton(open)}
-              required
-            />
-            {/* 
+    // style tokens:
+    const highlightBgColor = bg_color_highlight[color];
+    const highlightTextColor = text_color[color];
+    const hoverBgColor = bg_color_highlight_hover[color];
+    const placeholderTextColor = placeholder_text_color[color];
+
+    return (
+      <Combobox
+        disabled={disabled}
+        value={selectedOption}
+        onChange={onChange}
+        by="id"
+      >
+        {({ open }) => (
+          <>
+            <div className="relative">
+              <Combobox.Input
+                ref={inputRef}
+                autoComplete="off"
+                placeholder={placeholder}
+                className={clsx(
+                  "relative z-50 flex justify-between px-3 h-8 w-full max-w-[62px] min-w-[62px] rounded-md text-base font-mono font-semibold caret-black disabled:cursor-not-allowed ",
+                  hoverBgColor,
+                  `${placeholderTextColor} placeholder:text-base placeholder:uppercase appearance-none outline-none focus:outline-none`,
+                  open ? highlightBgColor : "bg-transparent"
+                )}
+                displayValue={(dept: ComboOption) =>
+                  open ? query : dept.value
+                }
+                onChange={(e) => setQuery(e.target.value)}
+                onFocus={() => clickButton(open)}
+                required
+              />
+              {/* 
                 Taking advantage of this button in TWO ways:
                 1. as a graphic element to let the user know they must fill in the input field (red dot)
                 2. as a way to force headless-ui to open the options menu when the input is clicked (using refs)
             */}
-            <Combobox.Button
-              className="absolute z-50 flex h-1 w-1 top-[5px] right-[5px] text-red-500 pointer-events-none"
-              ref={buttonRef}
-              disabled
-            >
-              {selectedOption.value === "" && (
-                <>
-                  <span className="absolute rounded-full h-2 w-2 -top-[0.125rem] -left-[0.125rem] animate-ping-slow bg-red-500/75" />
-                  <span className="relative rounded-full h-full w-full bg-red-500" />
-                </>
-              )}
-            </Combobox.Button>
-          </div>
+              <Combobox.Button
+                className="absolute z-50 flex h-1 w-1 top-[5px] right-[5px] text-red-500 pointer-events-none"
+                ref={buttonRef}
+                disabled
+              >
+                {selectedOption.value === "" && (
+                  <>
+                    <span className="absolute rounded-full h-2 w-2 -top-[0.125rem] -left-[0.125rem] animate-ping-slow bg-red-500/75" />
+                    <span className="relative rounded-full h-full w-full bg-red-500" />
+                  </>
+                )}
+              </Combobox.Button>
+            </div>
 
-          <Combobox.Options
-            as="div"
-            className={clsx(
-              "absolute z-40 top-0 left-0 p-2 pr-1 pt-12 bg-white rounded-md  w-full sm:w-min min-w-[18rem] mb-32",
-              "appearance-none outline-none  shadow-lg ring-1 ring-black ring-opacity-5"
-            )}
-          >
-            <ul className="flex flex-col gap-[1px] custom-scrollbar-tiny overflow-y-auto overflow-x-hidden max-h-[calc(5*2.5rem+4px)] pr-3">
-              {filteredOptions.length === 0 && (
-                <li className="w-full">
-                  <button
-                    type="button"
-                    className="w-full flex justify-center items-center gap-4 px-3 py-2 whitespace-nowrap rounded-md bg-rose-50 text-rose-500 font-semibold hover:bg-rose-100 hover:text-rose-600"
-                    onClick={resetQuery}
-                  >
-                    No results. Click to reset.
-                  </button>
-                </li>
+            <Combobox.Options
+              as="div"
+              className={clsx(
+                "absolute z-40 top-0 left-0 p-2 pr-1 pt-12 bg-white rounded-md  w-full sm:w-min min-w-[18rem] mb-32",
+                "appearance-none outline-none  shadow-lg ring-1 ring-black ring-opacity-5"
               )}
-              {filteredOptions.map((option) => (
-                <Combobox.Option key={option.id} value={option} as={Fragment}>
-                  {({ active, selected }) => (
-                    <li
-                      className={clsx(
-                        "flex items-center gap-4 px-3 min-h-[2.5rem] rounded cursor-pointer whitespace-nowrap text-sm",
-                        active || selected
-                          ? highlightBgColor
-                          : "bg-transparent",
-                        active || selected
-                          ? highlightTextColor
-                          : "text-slate-900"
-                      )}
+            >
+              <ul className="flex flex-col gap-[1px] custom-scrollbar-tiny overflow-y-auto overflow-x-hidden max-h-[calc(5*2.5rem+4px)] pr-3">
+                {filteredOptions.length === 0 && (
+                  <li className="w-full">
+                    <button
+                      type="button"
+                      className="w-full flex justify-center items-center gap-4 px-3 py-2 whitespace-nowrap rounded-md bg-rose-50 text-rose-500 font-semibold hover:bg-rose-100 hover:text-rose-600"
+                      onClick={resetQuery}
                     >
-                      <span className="min-w-[2rem] font-mono font-bold">
-                        {option.label}
-                      </span>
-                      <span className="flex-1">
-                        {formatTitle(option.title)}
-                      </span>
-                      {selected && <IconCheck size={20} stroke={3} />}
-                    </li>
-                  )}
-                </Combobox.Option>
-              ))}
-            </ul>
-          </Combobox.Options>
-        </>
-      )}
-    </Combobox>
-  );
-};
+                      No results. Click to reset.
+                    </button>
+                  </li>
+                )}
+                {filteredOptions.map((option) => (
+                  <Combobox.Option key={option.id} value={option} as={Fragment}>
+                    {({ active, selected }) => (
+                      <li
+                        className={clsx(
+                          "flex items-center gap-4 px-3 min-h-[2.5rem] rounded cursor-pointer whitespace-nowrap text-sm",
+                          active || selected
+                            ? highlightBgColor
+                            : "bg-transparent",
+                          active || selected
+                            ? highlightTextColor
+                            : "text-slate-900"
+                        )}
+                      >
+                        <span className="min-w-[2rem] font-mono font-bold">
+                          {option.label}
+                        </span>
+                        <span className="flex-1">
+                          {formatTitle(option.title)}
+                        </span>
+                        {selected && <IconCheck size={20} stroke={3} />}
+                      </li>
+                    )}
+                  </Combobox.Option>
+                ))}
+              </ul>
+            </Combobox.Options>
+          </>
+        )}
+      </Combobox>
+    );
+  }
+);
 
 function arePropsEqual(
   prev: Readonly<CourseSelectorProps>,

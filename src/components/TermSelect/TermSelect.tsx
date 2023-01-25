@@ -25,7 +25,13 @@ export const TermSelect = ({
     <Listbox value={selectedOption} onChange={onChange} by="id">
       {({ open }) => (
         <div className="relative flex flex-col min-w-[12rem] w-full sm:w-auto">
-          <Listbox.Button className="flex justify-between items-center h-10 pl-3 pr-[2px] w-full text-slate-400 hover:bg-slate-50 font-semibold rounded-lg bg-white ring-1 ring-black ring-opacity-5">
+          <Listbox.Button
+            className={clsx(
+              "group grid grid-cols-[1fr_min-content] justify-items-center items-center h-10 w-full text-slate-400 font-semibold rounded-lg ",
+              "bg-white hover:bg-indigo-50 focus:bg-indigo-50 ring-1 ring-slate-200 hover:ring-indigo-200 focus:ring-indigo-200",
+              "appearance-none outline-none"
+            )}
+          >
             <span className="flex gap-2">
               <span className="flex font-extrabold text-slate-900 uppercase">
                 {selectedOption.value.semester}
@@ -35,7 +41,7 @@ export const TermSelect = ({
               </span>
             </span>
 
-            <IconSelector stroke={2} className="" />
+            <IconSelector stroke={2} className="group-hover:text-indigo-500" />
           </Listbox.Button>
 
           <Listbox.Options
@@ -62,7 +68,7 @@ export const TermSelect = ({
                     {({ active, selected }) => (
                       <li
                         className={clsx(
-                          "flex items-center px-4 min-h-[2.5rem] rounded cursor-pointer text-sm",
+                          "flex justify-center items-center px-4 min-h-[2.5rem] rounded cursor-pointer text-sm",
                           selected ? "font-bold" : "font-normal",
                           active || selected
                             ? "bg-indigo-50"

@@ -104,15 +104,15 @@ export const ring_color: PrettyColorMap = {
   violet: "ring-violet-500",
 };
 
-export const glow: PrettyColorMap = {
-  yellow: "ring-yellow-300/60 border-yellow-300",
-  cyan: "ring-cyan-300/60 border-cyan-300",
-  emerald: "ring-emerald-300/60 border-emerald-300",
-  fuchsia: "ring-fuchsia-300/60 border-fuchsia-300",
-  indigo: "ring-indigo-300/60 border-indigo-300",
-  lime: "ring-lime-300/60 border-lime-300",
-  orange: "ring-orange-300/60 border-orange-300",
-  rose: "ring-rose-300/60 border-rose-300",
-  sky: "ring-sky-300/60 border-sky-300",
-  violet: "ring-violet-300/60 border-violet-300",
+export const helper_hover_text: PrettyColorMap = {
+  yellow: "hover:text-yellow-500",
+  cyan: "hover:text-cyan-500",
+  emerald: "hover:text-emerald-500",
+  fuchsia: "hover:text-fuchsia-500",
+  indigo: "hover:text-indigo-500",
+  lime: "hover:text-lime-500",
+  orange: "hover:text-orange-500",
+  rose: "hover:text-rose-500",
+  sky: "hover:text-sky-500",
+  violet: "hover:text-violet-500",
 };

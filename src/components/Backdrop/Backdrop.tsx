@@ -6,6 +6,7 @@ type BackdropProps = {
   children: ReactNode;
   close?: () => void;
   manual?: boolean;
+  className?: string;
 };
 
 export const Backdrop = ({
@@ -13,11 +14,13 @@ export const Backdrop = ({
   open,
   close,
   manual = false,
+  className,
 }: BackdropProps) => {
   return (
     <div className="fixed top-0 left-0 w-full h-full pointer-events-none">
       <div
         className={clsx(
+          className,
           "relative w-full h-full max-h-full overflow-x-hidden",
           "transition-[backdrop-filter_background-color] duration-300",
           open ? "bg-slate-900/20" : "bg-slate-900/0",

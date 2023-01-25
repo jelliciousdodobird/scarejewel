@@ -1,3 +1,4 @@
+import { nanoid } from "nanoid";
 import { Semester } from "../database/types";
 import { PrettyColor, prettyTailwindColors, pretty_colors } from "./colors";
 import { HasId } from "./types";

@@ -83,7 +83,24 @@ export const SectionSelector = ({
 
   if (queryDisabled)
     return (
-      <div className="text-xl">Please pick a department and course code</div>
+      <div className="relative">
+        <div
+          className={clsx(
+            "text-xl bg-slate-100zz w-full rounded-xl flex gap-4",
+            " [&>*]:hidden [&>*:first-child]:flex sm:[&>*:not(:last-child)]:flex md:[&>*]:flex"
+          )}
+        >
+          {[...Array(3).keys()].map((i) => (
+            <div
+              key={i}
+              className="aaaaaa h-80 w-full bg-slate-100 rounded-2xl"
+            ></div>
+          ))}
+        </div>
+        <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex font-extrabold text-4xl text-slate-500">
+          Get started by picking a department and course code.
+        </span>
+      </div>
     );
 
   if (isLoading)
@@ -100,9 +117,7 @@ export const SectionSelector = ({
       {groups.map((group, i) => (
         <Fragment key={group.group_id}>
           {groups.length > 1 && (
-            <h3 className="sticky top-0 font-extrabold text-xl uppercase">
-              Group {i + 1}
-            </h3>
+            <h3 className="font-extrabold text-xl uppercase">Group {i + 1}</h3>
           )}
           <span className="flex gap-4 text-sm rounded-lg p-4 bg-slate-100 text-slate-900">
             <span className="">

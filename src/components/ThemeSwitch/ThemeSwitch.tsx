@@ -8,15 +8,24 @@ import { useHasMounted } from "../../hooks/useHasMounted";
 export const ThemeSwitch = () => {
   const mounted = useHasMounted();
   const { theme, setTheme } = useTheme();
+  const toggleTheme = () => setTheme(theme === "dark" ? "light" : "dark");
 
-  if (!mounted) {
-    return null;
-  }
+  // render a skeleton is not mounted to prevent layout shifts:
+  if (!mounted)
+    return (
+      <button
+        type="button"
+        className="w-16 h-8 rounded-full bg-slate-100 text-xs grid place-items-center text-black"
+      ></button>
+    );
 
   return (
-    <select value={theme} onChange={(e) => setTheme(e.target.value)}>
-      <option value="dark">Dark</option>
-      <option value="light">Light</option>
-    </select>
+    <button
+      type="button"
+      className="w-16 h-8 rounded-full bg-slate-100 text-xs grid place-items-center text-black"
+      onClick={toggleTheme}
+    >
+      {theme}
+    </button>
   );
 };
