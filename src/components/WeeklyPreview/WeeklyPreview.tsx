@@ -181,10 +181,10 @@ export const WeeklyPreview = ({
         >
           <BorderGlow containerRef={containerRef} />
           {/* the time column (for ex: 0:00am to 11:59pm) */}
-          <div className="overflow-hidden flex flex-col gap-[1px] opacity-0zz [border-top-left-radius:inherit] [border-bottom-left-radius:inherit] zzrounded-xl">
+          <div className="overflow-hidden flex flex-col gap-[1px] [border-top-left-radius:inherit] [border-bottom-left-radius:inherit]">
             <button
               type="button"
-              className="grid place-items-center uppercase font-semibold h-full bg-slate-100 text-slate-600 hover:bg-primary-500 hover:text-white"
+              className="grid place-items-center uppercase font-semibold h-full bg-slate-100 text-slate-600 hover:bg-primary-400 hover:text-white"
               onClick={() => setShowFullView((v) => !v)}
             >
               {showFullView ? <IconArrowsMinimize /> : <IconArrowsMaximize />}
@@ -205,10 +205,7 @@ export const WeeklyPreview = ({
           </div>
           {mainView.map((col) => (
             //the days columns:
-            <div
-              key={col.day.long}
-              className="flex flex-col flex-1 gap-[1px] opacity-0zz"
-            >
+            <div key={col.day.long} className="flex flex-col flex-1 gap-[1px]">
               <h2 className="grid place-items-center uppercase font-semibold h-12 bg-slate-50 text-slate-600 ">
                 <span className="hidden sm:block">{col.day.medium}</span>
                 <span className="sm:hidden">{col.day.short}</span>
@@ -247,11 +244,7 @@ export const WeeklyPreview = ({
           {unShownView.map((dayCol) => (
             <div key={dayCol.day.long}>
               {dayCol.sections.map((section) => (
-                <ClassSectionItem
-                  key={section.uid}
-                  data={section}
-                  // startOffset={startTime}
-                />
+                <ClassSectionItem key={section.uid} data={section} />
               ))}
             </div>
           ))}
@@ -290,7 +283,7 @@ export const BorderGlow = ({
   return (
     <div
       ref={glowRef}
-      className="isolate -z-10 absolute top-0 left-0 bg-gradient-radial from-primary-500 via-transparent to-transparent w-96 h-96 origin-top-right"
+      className="isolate -z-10 absolute top-0 left-0 bg-gradient-radial from-primary-400 via-transparent to-transparent w-96 h-96 origin-top-right"
       style={{ transform: `translate(${x}px,${y}px)` }}
     />
   );

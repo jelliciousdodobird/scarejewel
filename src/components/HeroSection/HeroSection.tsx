@@ -173,9 +173,9 @@ export const HeroSection = () => {
               <span
                 className={clsx(
                   "absolute top-0 left-0 w-full h-full rounded-full ring-[2px] ring-primary-50",
-                  "bg-gradient-to-r from-emerald-300 via-primary-500 to-indigo-500 animate-gradient-x group-hover/hero-btn:animate-gradient-x-fast group-hover/hero-btn:[animation-duration:2s] zztransition-[animation-duration]" // gradient animation
+                  "bg-gradient-to-r from-emerald-300 via-primary-500 to-indigo-500 animate-gradient-x group-hover/hero-btn:[animation-duration:2s]" // gradient animation
                 )}
-              ></span>
+              />
               <span className="isolate flex items-center gap-1 whitespace-nowrap uppercasezz">
                 Start Plan <IconArrowBadgeRight />
               </span>
