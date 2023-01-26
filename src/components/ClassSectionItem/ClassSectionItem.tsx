@@ -118,14 +118,10 @@ const ClassCard = ({ data, update }: BaseClassSectionItemProps) => {
 
   const { setHidden, setSelected } = useClassEntry(data, update);
 
-  const childGrayscale = hidden
-    ? "opacity-50 grayscale-[80%]"
-    : "opacity-100 grayscale-0";
-
   const selectedNotHidden = selected && !hidden;
 
   return (
-    <li className="flex flex-col">
+    <li className="flex flex-col" onClick={() => console.log(data)}>
       <div
         className={clsx(
           ////////////////////////////////////////////////////////////////////////////////////////
