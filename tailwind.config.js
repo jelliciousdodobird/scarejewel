@@ -14,7 +14,7 @@ module.exports = {
     },
     extend: {
       colors: {
-        primary: colors.indigo,
+        primary: colors.teal,
       },
       fontFamily: {
         base: ["var(--font-inter)"],
@@ -60,12 +60,9 @@ module.exports = {
         "ping-slow": "ping 3s cubic-bezier(0, 0, 0.2, 1) infinite",
         "fade-in-out":
           "fade-in-out 0.5s cubic-bezier(.13,.74,.84,.43) 1 forwards",
-        "gradient-x": "gradient-x 5s ease infinite",
-        "gradient-y": "gradient-y 5s ease infinite",
-        "gradient-xy": "gradient-xy 5s ease infinite",
-        "gradient-x-fast": "gradient-x 2s ease infinite",
-        "gradient-y-fast": "gradient-y 2s ease infinite",
-        "gradient-xy-fast": "gradient-xy 2s ease infinite",
+        "gradient-x": "gradient-x 5s linear infinite",
+        "gradient-y": "gradient-y 5s linear infinite",
+        "gradient-xy": "gradient-xy 5s linear infinite",
       },
     },
   },

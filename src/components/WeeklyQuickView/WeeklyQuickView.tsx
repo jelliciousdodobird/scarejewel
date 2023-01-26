@@ -58,7 +58,7 @@ const ShowButton = ({
     <button
       type="button"
       className={clsx(
-        "relative rounded-[50%] w-min h-min p-4 bg-indigo-500 text-white text-indigo-900zz pointer-events-auto shadow-lg",
+        "relative rounded-[50%] w-min h-min p-4 bg-primary-500 text-white text-primary-900zz pointer-events-auto shadow-lg",
         "transition-[border-radius] duration-200",
         hasNewChanges && "rounded-tl-md"
       )}

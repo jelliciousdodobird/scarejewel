@@ -5,7 +5,7 @@ import Link from "next/link";
 export const HeroSection = () => {
   return (
     <div className="w-full pack-content">
-      <div className="overflow-hidden flex relative group flex-col-reverse sm:flex-col-reverse md:flex-row bg-gradient-to-t md:bg-gradient-to-r from-transparent to-indigo-50 rounded-3xl">
+      <div className="overflow-hidden flex relative group flex-col-reverse sm:flex-col-reverse md:flex-row bg-gradient-to-t md:bg-gradient-to-r from-transparent to-primary-50 rounded-3xl">
         <div className="z-10 isolate relative w-full p-4 md:p-8 md:pl-0 flex flex-col gap-6 rounded-2xl">
           <h1 className="w-full font-extrabold text-6xl">{"Yotëi"}</h1>
           <p className="flex gap-4 items-center">
@@ -44,14 +44,12 @@ export const HeroSection = () => {
                   {"everybody has a plan until they get punched in the mouth."}
                 </span>
               </span>
-              <span className="text-indigo-700">
-                <span className="text-slate-500zz font-extrabold whitespace-pre">
-                  {"3   "}
-                </span>
-                <span className="text-indigo-700zz font-semibold">
+              <span className="text-primary-500">
+                <span className="font-extrabold whitespace-pre">{"3   "}</span>
+                <span className="font-semibold">
                   {"a web app to help CSULB students arrange their schedules: "}
                 </span>
-                <span className="text-neutral-700zz italic font-light">
+                <span className="italic font-light">
                   {"the perfect plan for your next semester."}
                 </span>
               </span>
@@ -71,7 +69,7 @@ export const HeroSection = () => {
                 "will-change-transform [border:1px_solid_rgba(0,0,0,0.01)] [-webkit-backface-visibility:hidden]",
                 "      [transform:rotateX(60deg)_rotateZ(25deg)_translateZ(0px)]",
                 "hover:[transform:rotateX(60deg)_rotateZ(25deg)_translateZ(0px)_translateY(40px)]",
-                "overflow-hidden rounded-xl w-[400px] h-[800px] bg-indigo-500"
+                "overflow-hidden rounded-xl w-[400px] h-[800px] bg-primary-500"
               )}
             />
 
@@ -80,7 +78,7 @@ export const HeroSection = () => {
                 "will-change-transform [border:1px_solid_rgba(0,0,0,0.01)] [-webkit-backface-visibility:hidden]",
                 "      [transform:rotateX(60deg)_rotateZ(25deg)_translateZ(50px)]",
                 "hover:[transform:rotateX(60deg)_rotateZ(25deg)_translateZ(50px)_translateY(40px)]",
-                "overflow-hidden rounded-xl w-[400px] h-[800px] bg-indigo-400"
+                "overflow-hidden rounded-xl w-[400px] h-[800px] bg-primary-400"
               )}
             />
 
@@ -89,7 +87,7 @@ export const HeroSection = () => {
                 "will-change-transform [border:1px_solid_rgba(0,0,0,0.01)] [-webkit-backface-visibility:hidden]",
                 "      [transform:rotateX(60deg)_rotateZ(25deg)_translateZ(100px)]",
                 "hover:[transform:rotateX(60deg)_rotateZ(25deg)_translateZ(100px)_translateY(40px)]",
-                "overflow-hidden rounded-xl w-[400px] h-[800px] bg-indigo-300"
+                "overflow-hidden rounded-xl w-[400px] h-[800px] bg-primary-300"
               )}
             />
 
@@ -98,7 +96,7 @@ export const HeroSection = () => {
                 "will-change-transform [border:1px_solid_rgba(0,0,0,0.01)] [-webkit-backface-visibility:hidden]",
                 "      [transform:rotateX(60deg)_rotateZ(25deg)_translateZ(150px)]",
                 "hover:[transform:rotateX(60deg)_rotateZ(25deg)_translateZ(150px)_translateY(40px)]",
-                "overflow-hidden rounded-xl w-[400px] h-[800px] bg-indigo-200"
+                "overflow-hidden rounded-xl w-[400px] h-[800px] bg-primary-200"
               )}
             />
 
@@ -108,7 +106,7 @@ export const HeroSection = () => {
                 "will-change-transform [border:1px_solid_rgba(0,0,0,0.01)] [-webkit-backface-visibility:hidden]",
                 "      [transform:rotateX(60deg)_rotateZ(25deg)_translateZ(200px)]",
                 "hover:[transform:rotateX(60deg)_rotateZ(25deg)_translateZ(200px)_translateY(40px)]",
-                "overflow-hidden rounded-xl w-[400px] h-[800px] bg-indigo-100",
+                "overflow-hidden rounded-xl w-[400px] h-[800px] bg-primary-100",
                 "peer/top-card"
               )}
             />
@@ -124,12 +122,12 @@ export const HeroSection = () => {
                 "pointer-events-none"
               )}
             >
-              <span className="grid grid-cols-[1fr_1fr_1fr] gap-y-8  gap-x-6 w-full text-indigo-600 font-extrabold text-2xl">
-                <span className="blur-smzz bg-primary-300/10 w-full h-16 rounded-xl col-span-full row-span-full grid place-items-center " />
-                <span className="blur-smzz bg-primary-300/10 w-full h-12 rounded-xl" />
-                <span className="blur-smzz bg-primary-300/10 w-full h-12 rounded-xl col-span-2" />
-                <span className="blur-smzz bg-primary-300/10 w-full h-12 rounded-xl" />
-                <span className="blur-smzz bg-primary-300/10 w-full h-12 rounded-xl col-span-2" />
+              <span className="grid grid-cols-[1fr_1fr_1fr] gap-y-8  gap-x-6 w-full text-primary-600 font-extrabold text-2xl">
+                <span className="bg-primary-400/10 w-full h-16 rounded-xl col-span-full row-span-full grid place-items-center " />
+                <span className="bg-primary-400/10 w-full h-12 rounded-xl" />
+                <span className="bg-primary-400/10 w-full h-12 rounded-xl col-span-2" />
+                <span className="bg-primary-400/10 w-full h-12 rounded-xl" />
+                <span className="bg-primary-400/10 w-full h-12 rounded-xl col-span-2" />
               </span>
             </div>
 
@@ -143,14 +141,14 @@ export const HeroSection = () => {
                 "pointer-events-none"
               )}
             >
-              <span className="grid grid-cols-[1fr_1fr_1fr] gap-y-8  gap-x-6 w-full text-indigo-600 font-extrabold text-2xl">
-                <span className="bg-indigo-200 w-full h-16 rounded-xl col-span-full row-span-full grid place-items-center ">
+              <span className="grid grid-cols-[1fr_1fr_1fr] gap-y-8  gap-x-6 w-full text-primary-600 font-extrabold text-2xl">
+                <span className="bg-primary-200 w-full h-16 rounded-xl col-span-full row-span-full grid place-items-center ">
                   MATH 101
                 </span>
-                <span className="bg-indigo-200 w-full h-12 rounded-xl" />
-                <span className="bg-indigo-200 w-full h-12 rounded-xl col-span-2" />
-                <span className="bg-indigo-200 w-full h-12 rounded-xl" />
-                <span className="bg-indigo-200 w-full h-12 rounded-xl col-span-2" />
+                <span className="bg-primary-200 w-full h-12 rounded-xl" />
+                <span className="bg-primary-200 w-full h-12 rounded-xl col-span-2" />
+                <span className="bg-primary-200 w-full h-12 rounded-xl" />
+                <span className="bg-primary-200 w-full h-12 rounded-xl col-span-2" />
               </span>
             </div>
           </div>
@@ -174,8 +172,8 @@ export const HeroSection = () => {
             >
               <span
                 className={clsx(
-                  "absolute top-0 left-0 w-full h-full rounded-full ring-[2px] ring-indigo-50",
-                  "bg-gradient-to-r from-emerald-500 via-primary-500 to-rose-500 animate-gradient-x group-hover/hero-btn:animate-gradient-x-fast" // gradient animation
+                  "absolute top-0 left-0 w-full h-full rounded-full ring-[2px] ring-primary-50",
+                  "bg-gradient-to-r from-emerald-300 via-primary-500 to-indigo-500 animate-gradient-x group-hover/hero-btn:animate-gradient-x-fast group-hover/hero-btn:[animation-duration:2s] zztransition-[animation-duration]" // gradient animation
                 )}
               ></span>
               <span className="isolate flex items-center gap-1 whitespace-nowrap uppercasezz">

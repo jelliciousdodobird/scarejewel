@@ -113,7 +113,7 @@ const AddButton = ({ addLimit = 10 }: { addLimit?: number }) => {
     <>
       <button
         type="button"
-        className="flex justify-center items-center gap-2 w-min px-2 h-10 rounded-3xl rounded-bl bg-indigo-500 text-white font-bold disabled:cursor-not-allowed"
+        className="flex justify-center items-center gap-2 w-min px-2 h-10 rounded-3xl rounded-bl bg-primary-500 text-white font-bold disabled:cursor-not-allowed"
         onClick={addCourseItem}
       >
         <span className="hidden sm:flex whitespace-nowrap pl-2 text-opacity-100">

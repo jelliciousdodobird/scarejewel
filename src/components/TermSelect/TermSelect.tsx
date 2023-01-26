@@ -28,7 +28,7 @@ export const TermSelect = ({
           <Listbox.Button
             className={clsx(
               "group grid grid-cols-[1fr_min-content] justify-items-center items-center h-10 w-full text-slate-400 font-semibold rounded-lg ",
-              "bg-white hover:bg-indigo-50 focus:bg-indigo-50 ring-1 ring-slate-200 hover:ring-indigo-200 focus:ring-indigo-200",
+              "bg-white hover:bg-primary-50 focus:bg-primary-50 ring-1 ring-slate-200 hover:ring-primary-200 focus:ring-primary-200",
               "appearance-none outline-none"
             )}
           >
@@ -41,7 +41,7 @@ export const TermSelect = ({
               </span>
             </span>
 
-            <IconSelector stroke={2} className="group-hover:text-indigo-500" />
+            <IconSelector stroke={2} className="group-hover:text-primary-500" />
           </Listbox.Button>
 
           <Listbox.Options
@@ -71,10 +71,10 @@ export const TermSelect = ({
                           "flex justify-center items-center px-4 min-h-[2.5rem] rounded cursor-pointer text-sm",
                           selected ? "font-bold" : "font-normal",
                           active || selected
-                            ? "bg-indigo-50"
+                            ? "bg-primary-50"
                             : "bg-transparent",
                           active || selected
-                            ? "text-indigo-700"
+                            ? "text-primary-700"
                             : "text-slate-900"
                         )}
                       >
