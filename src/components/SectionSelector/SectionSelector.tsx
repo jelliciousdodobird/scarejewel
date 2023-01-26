@@ -1,3 +1,5 @@
+"use client";
+
 import { IconAlertCircle } from "@tabler/icons";
 import { useQuery } from "@tanstack/react-query";
 import { PrimitiveAtom, useAtom } from "jotai";
@@ -6,7 +8,7 @@ import { ClassSectionWithState, CourseItem } from "../../state/course-cart";
 import { Semester } from "../../database/types";
 import { ClassSectionState } from "../../state/course-cart";
 import { fetchSections } from "../../database/api";
-import { splitIntoGroups } from "./helpers";
+import { splitIntoGroups } from "./SectionSelector.helpers";
 import {
   ClassSectionItem,
   SectionTypeLabel,

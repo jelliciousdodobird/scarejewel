@@ -103,22 +103,54 @@ export const HeroSection = () => {
             />
 
             <div
+              // THIS IS THE TOP CARD
               className={clsx(
                 "will-change-transform [border:1px_solid_rgba(0,0,0,0.01)] [-webkit-backface-visibility:hidden]",
                 "      [transform:rotateX(60deg)_rotateZ(25deg)_translateZ(200px)]",
                 "hover:[transform:rotateX(60deg)_rotateZ(25deg)_translateZ(200px)_translateY(40px)]",
                 "overflow-hidden rounded-xl w-[400px] h-[800px] bg-indigo-100",
-                "flex flex-col items-center justify-end p-12 pb-16"
+                "peer/top-card"
+              )}
+            />
+
+            <div
+              // THIS IS THE SHADOW FOR THE LITTLE BOXES
+              className={clsx(
+                "                    [transform:rotateX(60deg)_rotateZ(25deg)_translateZ(200px)]",
+                "peer-hover/top-card:[transform:rotateX(60deg)_rotateZ(25deg)_translateZ(200px)_translateY(40px)]",
+                "peer-hover/top-card:scale-[20%]zz scale-0zz",
+                "overflow-hidden rounded-xl w-[400px] h-[800px] bg-transparent",
+                "flex flex-col items-center justify-end p-12 pb-16",
+                "pointer-events-none"
               )}
             >
               <span className="grid grid-cols-[1fr_1fr_1fr] gap-y-8  gap-x-6 w-full text-indigo-600 font-extrabold text-2xl">
-                <span className="bg-indigo-200/50 w-full h-16 rounded-xl col-span-full row-span-full grid place-items-center ">
+                <span className="blur-smzz bg-primary-300/10 w-full h-16 rounded-xl col-span-full row-span-full grid place-items-center " />
+                <span className="blur-smzz bg-primary-300/10 w-full h-12 rounded-xl" />
+                <span className="blur-smzz bg-primary-300/10 w-full h-12 rounded-xl col-span-2" />
+                <span className="blur-smzz bg-primary-300/10 w-full h-12 rounded-xl" />
+                <span className="blur-smzz bg-primary-300/10 w-full h-12 rounded-xl col-span-2" />
+              </span>
+            </div>
+
+            <div
+              // THIS IS THE LITTLE BOXES
+              className={clsx(
+                "                    [transform:rotateX(60deg)_rotateZ(25deg)_translateZ(200px)]",
+                "peer-hover/top-card:[transform:rotateX(60deg)_rotateZ(25deg)_translateZ(225px)_translateY(40px)]",
+                "overflow-hidden rounded-xl w-[400px] h-[800px] bg-transparent",
+                "flex flex-col items-center justify-end p-12 pb-16",
+                "pointer-events-none"
+              )}
+            >
+              <span className="grid grid-cols-[1fr_1fr_1fr] gap-y-8  gap-x-6 w-full text-indigo-600 font-extrabold text-2xl">
+                <span className="bg-indigo-200 w-full h-16 rounded-xl col-span-full row-span-full grid place-items-center ">
                   MATH 101
                 </span>
-                <span className="bg-indigo-200/50 w-full h-12 rounded-xl"></span>
-                <span className="bg-indigo-200/50 w-full h-12 rounded-xl col-span-2"></span>
-                <span className="bg-indigo-200/50 w-full h-12 rounded-xl"></span>
-                <span className="bg-indigo-200/50 w-full h-12 rounded-xl col-span-2"></span>
+                <span className="bg-indigo-200 w-full h-12 rounded-xl" />
+                <span className="bg-indigo-200 w-full h-12 rounded-xl col-span-2" />
+                <span className="bg-indigo-200 w-full h-12 rounded-xl" />
+                <span className="bg-indigo-200 w-full h-12 rounded-xl col-span-2" />
               </span>
             </div>
           </div>

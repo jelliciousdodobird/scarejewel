@@ -1,11 +1,7 @@
-import { Listbox, RadioGroup } from "@headlessui/react";
+import { RadioGroup } from "@headlessui/react";
 import clsx from "clsx";
 import { PrettyColor, pretty_colors } from "../../utils/colors";
-import {
-  bg_color,
-  ring_color,
-  selected_color,
-} from "./PrettyColorPicker.variants";
+import { bg_color, ring_color } from "./PrettyColorPicker.variants";
 
 type PrettyColorPickerProps = {
   colors?: PrettyColor[];
