@@ -105,8 +105,6 @@ function ClassCard({ data, update }: ClassSectionItemProps) {
 
   const { setHidden, setSelected } = useClassEntry(data, update);
 
-  const selectedNotHidden = selected && !hidden;
-
   return (
     <li className="relative flex flex-col">
       <div
@@ -122,7 +120,7 @@ function ClassCard({ data, update }: ClassSectionItemProps) {
           "flex flex-col gap-8 p-6 bg-white",
           "rounded-lg rounded-tr-[6rem] transition-[opacity_background-color_box-shadow] duration-300",
 
-          !hidden && "[box-shadow:rgba(149,157,165,0.12)_0px_0px_24px]",
+          !hidden && "shadow-center shadow-slate-500/10",
           hidden ? "bg-stone-50" : "bg-white" // background color
         )}
       >
@@ -171,20 +169,18 @@ function ClassCard({ data, update }: ClassSectionItemProps) {
         </div>
       </div>
       {!!update && (
-        <div className="absolute top-0 right-0 flex flex-col items-center gap-2 w-min h-min text-slate-400 nograyscale">
+        <div className="absolute top-0 right-0 flex flex-col items-center gap-2 w-min h-min text-slate-400">
           <Switch
             checked={selected}
             onChange={setSelected}
             className={clsx(
-              "grid place-items-center w-12 h-12 rounded-full",
+              "grid place-items-center w-12 h-12 rounded-full shadow-center",
+              selected ? "" : "shadow-emerald-500/20",
               selected
-                ? "hover:ring-4"
-                : "hover:[box-shadow:rgba(16,185,129,0.45)_0px_0px_24px]",
-              selected ? "hover:ring-emerald-100" : "hover:ring-emerald-400",
-              selected ? "ring-emerald-500" : "ring-slate-200",
+                ? "hover:shadow-emerald-500/60"
+                : "hover:shadow-emerald-500/40",
               selected ? "text-white" : "text-emerald-500",
-              selected ? "bg-emerald-500" : "bg-white",
-              "[box-shadow:rgba(16,185,129,0.20)_0px_0px_24px]"
+              selected ? "bg-emerald-500" : "bg-white"
             )}
           >
             {selected ? <IconCheck /> : <IconPlus />}
@@ -194,7 +190,7 @@ function ClassCard({ data, update }: ClassSectionItemProps) {
             onChange={setHidden}
             className={clsx(
               "grid place-items-center w-10 h-10 rounded-full bg-white text-rose-500 hover:text-red-500",
-              "[box-shadow:rgba(244,63,94,0.2)_0px_0px_24px] hover:[box-shadow:rgba(244,63,94,0.4)_0px_0px_24px]"
+              "shadow-center shadow-rose-500/20 hover:shadow-rose-500/40"
             )}
           >
             {hidden ? <IconEyeOff /> : <IconEye />}

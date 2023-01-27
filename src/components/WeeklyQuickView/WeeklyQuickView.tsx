@@ -58,9 +58,9 @@ const ShowButton = ({
     <button
       type="button"
       className={clsx(
-        "relative rounded-[50%] w-min h-min p-4 bg-primary-500 text-white pointer-events-auto shadow-lg",
-        "transition-[border-radius] duration-200"
-        // hasNewChanges && "rounded-tl-md"
+        "relative rounded-[50%] w-min h-min p-4 bg-primary-500 text-white pointer-events-auto ",
+        "transition-[border-radius] duration-200 sha",
+        "shadow-center hover:shadow-primary-500/80"
       )}
       onClick={toggleOpen}
     >
