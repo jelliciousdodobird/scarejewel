@@ -72,8 +72,6 @@ export const selectedSectionsAtom: Atom<ClassSectionWithState[]> = atom(
   }
 );
 
-export const weeklyFullViewAtom = atomWithStorage("weeklyShowFullView", false);
-
 export const selectedSectionsSnapshotAtom = atom<ClassSectionWithState[]>([]);
 
 export const selectedSectionsHasChanged = atom((get) => {
@@ -93,3 +91,8 @@ export const selectedSectionsHasChanged = atom((get) => {
 
   return newStateIds !== oldStateIds;
 });
+
+export const preferedTimeFormatAtom = atomWithStorage<"24h" | "12h">(
+  "preferedTimeFormat",
+  "12h"
+);

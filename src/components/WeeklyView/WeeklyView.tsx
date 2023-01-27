@@ -1,36 +1,31 @@
 "use client";
 
-import { Transition } from "@headlessui/react";
-import { IconArrowsMaximize, IconArrowsMinimize } from "@tabler/icons";
+import { Switch, Transition } from "@headlessui/react";
+import { IconAlertCircle } from "@tabler/icons";
 import clsx from "clsx";
 import { atom, useAtom, useAtomValue, useSetAtom } from "jotai";
 import {
   createElement,
+  Dispatch,
   Fragment,
   RefObject,
+  SetStateAction,
   useEffect,
   useRef,
   useState,
 } from "react";
-import { ClassDay } from "../../database/types";
 import { useHasMounted } from "../../hooks/useHasMounted";
 import { useLastValidValue } from "../../hooks/useLastValidValue";
 import {
   ClassSectionWithState,
-  selectedSectionsSnapshotAtom,
   selectedSectionsAtom,
-  weeklyFullViewAtom,
-  selectedSectionsHasChanged,
+  preferedTimeFormatAtom,
 } from "../../state/course-cart";
 import { DayName, dayNameMap } from "../../utils/types";
-import { clamp } from "../../utils/util";
+import { formatTime, rangesOverlap } from "../../utils/util";
 import { Backdrop } from "../Backdrop/Backdrop";
 import { ClassSectionItem } from "../ClassSectionItem/ClassSectionItem";
 import { section_type_icons } from "../ClassSectionItem/ClassSectionItem.helper";
-import {
-  bg_color_base,
-  text_color,
-} from "../CourseSelector/CourseSelector.variants";
 import { Portal } from "../Portal/Portal";
 import { SelectedSnapshot } from "../SelectedSnapshot/SelectedSnapshot";
 import {
@@ -39,12 +34,15 @@ import {
   ONE_HOUR_IN_MINS,
   roundToNearestHour,
   TWENTY_FOUR_HOURS_IN_MINS,
-} from "./WeeklyPreview.helpers";
+} from "./WeeklyView.helpers";
 import {
   icon_bg_color,
   icon_text_color,
   ring_highlight,
-} from "./WeeklyPreview.variants";
+  time_item_bg_color,
+  time_item_border_color,
+  time_item_text_color,
+} from "./WeeklyView.variants";
 
 type DayColumn = {
   day: DayName;
@@ -53,23 +51,35 @@ type DayColumn = {
 };
 
 export type WeeklyPreviewProps = {
-  numOfMinsPerBlock?: number; // each block is 60 minutes by default
+  minsPerBlock?: number; // each block is 60 minutes by default
+  yScale?: number; // how much each time block is stretched vertically
 };
 
-export const WeeklyPreview = ({
-  numOfMinsPerBlock = 60,
+export const WeeklyView = ({
+  minsPerBlock: numOfMinsPerBlock = 60,
+  yScale = 1.5,
 }: WeeklyPreviewProps) => {
   const mounted = useHasMounted();
 
   // both weeklyFullViewAtom/selectedSectionsAtom access local storage:
-  const [showFullView, setShowFullView] = useAtom(weeklyFullViewAtom);
+  const [timeFormat, setTimeFormat] = useAtom(preferedTimeFormatAtom);
   const sections = useAtomValue(selectedSectionsAtom);
   const containerRef = useRef<HTMLDivElement>(null);
+  const [highlightTime, setHighlightTime] = useState({ start: -1, end: -1 });
 
   // since atleast one of our state uses local storage we have to ensure we're mounted,
   // before we can render anything or else we get hydration mismatches:
   if (!mounted) return null;
   // if (sections.length === 0) return null;
+
+  // simple derived state:
+  const timeFormatIs24h = timeFormat === "24h";
+  const showFullView = sections.length === 0;
+
+  // functions:
+  const resetHighlightTime = () => setHighlightTime({ start: -1, end: -1 });
+  const toggleTimeFormat = () =>
+    setTimeFormat((v) => (v === "24h" ? "12h" : "24h"));
 
   // NO POINT IN MEMOIZING ANYTHING BELOW THIS POINT SINCE IT ALL DEPENDS ON "selectedSectionsAtom"
   const dayColumns: DayColumn[] = [
@@ -100,15 +110,12 @@ export const WeeklyPreview = ({
   dayColumns.forEach((dayCol) => {
     const daykey = dayCol.day.short;
 
-    // most student don't have saturday classes so we only want
-    // to show saturday if the calendar is expanded (showFullView)
-    // or if they do have a saturday class (sections.length !== 0)
+    // most student don't have sunday/saturday classes so we only want to show that day
+    // (1) if they do have a class for it,
+    // or
+    // (2) if we need to force a full week view
     if (daykey === "sa")
       dayCol.show = showFullView || dayCol.sections.length !== 0;
-
-    // most student don't have sunday classes so we only want
-    // to show sunday if the calendar is expanded (showFullView)
-    // or if they do have a sunday class (sections.length !== 0)
     if (daykey === "su")
       dayCol.show = showFullView || dayCol.sections.length !== 0;
   });
@@ -126,7 +133,7 @@ export const WeeklyPreview = ({
       }),
     }));
 
-  const unShownView = dayColumns.filter(({ show }) => !show);
+  const subViewSections = dayColumns.filter(({ show }) => !show);
 
   // we do not want to render time ranges where the user
   // hasn't selected a class so this finds the earliest and latest times
@@ -175,29 +182,37 @@ export const WeeklyPreview = ({
         <div
           ref={containerRef}
           className={clsx(
-            "isolate relative flex gap-[1px] overflow-hidden bg-slate-100 borderzborder-transparent p-[1px]",
-            "rounded-xl [&>*:last-child]:[border-top-right-radius:12px] [&>*:last-child]:[border-bottom-right-radius:12px] [&>*:last-child]:overflow-hidden"
+            "isolate relative flex gap-[1px]zz overflow-hidden bg-slate-100 bg-whitezz borderzborder-transparent p-[1px]",
+            "rounded-xlzz[&>*:last-child]:[border-top-right-radius:12px]zz[&>*:last-child]:[border-bottom-right-radius:12px]zz[&>*:last-child]:overflow-hidden"
           )}
+          onMouseLeave={resetHighlightTime}
         >
           <BorderGlow containerRef={containerRef} />
           {/* the time column (for ex: 0:00am to 11:59pm) */}
-          <div className="overflow-hidden flex flex-col gap-[1px] [border-top-left-radius:inherit] [border-bottom-left-radius:inherit]">
-            <button
-              type="button"
-              className="grid place-items-center uppercase font-semibold h-full bg-slate-100 text-slate-600 hover:bg-primary-400 hover:text-white"
-              onClick={() => setShowFullView((v) => !v)}
+          <div className="overflow-hidden flex flex-col gap-[1px] [border-top-left-radius:inherit] [border-bottom-left-radius:inherit] mr-[1px]">
+            <Switch
+              checked={timeFormatIs24h}
+              onChange={toggleTimeFormat}
+              className="grid place-items-center uppercase font-semibold h-full bg-slate-100 text-slate-600 text-sm hover:text-primary-500 hover:text-whitezz"
             >
-              {showFullView ? <IconArrowsMinimize /> : <IconArrowsMaximize />}
-            </button>
-            <div className="relative flex flex-col gap-[1px] w-full bg-white min-w-[3rem]">
-              {timeSlots.map((time, i) => (
+              {timeFormat}
+            </Switch>
+            <div className="relative flex flex-col gap-[1px] w-full bg-white min-w-[3.5rem] [&>*:first-child]:opacity-0 [&>*:first-child]:pointer-events-none">
+              {timeSlots.map((time) => (
                 <div
                   key={time}
                   className="relative w-full flex justify-end bg-transparent px-2"
-                  style={{ height: numOfMinsPerBlock - 1 }}
+                  style={{ height: numOfMinsPerBlock * yScale - 1 }} // the -1 is to compensate for the gap-[1px]
                 >
-                  <span className="relative top-[-9px] text-xs text-slate-500 lowercase">
-                    {i !== 0 && hourOnly(time)}
+                  <span
+                    className={clsx(
+                      "absolute top-[-9px] text-xs zztext-slate-500 lowercase",
+                      time >= highlightTime.start && time <= highlightTime.end
+                        ? "text-primary-500 font-bold"
+                        : "text-slate-500"
+                    )}
+                  >
+                    {timeFormatIs24h ? formatTime(time, false) : hourOnly(time)}
                   </span>
                 </div>
               ))}
@@ -206,9 +221,19 @@ export const WeeklyPreview = ({
           {mainView.map((col) => (
             //the days columns:
             <div key={col.day.long} className="flex flex-col flex-1 gap-[1px]">
-              <h2 className="grid place-items-center uppercase font-semibold h-12 bg-slate-50 text-slate-600 ">
+              <h2 className="flex justify-center items-center gap-0 sm:gap-2 uppercase font-semibold h-12 bg-slate-50 text-slate-600 ">
                 <span className="hidden sm:block">{col.day.medium}</span>
                 <span className="sm:hidden">{col.day.short}</span>
+                {rangesOverlap(
+                  col.sections.map((s) => ({
+                    start: s.time_start,
+                    end: s.time_end,
+                  }))
+                ) && (
+                  <span className="right-0 text-rose-400">
+                    <IconAlertCircle size={16} stroke={3} />
+                  </span>
+                )}
               </h2>
 
               <div className="relative flex w-full">
@@ -217,20 +242,28 @@ export const WeeklyPreview = ({
                     <div
                       key={time}
                       className="text-[10px] w-full bg-white"
-                      style={{ height: numOfMinsPerBlock - 1 }} // the -1 is to compensate for the gap-[1px]
+                      style={{ height: numOfMinsPerBlock * yScale - 1 }} // the -1 is to compensate for the gap-[1px]
+                      onMouseEnter={() => {
+                        setHighlightTime({
+                          start: time,
+                          end: time + ONE_HOUR_IN_MINS,
+                        });
+                      }}
                     >
                       {/* {formatTime(time)} */}
                     </div>
                   ))}
                 </div>
-                <div className="z-10 absolute top-0 left-0 flex flex-col w-full isolate h-full px-1">
+                <div className="z-10 absolute top-0 left-0 flex flex-col w-full isolate h-full px-1 pointer-events-none">
                   {/* this extra div is needed so that TimeItem does not overflow because of the px-1 above */}
-                  <div className="relative w-full">
+                  <div className="relative w-full [&>*]:pointer-events-auto">
                     {col.sections.map((cs) => (
                       <TimeItem
                         key={cs.uid}
                         data={cs}
                         startOffset={startTime}
+                        yScale={yScale}
+                        setHighlightTime={setHighlightTime}
                       />
                     ))}
                   </div>
@@ -241,7 +274,7 @@ export const WeeklyPreview = ({
         </div>
         <div className="">
           <div>TBA sections</div>
-          {unShownView.map((dayCol) => (
+          {subViewSections.map((dayCol) => (
             <div key={dayCol.day.long}>
               {dayCol.sections.map((section) => (
                 <ClassSectionItem key={section.uid} data={section} />
@@ -281,11 +314,18 @@ export const BorderGlow = ({
     };
   }, []);
   return (
-    <div
-      ref={glowRef}
-      className="isolate -z-10 absolute top-0 left-0 bg-gradient-radial from-primary-400 via-transparent to-transparent w-96 h-96 origin-top-right"
-      style={{ transform: `translate(${x}px,${y}px)` }}
-    />
+    <>
+      <div
+        ref={glowRef}
+        className="isolate -z-10 absolute top-0 left-0 bg-gradient-radial from-slate-300 via-transparent to-transparent w-96 h-96 origin-top-right"
+        style={{ transform: `translate(${x}px,${y}px)` }}
+      />
+      {/* <div
+        // ref={glowRef}
+        className="z-50 absolute top-0 left-0 bg-gradient-radial from-white/50 via-transparent to-transparent w-96 h-96 origin-top-right mix-blend-multiplyzz opacity-50zz pointer-events-none"
+        style={{ transform: `translate(${x}px,${y}px)` }}
+      /> */}
+    </>
   );
 };
 
@@ -294,9 +334,21 @@ export const selectedSectionAtom = atom<ClassSectionWithState | null>(null);
 type TimeItemProps = {
   data: ClassSectionWithState;
   startOffset: number;
+  yScale?: number;
+  setHighlightTime: Dispatch<
+    SetStateAction<{
+      start: number;
+      end: number;
+    }>
+  >;
 };
 
-const TimeItem = ({ data, startOffset }: TimeItemProps) => {
+const TimeItem = ({
+  data,
+  startOffset,
+  yScale = 1,
+  setHighlightTime,
+}: TimeItemProps) => {
   const {
     time_start,
     time_end,
@@ -313,15 +365,16 @@ const TimeItem = ({ data, startOffset }: TimeItemProps) => {
   const choose = () => setSelected(data);
 
   // style tokens:
-  const bgColor = bg_color_base[color];
-  const textColor = text_color[color];
+  const bgColor = time_item_bg_color[color];
+  const textColor = time_item_text_color[color];
+  const borderColor = time_item_border_color[color];
   const iconColor = icon_text_color[color];
   const iconBgColor = icon_bg_color[color];
   const ringHighlight = ring_highlight[color];
 
   // dynamic values to be used in styles:
-  const height = time_end - time_start;
-  const posY = time_start - startOffset;
+  const height = (time_end - time_start) * yScale;
+  const posY = (time_start - startOffset) * yScale - 1;
   const icon = createElement(section_type_icons[section_type], {
     className: "w-4 h-4 sm:w-6 sm:h-6",
   });
@@ -330,12 +383,18 @@ const TimeItem = ({ data, startOffset }: TimeItemProps) => {
     <button
       type="button"
       className={clsx(
-        "group absolute flex rounded overflow-hidden w-full outline-none appearance-none",
-        "ring-0 focus:ring-2 hover:ring-2 focus:z-10 hover:z-10 ",
+        "group absolute flex roundedzz overflow-hiddenzz w-full outline-none appearance-none",
+        "ring-0 focus:ring-1 hover:ring-1 focus:z-10 hover:z-10",
         ringHighlight
       )}
       style={{ height, top: posY }}
       onClick={choose}
+      onMouseEnter={() => {
+        setHighlightTime({
+          start: data.time_start,
+          end: data.time_end,
+        });
+      }}
     >
       <div
         className={clsx(
@@ -368,10 +427,10 @@ const TimeItem = ({ data, startOffset }: TimeItemProps) => {
       </div>
       <span
         className={clsx(
-          "min-w-[1rem] h-full mix-blend-multiply group-hover:bg-opacity-50 group-focus:bg-opacity-50",
+          "isolate min-w-[0.5rem] sm:min-w-[1rem] h-full mix-blend-multiply group-hover:bg-opacity-0 group-focus:bg-opacity-0",
           bgColor
         )}
-      ></span>
+      />
     </button>
   );
 };

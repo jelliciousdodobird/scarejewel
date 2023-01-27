@@ -1,9 +1,9 @@
-import { WeeklyPreview } from "../../components/WeeklyPreview/WeeklyPreview";
+import { WeeklyView } from "../../components/WeeklyView/WeeklyView";
 
 export default async function WeekPage() {
   return (
     <div className="pack-content flex flex-col py-8">
-      <WeeklyPreview />
+      <WeeklyView />
     </div>
   );
 }

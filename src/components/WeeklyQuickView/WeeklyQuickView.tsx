@@ -8,7 +8,7 @@ import { Dispatch, SetStateAction, useState } from "react";
 import { selectedSectionsHasChanged } from "../../state/course-cart";
 import { Backdrop } from "../Backdrop/Backdrop";
 import { Portal } from "../Portal/Portal";
-import { WeeklyPreview } from "../WeeklyPreview/WeeklyPreview";
+import { WeeklyView } from "../WeeklyView/WeeklyView";
 
 export const WeeklyQuickView = () => {
   const [open, setOpen] = useState(false);
@@ -28,7 +28,7 @@ export const WeeklyQuickView = () => {
             leaveFrom="transform scale-100 opacity-100"
             leaveTo="transform scale-50 opacity-0"
           >
-            <WeeklyPreview />
+            <WeeklyView />
           </Transition>
         </Backdrop>
       </Portal>

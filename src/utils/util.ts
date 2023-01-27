@@ -1,7 +1,20 @@
 import { nanoid } from "nanoid";
 import { Semester } from "../database/types";
 import { PrettyColor, prettyTailwindColors, pretty_colors } from "./colors";
-import { HasId } from "./types";
+import { HasId, NumberRange } from "./types";
+
+export const rangeOverlaps = (a: NumberRange, b: NumberRange) => {
+  return (
+    (b.start <= a.start && a.start <= b.end) ||
+    (b.start <= a.end && a.end <= b.end)
+  );
+};
+
+export const rangesOverlap = (ranges: NumberRange[]) => {
+  return ranges.some((a, i) => {
+    return [...ranges.slice(i + 1)].some((b) => rangeOverlaps(a, b));
+  });
+};
 
 export const getCurrentSemester = (): Semester => {
   // 0 = January
