@@ -160,7 +160,7 @@ export const WeeklyView = ({
     roundToNearestHour(latestTime + ONE_HOUR_IN_MINS)
   );
 
-  // finally, we adjust the start and ends times, depending on if the user wants the full view:
+  // finally, we adjust the start and ends times, depending on if we want the full view:
   const endTime = showFullView ? TWENTY_FOUR_HOURS_IN_MINS : endTimeOffset;
   const startTime = showFullView ? 0 : Math.min(startTimeOffset, endTime);
 

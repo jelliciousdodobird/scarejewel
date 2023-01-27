@@ -5,6 +5,8 @@ import {
   IconChevronDown,
   IconSquareRoundedCheck,
   IconSquareRoundedPlus,
+  IconCheck,
+  IconPlus,
 } from "@tabler/icons";
 import clsx from "clsx";
 import { useAtom, useSetAtom } from "jotai";
@@ -36,27 +38,12 @@ import {
 } from "./ClassSectionItem.helper";
 import { day_bg_color, day_text_color } from "./ClassSectionItem.variants";
 
-export type BaseClassSectionItemProps = {
+export type ClassSectionItemProps = {
   data: ClassSectionWithState;
   update?: (updateItem: ClassSectionWithState) => void;
 };
 
-export type ClassSectionItemProps = BaseClassSectionItemProps & {
-  type?: "row" | "card";
-};
-
-export const ClassSectionItem = memo(function ClassSectionItem({
-  type = "card",
-  data,
-  update,
-}: ClassSectionItemProps) {
-  return type === "card" ? (
-    <ClassCard data={data} update={update} />
-  ) : (
-    <ClassRow data={data} update={update} />
-  );
-},
-arePropsEqual);
+export const ClassSectionItem = memo(ClassCard, arePropsEqual);
 
 function arePropsEqual(
   prev: Readonly<ClassSectionItemProps>,
@@ -67,14 +54,14 @@ function arePropsEqual(
   if (prev.data.state.hidden !== next.data.state.hidden) return false;
   if (prev.data.state.notes !== next.data.state.notes) return false;
   if (prev.data.state.color !== next.data.state.color) return false;
-  if (prev.type !== next.type) return false;
+  // if (prev.type !== next.type) return false;
 
   return true;
 }
 
 const useClassEntry = (
-  data: BaseClassSectionItemProps["data"],
-  update: BaseClassSectionItemProps["update"]
+  data: ClassSectionItemProps["data"],
+  update: ClassSectionItemProps["update"]
 ) => {
   const setSelected = useCallback(
     (value: boolean) =>
@@ -99,7 +86,7 @@ const useClassEntry = (
   return { setSelected, setHidden };
 };
 
-const ClassCard = ({ data, update }: BaseClassSectionItemProps) => {
+function ClassCard({ data, update }: ClassSectionItemProps) {
   const { selected, hidden, notes, color } = data.state;
   const {
     dept_abbr,
@@ -121,78 +108,57 @@ const ClassCard = ({ data, update }: BaseClassSectionItemProps) => {
   const selectedNotHidden = selected && !hidden;
 
   return (
-    <li className="flex flex-col" onClick={() => console.log(data)}>
+    <li className="relative flex flex-col">
       <div
         className={clsx(
           ////////////////////////////////////////////////////////////////////////////////////////
           // Using the next two lines in combination with the parent having flex-col ensures that
           // we maintain the card height until all items in a row are hidden (collapsed)
           "flex-grow", //------------------------------> IMPORTANT (read above / DONT CHANGE)
-          hidden ? "h-16 overflow-hidden" : "h-auto", // IMPORTANT (this line changes the height)
+          hidden ? "h-[8rem] overflow-hidden" : "h-auto", // IMPORTANT (this line changes the height)
           ////////////////////////////////////////////////////////////////////////////////////////
 
           // base styles:
-          "flex flex-col gap-8 p-4",
-          "rounded-lg border transition-[opacity_background-color_box-shadow] duration-300",
-          "ring-0 ring-transparent hover:ring-[3px]",
+          "flex flex-col gap-8 p-6 bg-white",
+          "rounded-lg rounded-tr-[6rem] transition-[opacity_background-color_box-shadow] duration-300",
 
-          hidden ? "bg-slate-50" : "bg-white", // background color
-          selectedNotHidden ? "border-emerald-400" : "border-slate-200", // border color
-          selectedNotHidden ? "hover:ring-emerald-100" : "hover:ring-slate-100" // ring color
+          !hidden && "[box-shadow:rgba(149,157,165,0.12)_0px_0px_24px]",
+          hidden ? "bg-stone-50" : "bg-white" // background color
         )}
       >
         <div
           className={clsx(
-            "grid grid-cols-[7rem_1fr] gap-x-2 gap-y-8",
+            "flex flex-col gap-6",
             "[&>*]:duration-300 [&>*]:transition-[filter_opacity]",
-            hidden
-              ? "[&>*:not(.nograyscale)]:grayscale-[80%]"
-              : "[&>*]:grayscale-0",
-            hidden ? "[&>*:not(.nograyscale)]:opacity-20" : "[&>*]:opacity-100"
+            hidden ? "[&>*]:grayscale-[80%]" : "[&>*]:grayscale-0",
+            hidden ? "[&>*]:opacity-20" : "[&>*]:opacity-100"
           )}
         >
-          <span className="flex items-center flex-1 lowercase text-slate-900 text-lg font-mono font-extrabold">
-            {section_number} {class_number}
-          </span>
-          {!!update ? (
-            <div className="w-full flex justify-end text-slate-400 nograyscale">
-              <Switch
-                checked={hidden}
-                onChange={setHidden}
-                className="grid place-items-center w-8 h-8 hover:text-slate-600"
-              >
-                {hidden ? <IconEyeOff /> : <IconEye />}
-              </Switch>
-
-              <SelectedButton
-                type="card"
-                checked={selected}
-                onChange={setSelected}
+          <div className="flex gap-6">
+            <SectionTypeLabel sectionType={section_type} />
+            <div className="flex flex-col justify-center">
+              <span className="text-slate-700 font-bold">
+                {dept_abbr} {course_number.toLowerCase()}
+              </span>
+              <span className="text-slate-500 text-sm font-semibold lowercase">
+                {section_number} {class_number}
+              </span>
+              <InstructorLink
+                firstName={instructor_fn}
+                lastName={instructor_ln}
+                className="text-slate-500 text-sm hover:underline"
               />
             </div>
-          ) : (
-            <span
-              className={clsx(
-                "flex items-center gap-2 font-bold w-min whitespace-nowrap px-3 rounded-md",
-                text_color[color],
-                bg_color_base[color]
-              )}
-            >
-              {dept_abbr} {course_number.toLowerCase()}
-            </span>
-          )}
-          <SectionTypeLabel sectionType={section_type} />
-          <span className="flex gap-1 text-slate-500">
-            <InstructorLink
-              firstName={instructor_fn}
-              lastName={instructor_ln}
-            />
-          </span>
-          <span className="text-slate-500 font-semibold">
-            {formatLocation(location)}
-          </span>
+          </div>
+
           <div className="flex flex-col gap-1">
-            <TimeRange start={time_start} end={time_end} />
+            <div className="flex gap-2 items-center">
+              <TimeRange start={time_start} end={time_end} />
+              <span className="text-sm text-slate-500 font-semibold">
+                {`(${formatLocation(location)})`}
+              </span>
+            </div>
+
             <div className="flex gap-2 flex-wrap">
               {getDays(days).map((day) => (
                 <DayTag key={day} day={day} />
@@ -204,144 +170,40 @@ const ClassCard = ({ data, update }: BaseClassSectionItemProps) => {
           </div>
         </div>
       </div>
-    </li>
-  );
-};
-
-const ClassRow = ({ data, update }: BaseClassSectionItemProps) => {
-  const { selected, hidden, notes } = data.state;
-  const {
-    section_type,
-    section_number,
-    class_number,
-    instructor_fn,
-    instructor_ln,
-    time_start,
-    time_end,
-    days,
-    location,
-    comment,
-  } = data;
-
-  const { setHidden, setSelected } = useClassEntry(data, update);
-  const [showExtraContent, setShowExtraContent] = useState(false);
-  const toggleShowContent = () => setShowExtraContent((v) => !v);
-
-  const bgColor = hidden ? "bg-stone-100" : "bg-white";
-
-  return (
-    <li className={clsx("relative flex flex-col", bgColor)}>
-      <div className="flex w-full">
-        <div className="grid place-items-center p-2 border-r border-slate-200 bg-white">
-          {!!update && (
-            <SelectedButton
-              type="row"
-              checked={selected}
-              onChange={setSelected}
-            />
-          )}
-        </div>
-        <div
-          className={clsx(
-            "grid justify-items-start items-start justify-between gap-0",
-            "grid-cols-[5rem_6rem_14rem_10rem]",
-            "relative flex-1 bg-inherit px-4 pt-8 pb-3",
-            hidden && "[&>*]:opacity-20 [&>*]:grayscale-[80%]"
-          )}
-        >
-          <SectionTypeLabel sectionType={section_type} />
-
-          <span className="flex items-center flex-1 lowercase text-slate-700 font-semibold">
-            {section_number} {class_number}
-          </span>
-
-          <div className="flex flex-col">
-            <TimeRange start={time_start} end={time_end} />
-            <div className="flex gap-2 flex-wrap">
-              {getDays(days).map((day) => (
-                <DayTag key={day} day={day} />
-              ))}
-            </div>
-          </div>
-
-          <span className="flex text-slate-500 ">
-            <InstructorLink
-              firstName={instructor_fn}
-              lastName={instructor_ln}
-            />
-          </span>
-        </div>
-        <div className="absolute right-0 top-0 flex gap-2 p-2 bg-inherit">
-          {!!update && (
-            <>
-              <Switch
-                checked={hidden}
-                onChange={setHidden}
-                className="grid place-items-center text-slate-500 hover:text-slate-700"
-              >
-                {hidden ? <IconEyeOff size={16} /> : <IconEye size={16} />}
-              </Switch>
-              <Switch
-                checked={showExtraContent}
-                onChange={setShowExtraContent}
-                className={clsx(
-                  "grid place-items-center bg-inherit text-slate-500 hover:text-slate-700"
-                )}
-                onClick={toggleShowContent}
-              >
-                <IconChevronDown
-                  size={16}
-                  className={clsx(
-                    "transition-[transform]",
-                    showExtraContent ? "rotate-180" : "rotate-0"
-                  )}
-                />
-              </Switch>
-            </>
-          )}
-        </div>
-      </div>
-      {showExtraContent && (
-        <div
-          className={clsx(
-            "flex flex-col gap-4  p-4 pl-[4rem] border-t border-slate-200",
-            hidden ? "bg-stone-100" : "bg-stone-100",
-            hidden && "[&>*]:opacity-20 [&>*]:grayscale-[80%]"
-          )}
-        >
-          <span className="text-slate-500 font-semibold">
-            {formatLocation(location)}
-          </span>
-
-          <Comment comment={comment} forceShowFull />
+      {!!update && (
+        <div className="absolute top-0 right-0 flex flex-col items-center gap-2 w-min h-min text-slate-400 nograyscale">
+          <Switch
+            checked={selected}
+            onChange={setSelected}
+            className={clsx(
+              "grid place-items-center w-12 h-12 rounded-full",
+              selected
+                ? "hover:ring-4"
+                : "hover:[box-shadow:rgba(16,185,129,0.45)_0px_0px_24px]",
+              selected ? "hover:ring-emerald-100" : "hover:ring-emerald-400",
+              selected ? "ring-emerald-500" : "ring-slate-200",
+              selected ? "text-white" : "text-emerald-500",
+              selected ? "bg-emerald-500" : "bg-white",
+              "[box-shadow:rgba(16,185,129,0.20)_0px_0px_24px]"
+            )}
+          >
+            {selected ? <IconCheck /> : <IconPlus />}
+          </Switch>
+          <Switch
+            checked={hidden}
+            onChange={setHidden}
+            className={clsx(
+              "grid place-items-center w-10 h-10 rounded-full bg-white text-rose-500 hover:text-red-500",
+              "[box-shadow:rgba(244,63,94,0.2)_0px_0px_24px] hover:[box-shadow:rgba(244,63,94,0.4)_0px_0px_24px]"
+            )}
+          >
+            {hidden ? <IconEyeOff /> : <IconEye />}
+          </Switch>
         </div>
       )}
     </li>
   );
-};
-
-const SelectedButton = ({
-  type = "card",
-  checked,
-  onChange,
-}: {
-  type: ClassSectionItemProps["type"];
-  checked: boolean;
-  onChange: (value: boolean) => void;
-}) => {
-  return (
-    <Switch
-      checked={checked}
-      onChange={onChange}
-      className={clsx(
-        "relative grid place-items-center w-8 h-8 hover:text-emerald-500",
-        checked && "text-emerald-500"
-      )}
-    >
-      {checked ? <IconSquareRoundedCheck /> : <IconSquareRoundedPlus />}
-    </Switch>
-  );
-};
+}
 
 export const SectionTypeLabel = ({
   size = "normal",
@@ -350,24 +212,19 @@ export const SectionTypeLabel = ({
   size?: "small" | "normal";
   sectionType: ClassSectionWithState["section_type"];
 }) => {
-  const iconSize = size === "normal" ? 24 : 16;
-  const iconStroke = size === "normal" ? 2 : 2.3;
   const icon = createElement(section_type_icons[sectionType], {
-    size: iconSize,
-    stroke: iconStroke,
+    size: 36,
   });
 
   return (
     <span
       className={clsx(
-        "inline-flex items-center gap-1 rounded-md font-semibold uppercase w-min h-min bg-slate-200 text-slate-700",
-        size === "normal" && "text-sm pl-2 pr-3 py-1",
-        size === "small" &&
-          "text-xs pl-[0.325rem] pr-2 py-1 border border-slate-300"
+        "w-20 h-20 flex flex-col justify-center items-center gap-1 rounded-lg  pl-2 pr-3 py-1",
+        "uppercase font-extrabold text-slate-700 text-sm bg-slate-100"
       )}
     >
-      {icon}
-      {sectionType}
+      <span>{icon}</span>
+      <span className="relative">{sectionType}</span>
     </span>
   );
 };
@@ -448,23 +305,21 @@ export const DayTag = ({ day }: { day: ClassDay | string }) => {
 const InstructorLink = ({
   firstName,
   lastName,
+  className,
 }: {
   firstName: string;
   lastName: string;
+  className?: string;
 }) => {
   const link = get_rmp_URL(firstName, lastName);
 
   return (
     <Link
-      className={clsx(
-        "relative flex items-center gap-1 font-bold hover:underline text-slate-900"
-        // "sm:font-semibold sm:text-slate-700"
-      )}
+      className={className}
       target="_blank" // open in new tab/window
       href={link}
     >
       {formatFirstName(firstName)} {lastName}
-      {/* <IconExternalLink size={14} /> */}
     </Link>
   );
 };

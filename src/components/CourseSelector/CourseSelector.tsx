@@ -175,8 +175,7 @@ export const CourseSelector = memo(function CourseSelector({
         <>
           <div
             className={clsx(
-              "sticky z-10 top-[calc(4rem+0.5rem)] flex gap-0 w-full rounded-3xl rounded-trzz p-2 text-sm font-medium",
-
+              "sticky z-10 top-[calc(4rem+0.5rem)] flex gap-0 w-full rounded-2xl rounded-br p-2 py-3 text-sm font-medium",
               textColor,
               bgc
             )}
@@ -228,7 +227,7 @@ export const CourseSelector = memo(function CourseSelector({
             />
           </div>
 
-          <Disclosure.Panel className="relative z-0 px-4">
+          <Disclosure.Panel className="relative z-0">
             {courseItem.selectedDept.value !== "" &&
             courseItem.selectedCourse.value !== "" ? (
               <SectionSelector

@@ -58,16 +58,16 @@ const ShowButton = ({
     <button
       type="button"
       className={clsx(
-        "relative rounded-[50%] w-min h-min p-4 bg-primary-500 text-white text-primary-900zz pointer-events-auto shadow-lg",
-        "transition-[border-radius] duration-200",
-        hasNewChanges && "rounded-tl-md"
+        "relative rounded-[50%] w-min h-min p-4 bg-primary-500 text-white pointer-events-auto shadow-lg",
+        "transition-[border-radius] duration-200"
+        // hasNewChanges && "rounded-tl-md"
       )}
       onClick={toggleOpen}
     >
       {hasNewChanges && (
-        <span className="absolute top-1 left-1 w-2 h-2 flex">
-          <span className="absolute rounded-full h-full w-full animate-ping-slow bg-white/75" />
-          <span className="relative rounded-full h-full w-full bg-white" />
+        <span className="absolute top-0 right-0 w-2 h-2 flex">
+          <span className="absolute rounded-full h-full w-full animate-ping-slow bg-rose-500/75" />
+          <span className="relative rounded-full h-full w-full bg-rose-500 scale-90" />
         </span>
       )}
       {open ? <IconX /> : <IconCalendarEvent />}
