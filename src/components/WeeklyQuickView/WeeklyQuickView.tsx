@@ -20,7 +20,7 @@ export const WeeklyQuickView = () => {
         <Backdrop open={open} close={close} manual>
           <Transition
             show={open}
-            className="pack-content flex flex-col py-8 w-full pointer-events-none [&>*]:pointer-events-auto"
+            className="pack-content flex flex-col pt-4 pb-24 w-full pointer-events-none [&>*]:pointer-events-auto"
             enter="transition-[transform_opacity] duration-200 ease-linear"
             enterFrom="transform scale-50 opacity-0"
             enterTo="transform scale-100 opacity-100"

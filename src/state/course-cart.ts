@@ -92,7 +92,9 @@ export const selectedSectionsHasChanged = atom((get) => {
   return newStateIds !== oldStateIds;
 });
 
-export const preferedTimeFormatAtom = atomWithStorage<"24h" | "12h">(
+export type TimeFormat = "24h" | "12h";
+
+export const preferedTimeFormatAtom = atomWithStorage<TimeFormat>(
   "preferedTimeFormat",
   "12h"
 );

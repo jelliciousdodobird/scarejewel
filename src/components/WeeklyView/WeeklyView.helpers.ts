@@ -1,5 +1,5 @@
 import { ClassSection } from "../../database/types";
-import { ClassSectionWithState } from "../../state/course-cart";
+import { ClassSectionWithState, TimeFormat } from "../../state/course-cart";
 import { clamp, formatTime, roundToNearestMultipleOf } from "../../utils/util";
 
 export const ONE_HOUR_IN_MINS = 60;
@@ -12,6 +12,9 @@ export const roundToNearestHour = (n: number) => {
 export const hourOnly = (time: number) => {
   return formatTime(time).replace(":00", "");
 };
+
+export const getTimeFormatted = (time: number, format: TimeFormat) =>
+  format === "24h" ? formatTime(time, false) : hourOnly(time);
 
 export const isTimeNA = (start: number, end: number) =>
   start === -1 && start === end;
