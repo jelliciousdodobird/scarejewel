@@ -6,6 +6,9 @@
   html {
     -webkit-tap-highlight-color: transparent;
   }
+  * {
+    @apply appearance-none outline-none;
+  }
 }
 
 @layer utilities {

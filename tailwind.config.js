@@ -21,7 +21,6 @@ module.exports = {
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
       },
-
       boxShadow: {
         center: "0 0 24px 0 rgba(0,0,0, 0.25)",
       },
