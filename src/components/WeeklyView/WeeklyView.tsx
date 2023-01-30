@@ -1,24 +1,25 @@
 "use client";
 
 import { Switch, Transition } from "@headlessui/react";
+
+import * as Popover from "@radix-ui/react-popover";
 import {
   IconAlertCircle,
   IconCalendarEvent,
   IconChevronRight,
 } from "@tabler/icons";
 import clsx from "clsx";
+import { AnimatePresence, motion } from "framer-motion";
 import { atom, useAtom, useAtomValue, useSetAtom } from "jotai";
 import {
   createElement,
   CSSProperties,
   Fragment,
   useEffect,
-  useLayoutEffect,
   useMemo,
   useRef,
   useState,
 } from "react";
-import { usePopperTooltip } from "react-popper-tooltip";
 import { useHasMounted } from "../../hooks/useHasMounted";
 import { useLastValidValue } from "../../hooks/useLastValidValue";
 import {
@@ -27,7 +28,7 @@ import {
   preferedTimeFormatAtom,
 } from "../../state/course-cart";
 import { DayName, dayNameMap, NumberRange } from "../../utils/types";
-import { clamp, rangesOverlap } from "../../utils/util";
+import { rangesOverlap } from "../../utils/util";
 import { Backdrop } from "../Backdrop/Backdrop";
 import { ClassSectionItem } from "../ClassSectionItem/ClassSectionItem";
 import { section_type_icons } from "../ClassSectionItem/ClassSectionItem.helper";
@@ -54,7 +55,7 @@ import {
 } from "./WeeklyView.variants";
 
 export const selectedSectionAtom = atom<ClassSectionWithState | null>(null);
-
+export const timeOverlapTooltipId = "time-overlap-tooltip";
 type DayColumn = {
   day: DayName;
   sections: ClassSectionWithState[];
@@ -195,7 +196,7 @@ export const WeeklyView = ({
     "flex justify-center items-center h-14 bg-slate-100 text-slate-700 text-xl font-bold w-full";
   const headerClass =
     "h-12 uppercase font-semibold text-sm text-slate-500 bg-slate-50";
-  const timeSlotClass = "border-b border-slate-100 last:border-b-0 bg-white";
+  const timeSlotClass = "border-b border-slate-100 last:border-b-0";
   const timeSlotDynamicStyle: CSSProperties = {
     height: numOfMinsPerBlock * yScale,
   };
@@ -204,11 +205,12 @@ export const WeeklyView = ({
     <>
       <SelectedSnapshot />
       <SelectedSectionPopup />
-      <div className="relative flex flex-col gap-8">
-        <div className="absolute " id="tooltip-location"></div>
+      <div className="relative flex flex-col overflow-hidden rounded-2xl ring-1 ring-black/5 bg-white">
+        <div className="absolute z-10" id={timeOverlapTooltipId}></div>
         {/* TABLE CONTAINER */}
         <div
-          className="flex flex-col isolate relative overflow-hidden rounded-2xl border border-black/5"
+          // className="flex flex-col isolate relative overflow-hidden rounded-2xl border border-black/5"
+          className="flex flex-col isolate relative"
           ref={containerRef}
         >
           {/* TABLE HEADER */}
@@ -230,7 +232,7 @@ export const WeeklyView = ({
               </Switch>
 
               {/* TIME COLUMN DATA */}
-              <div className="relative flex flex-col w-full bg-white">
+              <div className="relative flex flex-col w-full">
                 {timeSlots.map((time) => (
                   <div
                     key={time}
@@ -254,29 +256,18 @@ export const WeeklyView = ({
             </div>
             {/* DAY COLUMNS CONTAINER */}
             {mainView.map((col) => (
-              <div
-                key={col.day.long}
-                className="isolate flex flex-col flex-1 hover:z-10zz"
-              >
+              <div key={col.day.long} className="isolate flex flex-col flex-1">
                 {/* DAY COLUMN HEADER */}
-                {/* <h2
+                <h2
                   className={clsx(
-                    "relative flex justify-center items-center gap-0 sm:gap-2",
+                    "relative flex justify-center items-center gap-0 sm:gap-1",
                     headerClass
                   )}
                 >
                   <span className="hidden sm:block">{col.day.medium}</span>
                   <span className="sm:hidden">{col.day.short}</span>
                   {col.hasOverlap && <OverlapTooltip />}
-                </h2> */}
-
-                <OverlapTooltip
-                  column={col}
-                  className={clsx(
-                    "relative flex justify-center items-center gap-0 sm:gap-2",
-                    headerClass
-                  )}
-                />
+                </h2>
 
                 {/* DAY COLUMN HEADER DATA*/}
                 <div className="relative flex w-full">
@@ -311,7 +302,7 @@ export const WeeklyView = ({
           </div>
         </div>
         {subViewSections.length !== 0 && (
-          <div className="flex flex-col overflow-hidden border border-slate-100 rounded-2xl bg-white">
+          <div className="flex flex-col">
             <p className={clsx("flex flex-col", sectionHeaderClass)}>
               <span>{"No Time or Day"}</span>
               <span className="text-xs font-semibold italic lowercase">
@@ -319,7 +310,7 @@ export const WeeklyView = ({
               </span>
             </p>
 
-            <div className="flex gap-4 flex-wrap p-4">
+            <div className="flex gap-4 justify-center flex-wrap p-4">
               {subViewSections.map((dayCol) => (
                 <Fragment key={dayCol.day.long}>
                   {dayCol.sections.map((section) => (
@@ -550,180 +541,55 @@ export const SelectedSectionPopup = () => {
 };
 
 const OverlapTooltip = ({
-  className,
-  column,
+  portalTooltipToId = timeOverlapTooltipId,
 }: {
-  className?: string;
-  column: DayColumn;
+  portalTooltipToId?: string;
 }) => {
-  const [showTooltip, setShowTooltip] = useState(false);
-  const triggerRef = useRef<HTMLButtonElement>(null);
+  const [portalTo, setPortalTo] = useState<HTMLElement | null>(null);
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    const selector = portalTooltipToId ? `#${portalTooltipToId}` : "body";
+    const element = document.querySelector(selector);
+    setPortalTo((element as HTMLElement) ?? document.body);
+  }, []);
 
   return (
-    <div className="relative flex flex-col">
-      <h2
-        className={clsx(className)}
-        // safari can't gain focus onClick naturally, so we force it here
-        // it's also here cus on mobile the button is too small to click accurately
-        onClick={() => triggerRef?.current?.focus()}
-      >
-        <span className="hidden sm:block">{column.day.medium}</span>
-        <span className="sm:hidden">{column.day.short}</span>
-        {column.hasOverlap && (
-          <button
-            ref={triggerRef}
-            type="button"
-            className="text-rose-500"
-            onFocus={() => setShowTooltip(true)}
-            onBlur={() => setShowTooltip(false)}
-          >
-            <IconAlertCircle size={16} stroke={2.5} />
-          </button>
+    <Popover.Root open={open} onOpenChange={setOpen}>
+      <Popover.Trigger asChild>
+        <button
+          type="button"
+          className="text-rose-500 hover:bg-slate-200 hover:text-slate-500 rounded-lg p-1"
+          aria-label="Show time overlap tip"
+        >
+          <IconAlertCircle size={16} stroke={2.5} />
+        </button>
+      </Popover.Trigger>
+      <AnimatePresence>
+        {open && (
+          <Popover.Portal container={portalTo} forceMount>
+            <Popover.Content sideOffset={2} align="center" side="bottom">
+              <motion.div
+                initial={{ y: -50, opacity: 0, scale: 0.5 }}
+                animate={{ y: 0, opacity: 1, scale: 1 }}
+                exit={{ y: -80, opacity: 0, scale: 0 }}
+                transition={{ ease: "easeOut" }}
+              >
+                <div className="overflow-hidden flex flex-col gap-2 p-4 bg-white text-rose-500 text-sm rounded-xl shadow-center shadow-black/5 w-60">
+                  <span className="flex justify-center font-bold text-base uppercase w-full">
+                    Time Overlap
+                  </span>
+                  <span className="text-sm font-light text-slate-900 text-center">
+                    The colored segments to the left represent the times that
+                    are overlapped. Click on the segments to collapse a section.
+                  </span>
+                </div>
+                <Popover.Arrow className="fill-white" />
+              </motion.div>
+            </Popover.Content>
+          </Popover.Portal>
         )}
-      </h2>
-      {column.hasOverlap && (
-        <Portal portalToTag="body">
-          <Backdrop
-            open={showTooltip}
-            close={close}
-            manual
-            className="grid place-items-center"
-          >
-            <Transition
-              as={Fragment}
-              show={showTooltip}
-              enter="transition-[transform_opacity] duration-200 ease-linear"
-              enterFrom="transform scale-50 opacity-0"
-              enterTo="transform scale-100 opacity-100"
-              leave="transition-[transform_opacity] duration-200 ease-linear"
-              leaveFrom="transform scale-100 opacity-100"
-              leaveTo="transform scale-50 opacity-0"
-            >
-              <div className="bg-white text-rose-500 text-sm p-4 ring-1 ring-rose-500/10 rounded-xl shadow-lg w-60">
-                Looks like you have a time overlap. The overlapped segments are
-                outlined as a tab on the left of each section. You can click on
-                the tab to collapse it so you can see underneath that section.
-              </div>
-            </Transition>
-          </Backdrop>
-        </Portal>
-      )}
-    </div>
+      </AnimatePresence>
+    </Popover.Root>
   );
 };
-
-// const OverlapTooltip = ({
-//   className,
-//   column,
-//   width = 200,
-// }: {
-//   className?: string;
-//   column: DayColumn;
-//   width?: number;
-// }) => {
-//   const [showTooltip, setShowTooltip] = useState(false);
-//   const [position, setPosition] = useState<{
-//     x: number;
-//     y: number;
-//     width: number;
-//     originalWidth: number;
-//   }>({
-//     x: 0,
-//     y: 0,
-//     width,
-//     originalWidth: width,
-//   });
-
-//   const triggerRef = useRef<HTMLButtonElement>(null);
-
-//   useEffect(() => {
-//     const handle = () => {
-//       const trigger = triggerRef.current?.getBoundingClientRect();
-//       // const tooltip = tooltipRef.current?.getBoundingClientRect();
-
-//       // console.log(triggerRef);
-//       // console.log(tooltipRef);
-
-//       if (trigger) {
-//         setPosition((v) => {
-//           const marginTop = 20;
-//           const marginX = 10;
-
-//           const maxRightEdge = marginX;
-//           const maxLeftEdge = window.innerWidth - marginX;
-
-//           const maxWidth = clamp(
-//             v.originalWidth,
-//             0,
-//             window.innerWidth - marginX * 2
-//           );
-
-//           let width = maxWidth;
-//           let x = trigger.x + -width / 2 + trigger.width / 2;
-//           const y = trigger.y + trigger.height + marginTop;
-
-//           const rightEdge = x + v.originalWidth;
-//           const deltaRight = rightEdge - maxLeftEdge;
-
-//           if (deltaRight > 0) x = x - deltaRight;
-//           if (x < maxRightEdge) x = maxRightEdge;
-
-//           return { ...v, x, y, width };
-//         });
-//       }
-//     };
-
-//     handle();
-
-//     window.addEventListener("resize", handle);
-
-//     return () => {
-//       window.removeEventListener("resize", handle);
-//     };
-//   }, []);
-
-//   return (
-//     <div
-//       className={clsx("relative flex flex-col z-20zz", showTooltip && "z-10zz")}
-//     >
-//       <h2
-//         className={clsx(className)}
-//         // safari can't gain focus onClick naturally, so we force it here
-//         // it's also here cus on mobile the button is too small to click accurately
-//         onClick={() => triggerRef?.current?.focus()}
-//       >
-//         <span className="hidden sm:block">{column.day.medium}</span>
-//         <span className="sm:hidden">{column.day.short}</span>
-//         {column.hasOverlap && (
-//           <button
-//             ref={triggerRef}
-//             type="button"
-//             className="text-rose-500"
-//             onFocus={() => setShowTooltip(true)}
-//             onBlur={() => setShowTooltip(false)}
-//           >
-//             <IconAlertCircle size={16} stroke={2.5} />
-//           </button>
-//         )}
-//       </h2>
-//       {column.hasOverlap && showTooltip && (
-//         <Portal portalToTag="body">
-//           <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
-//             <div
-//               className="absolute bg-white text-rose-500 text-sm p-4 ring-1 ring-rose-500/10 rounded-xl shadow-lg"
-//               style={{
-//                 top: position.y,
-//                 left: position.x,
-//                 width: position.width,
-//               }}
-//             >
-//               Looks like you have a time overlap. The overlapped segments are
-//               outlined as a tab on the left of each section. You can click on
-//               the tab to collapse it so you can see underneath that section.
-//             </div>
-//           </div>
-//         </Portal>
-//       )}
-//     </div>
-//   );
-// };
