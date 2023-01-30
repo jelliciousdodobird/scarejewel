@@ -105,6 +105,8 @@ function ClassCard({ data, update }: ClassSectionItemProps) {
 
   const { setHidden, setSelected } = useClassEntry(data, update);
 
+  const displayMode = !update;
+
   return (
     <li className="relative flex flex-col">
       <div
@@ -118,7 +120,9 @@ function ClassCard({ data, update }: ClassSectionItemProps) {
 
           // base styles:
           "flex flex-col gap-8 p-6 bg-white",
-          "rounded-lg rounded-tr-[6rem] transition-[opacity_background-color_box-shadow] duration-300",
+          "rounded-lg transition-[opacity_background-color_box-shadow] duration-300",
+
+          displayMode ? "" : "rounded-tr-[6rem]",
 
           !hidden && "shadow-center shadow-slate-500/10",
           hidden ? "bg-stone-50" : "bg-white" // background color
@@ -168,7 +172,7 @@ function ClassCard({ data, update }: ClassSectionItemProps) {
           </div>
         </div>
       </div>
-      {!!update && (
+      {!displayMode && (
         <div className="absolute top-0 right-0 flex flex-col items-center gap-2 w-min h-min text-slate-400">
           <Switch
             checked={selected}

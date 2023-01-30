@@ -1,6 +1,6 @@
 "use client";
 
-import { Switch, Transition } from "@headlessui/react";
+import { Dialog, Switch } from "@headlessui/react";
 
 import * as Popover from "@radix-ui/react-popover";
 import {
@@ -21,7 +21,6 @@ import {
   useState,
 } from "react";
 import { useHasMounted } from "../../hooks/useHasMounted";
-import { useLastValidValue } from "../../hooks/useLastValidValue";
 import {
   ClassSectionWithState,
   selectedSectionsAtom,
@@ -29,10 +28,8 @@ import {
 } from "../../state/course-cart";
 import { DayName, dayNameMap, NumberRange } from "../../utils/types";
 import { rangesOverlap } from "../../utils/util";
-import { Backdrop } from "../Backdrop/Backdrop";
 import { ClassSectionItem } from "../ClassSectionItem/ClassSectionItem";
 import { section_type_icons } from "../ClassSectionItem/ClassSectionItem.helper";
-import { Portal } from "../Portal/Portal";
 import { SelectedSnapshot } from "../SelectedSnapshot/SelectedSnapshot";
 import {
   clampTime,
@@ -54,8 +51,9 @@ import {
   ring_highlight_on,
 } from "./WeeklyView.variants";
 
-export const selectedSectionAtom = atom<ClassSectionWithState | null>(null);
+// export const selectedSectionAtom = atom<ClassSectionWithState | null>(null);
 export const timeOverlapTooltipId = "time-overlap-tooltip";
+
 type DayColumn = {
   day: DayName;
   sections: ClassSectionWithState[];
@@ -90,9 +88,6 @@ export const WeeklyView = ({
   // functions:
   const toggleTimeFormat = () =>
     setTimeFormat((v) => (v === "24h" ? "12h" : "24h"));
-
-  // const getTime = (time: number) =>
-  //   timeFormatIs24h ? formatTime(time, false) : hourOnly(time);
 
   // NO POINT IN MEMOIZING ANYTHING BELOW THIS POINT SINCE IT ALL DEPENDS ON "selectedSectionsAtom"
   const dayColumns: DayColumn[] = [
@@ -204,9 +199,9 @@ export const WeeklyView = ({
   return (
     <>
       <SelectedSnapshot />
-      <SelectedSectionPopup />
+      {/* <SelectedSectionPopup /> */}
       <div className="relative flex flex-col overflow-hidden rounded-2xl ring-1 ring-black/5 bg-white">
-        <div className="absolute z-10" id={timeOverlapTooltipId}></div>
+        <div className="absolute z-50" id={timeOverlapTooltipId}></div>
         {/* TABLE CONTAINER */}
         <div
           // className="flex flex-col isolate relative overflow-hidden rounded-2xl border border-black/5"
@@ -351,8 +346,9 @@ const TimeItem = ({
   } = data;
   const { color } = state;
 
-  const setSelected = useSetAtom(selectedSectionAtom);
-  const setPopoverContent = () => setSelected(data);
+  const [open, setOpen] = useState(false);
+  const closePopup = () => setOpen(false);
+  const openPopup = () => setOpen(true);
 
   // style tokens:
   const ringHighlight = ring_highlight[color];
@@ -403,11 +399,7 @@ const TimeItem = ({
               textColor
             )}
           >
-            <IconChevronRight
-              className="text-whitezz w-3 h-3"
-              // size={16}
-              stroke={2.5}
-            />
+            <IconChevronRight className="w-3 h-3" stroke={2.5} />
           </span>
         </button>
       )}
@@ -418,7 +410,7 @@ const TimeItem = ({
           bgColor,
           textColor
         )}
-        onClick={setPopoverContent}
+        onClick={openPopup}
       >
         <div className="w-full h-full overflow-hidden flex gap-3 sm:gap-2 rounded">
           <div className="flex gap-2 flex-col sm:flex-row  zzflex-row flex-wrap items-center font-semibold w-minzz h-minzz h-min w-full">
@@ -444,6 +436,54 @@ const TimeItem = ({
           </div>
         </div>
       </button>
+
+      <AnimatePresence>
+        {open && (
+          <Dialog
+            open={open}
+            onClose={closePopup}
+            className="relative z-50zz"
+            static
+            as={motion.div}
+          >
+            {/* The backdrop, rendered as a fixed sibling to the panel container */}
+            <motion.div
+              className="fixed inset-0 bg-black/30"
+              aria-hidden="true"
+              initial={{ opacity: 0, backdropFilter: "blur(0px)" }}
+              animate={{ opacity: 1, backdropFilter: "blur(2px)" }}
+              exit={{ opacity: 0, backdropFilter: "blur(0px)" }}
+              transition={{ ease: "easeOut" }}
+            />
+            {/* Full-screen scrollable container */}
+            <div className="fixed inset-0 overflow-y-auto">
+              {/* Container to center the panel */}
+              <div className="flex min-h-full items-center justify-center p-4zz pack-content w-full">
+                {/* The actual dialog panel  */}
+                <Dialog.Panel
+                  className="max-w-md min-w-[min(400px,100%)]"
+                  as={motion.div}
+                  initial={{ y: 200, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  exit={{ y: -200, opacity: 0 }}
+                  transition={{ ease: "easeOut" }}
+                >
+                  <ClassSectionItem
+                    data={{
+                      ...data,
+                      state: {
+                        ...data.state,
+                        selected: false,
+                        hidden: false,
+                      },
+                    }}
+                  />
+                </Dialog.Panel>
+              </div>
+            </div>
+          </Dialog>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
@@ -456,6 +496,7 @@ type TimeSlotProps = {
   order: number;
   length: number;
 };
+
 const TimeSlot = ({
   data,
   order,
@@ -503,43 +544,6 @@ const TimeSlot = ({
   );
 };
 
-export const SelectedSectionPopup = () => {
-  const [selected, setSelected] = useAtom(selectedSectionAtom);
-  const prev = useLastValidValue(selected);
-  const close = () => setSelected(null);
-
-  const opened = !!selected;
-  const data = selected === null ? prev : selected;
-
-  return (
-    <Portal portalToTag="body">
-      <Backdrop open={opened} close={close} manual>
-        <Transition
-          className="pointer-events-none [&>*]:pointer-events-auto grid pack-content place-items-center h-full w-full"
-          show={opened}
-          enter="transition-[transform_opacity] duration-200 ease-linear"
-          enterFrom="transform scale-50 opacity-0"
-          enterTo="transform scale-100 opacity-100"
-          leave="transition-[transform_opacity] duration-200 ease-linear"
-          leaveFrom="transform scale-100 opacity-100"
-          leaveTo="transform scale-50 opacity-0"
-        >
-          <div className="max-w-md min-w-[min(400px,100%)]">
-            {!!data && (
-              <ClassSectionItem
-                data={{
-                  ...data,
-                  state: { ...data.state, selected: false, hidden: false },
-                }}
-              />
-            )}
-          </div>
-        </Transition>
-      </Backdrop>
-    </Portal>
-  );
-};
-
 const OverlapTooltip = ({
   portalTooltipToId = timeOverlapTooltipId,
 }: {
@@ -547,6 +551,7 @@ const OverlapTooltip = ({
 }) => {
   const [portalTo, setPortalTo] = useState<HTMLElement | null>(null);
   const [open, setOpen] = useState(false);
+  const closeTooltip = () => setOpen(false);
 
   useEffect(() => {
     const selector = portalTooltipToId ? `#${portalTooltipToId}` : "body";
@@ -568,7 +573,12 @@ const OverlapTooltip = ({
       <AnimatePresence>
         {open && (
           <Popover.Portal container={portalTo} forceMount>
-            <Popover.Content sideOffset={2} align="center" side="bottom">
+            <Popover.Content
+              sideOffset={2}
+              align="center"
+              side="bottom"
+              onBlur={closeTooltip} // THIS IS NEEDED ON MOBILE BECAUSE onPointerDownOutside() will not fire when WeeklyView is inside headless-ui's modal
+            >
               <motion.div
                 initial={{ y: -50, opacity: 0, scale: 0.5 }}
                 animate={{ y: 0, opacity: 1, scale: 1 }}

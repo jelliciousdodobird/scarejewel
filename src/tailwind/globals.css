@@ -7,7 +7,7 @@
     -webkit-tap-highlight-color: transparent;
   }
   * {
-    @apply appearance-none outline-none;
+    /* @apply appearance-none outline-none; */
   }
 }
 

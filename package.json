@@ -1,5 +1,5 @@
 {
-  "name": "scarejewel",
+  "name": "yotei",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -13,6 +13,7 @@
     "@headlessui/react": "^1.7.7",
     "@headlessui/tailwindcss": "^0.1.2",
     "@next/font": "13.1.1",
+    "@radix-ui/react-dialog": "^1.0.2",
     "@radix-ui/react-popover": "^1.0.3",
     "@supabase/supabase-js": "^2.2.3",
     "@tabler/icons": "^1.119.0",

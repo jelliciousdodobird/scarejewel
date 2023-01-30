@@ -180,12 +180,11 @@ export const GroupMessage = () => {
       <span className="">
         It is considered invalid when you register on the official CSULB site.
         For example, you cannot register for a
-        <span className="font-semibold italic uppercase"> lecture </span>
-        section from<span className="font-bold"> Group 1 </span>then a
-        <span className="font-semibold italic uppercase"> lab </span>section
-        from
-        <span className="font-bold"> Group 2 </span>. It is only allowed here so
-        that it is easier to rearrange your schedule to see what works.
+        <span className="font-bold ">{" lecture "}</span>
+        section from<span className="font-bold">{" group 1 "}</span>then a
+        <span className="font-bold ">{" lab "}</span>section from
+        <span className="font-bold">{" group 2 "}</span>. It is only allowed
+        here so that it is easier to rearrange your schedule to see what works.
       </span>
     </span>
   );
