@@ -89,15 +89,12 @@ export const SectionSelector = ({
       <div className="relative">
         <div
           className={clsx(
-            "text-xl bg-slate-100zz w-full rounded-xl flex gap-4",
+            "text-xl w-full rounded-xl flex gap-4",
             " [&>*]:hidden [&>*:first-child]:flex sm:[&>*:not(:last-child)]:flex md:[&>*]:flex"
           )}
         >
           {[...Array(3).keys()].map((i) => (
-            <div
-              key={i}
-              className="aaaaaa h-80 w-full bg-slate-100 rounded-2xl"
-            ></div>
+            <div key={i} className="h-80 w-full bg-slate-100 rounded-2xl"></div>
           ))}
         </div>
         <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex font-extrabold text-4xl text-slate-500">
@@ -117,83 +114,80 @@ export const SectionSelector = ({
   const groups = splitIntoGroups(courseItem.availableSections);
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col">
+      {groups.length > 1 && <GroupMessage />}
       {groups.map((group, i) => (
-        <Fragment key={group.group_id}>
-          {groups.length > 1 && (
-            <h3 className="font-extrabold text-xl uppercase">Group {i + 1}</h3>
-          )}
-          <span className="flex gap-4 text-sm rounded-lg p-4 bg-slate-100 text-slate-900">
-            <span className="">
-              <IconAlertCircle />
-            </span>
+        <div
+          key={group.group_id}
+          className="flex flex-col gap-10 my-8 py-2 pl-6 border-l border-slate-100 hover:border-slate-200"
+        >
+          <div className="flex flex-col gap-4 rounded-xl">
+            <h3 className="font-extrabold text-2xl uppercase">Group {i + 1}</h3>
+            <div className="flex flex-wrap gap-2">
+              <div className="flex flex-col gap-2 bg-slate-100 text-sm text-slate-900 p-3 px-4 rounded-xl">
+                <span className="flex gap-2 items-center">
+                  <span>
+                    <IconAlertCircle />
+                  </span>
+                  <span className="font-bold text-base uppercase">
+                    Instructions
+                  </span>
+                </span>
+                <span className="whitespace-nowrap">
+                  Enrollment requires one of each:
+                </span>
+              </div>
 
-            <span className="flex flex-col gap-4">
-              <span className="flex items-center whitespace-pre flex-wrap">
-                <span>Enrollment requires</span>
-                {group.uniqueSectionTypes.map((type, i) => (
-                  <Fragment key={type}>
-                    {group.uniqueSectionTypes.length === i + 1 && (
-                      <span className="whitespace-pre"> and</span>
-                    )}
-                    <span className="font-bold whitespace-pre"> one </span>
-                    <SectionTypeLabel size="small" sectionType={type} />
-                    {group.uniqueSectionTypes.length !== i + 1 && (
-                      <span className="whitespace-pre">
-                        {group.uniqueSectionTypes.length > 2 && ","}
-                      </span>
-                    )}
-                  </Fragment>
-                ))}
-                <span className="whitespace-pre"> within a group.</span>
-              </span>
-
-              {groups.length > 1 && <GroupMessage />}
-            </span>
-          </span>
+              <div className="flex flex-col">
+                <span className="flex gap-2">
+                  {group.uniqueSectionTypes.map((type) => (
+                    <SectionTypeLabel
+                      key={type}
+                      size="small"
+                      sectionType={type}
+                    />
+                  ))}
+                </span>
+              </div>
+            </div>
+          </div>
           <ul className="grid grid-cols-[repeat(auto-fill,minmax(min(320px,100%),1fr))] gap-8 rounded-md bg-transparent">
             {group.classSections.map((cs) => (
               <ClassSectionItem
                 key={cs.uid}
-                type="card"
                 data={cs}
                 update={updateClassSectionState}
               />
             ))}
           </ul>
-        </Fragment>
+        </div>
       ))}
     </div>
   );
 };
 
 export const GroupMessage = () => {
-  const [open, setOpen] = useState(false);
-  const toggleOpen = () => setOpen((v) => !v);
   return (
-    <span className="flex flex-col gap-4 text-sm">
-      <span className="">
-        Do not pick sections from ACROSS groups.{" "}
-        <button className="font-bold" type="button" onClick={toggleOpen}>
-          {open ? "(close)" : "Why?"}
-        </button>
-      </span>
-      {open && (
-        <span className="">
-          It is considered{" "}
-          <span className="font-bold uppercase underline text-rose-600">
-            invalid
-          </span>{" "}
-          when you register on the official CSULB site. For example, you cannot
-          register for a
-          <span className="font-semibold italic uppercase"> lecture </span>
-          section from<span className="font-bold"> Group 1 </span>then a
-          <span className="font-semibold italic uppercase"> lab </span>section
-          from
-          <span className="font-bold"> Group 2 </span>. It is only allowed here
-          so that it is easier to rearrange your schedule to see what works.
+    <span className="flex flex-col gap-4 text-sm rounded-xl p-6 bg-rose-50 text-rose-600 ">
+      <span className="flex gap-2 items-center ">
+        <span>
+          <IconAlertCircle />
         </span>
-      )}
+        <span className="font-bold text-lg text-rose-600 uppercase">
+          Warning
+        </span>
+      </span>
+      <span className="">Do not pick sections from ACROSS groups. </span>
+
+      <span className="">
+        It is considered invalid when you register on the official CSULB site.
+        For example, you cannot register for a
+        <span className="font-bold ">{" lecture "}</span>
+        section from<span className="font-bold">{" group 1 "}</span>then a
+        <span className="font-bold ">{" lab "}</span>section from
+        <span className="font-bold">{" group 2 "}</span>. It is only allowed
+        here so that it is easier to rearrange your schedule to see what works.
+      </span>
     </span>
   );
 };

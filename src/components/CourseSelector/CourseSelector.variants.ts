@@ -26,6 +26,7 @@ export const bg_color_highlight: PrettyColorMap = {
   sky: "bg-sky-100",
   violet: "bg-violet-100",
 };
+
 export const bg_color_highlight_hover: PrettyColorMap = {
   yellow: "hover:bg-yellow-100",
   cyan: "hover:bg-cyan-100",

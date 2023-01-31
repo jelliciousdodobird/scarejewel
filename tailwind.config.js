@@ -1,4 +1,6 @@
+const plugin = require("tailwindcss/plugin");
 const colors = require("tailwindcss/colors");
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: "class",
@@ -20,6 +22,9 @@ module.exports = {
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
+      },
+      boxShadow: {
+        center: "0 0 24px 0 rgba(0,0,0, 0.25)",
       },
       keyframes: {
         "fade-in-out": {
@@ -72,5 +77,16 @@ module.exports = {
     require("@headlessui/tailwindcss"),
     require("tailwind-scrollbar"),
     require("@tailwindcss/line-clamp"),
+    plugin(function ({ addUtilities }) {
+      addUtilities({
+        ".no-scrollbar": {
+          "-ms-overflow-style": "none" /* IE and Edge */,
+          "scrollbar-width": "none" /* Firefox */,
+        },
+        ".no-scrollbar::-webkit-scrollbar": {
+          display: "none",
+        },
+      });
+    }),
   ],
 };
