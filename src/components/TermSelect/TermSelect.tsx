@@ -27,7 +27,7 @@ export const TermSelect = ({
         <div className="relative flex flex-col min-w-[12rem] w-full sm:w-auto">
           <Listbox.Button
             className={clsx(
-              "group grid grid-cols-[1fr_min-content] justify-items-center items-center h-10 w-full text-slate-400 font-semibold rounded-lg ",
+              "group grid grid-cols-[1fr_min-content] justify-items-center items-center h-10 w-full text-slate-400 font-semibold rounded-xl ",
               "bg-white hover:bg-primary-50 focus:bg-primary-50 ring-1 ring-slate-200 hover:ring-primary-200 focus:ring-primary-200",
               "appearance-none outline-none"
             )}

@@ -1,20 +1,34 @@
 "use client";
 
-import { Transition } from "@headlessui/react";
-import { IconCirclePlus, IconAlertOctagon, IconX } from "@tabler/icons";
-import { useAtom } from "jotai";
+import { Tab, Transition } from "@headlessui/react";
+import {
+  IconCirclePlus,
+  IconAlertOctagon,
+  IconX,
+  IconChevronLeft,
+  IconChevronRight,
+  IconPlus,
+} from "@tabler/icons";
+import clsx from "clsx";
+import { motion } from "framer-motion";
+import { atom, PrimitiveAtom, useAtom, useAtomValue, useSetAtom } from "jotai";
 import { nanoid } from "nanoid";
-import { useMemo, useState, Fragment } from "react";
+import { useMemo, useState, Fragment, WheelEventHandler, useRef } from "react";
 import { Term } from "../../database/types";
 import { useHasMounted } from "../../hooks/useHasMounted";
 import {
   courseItemsAtomAtom,
   selectedTermOptionAtom,
   courseItemsAtom,
+  CourseItem,
 } from "../../state/course-cart";
 import { getRandomPrettyColor } from "../../utils/util";
 import { Backdrop } from "../Backdrop/Backdrop";
 import { CourseSelector } from "../CourseSelector/CourseSelector";
+import {
+  bg_color_base,
+  text_color,
+} from "../CourseSelector/CourseSelector.variants";
 import { Portal } from "../Portal/Portal";
 import {
   TermOption,
@@ -22,6 +36,16 @@ import {
   TermSelect,
 } from "../TermSelect/TermSelect";
 import { CoursePlanSkeleton } from "./CoursePlan.skeleton";
+import { hex_bg_color } from "./CoursePlan.variants";
+
+export const selectedTabAtom = atom(0);
+const defaultAtom = atom({
+  id: "",
+  color: "cyan",
+  availableSections: [],
+  selectedDept: {},
+  selectedCourse: {},
+});
 
 export const CoursePlan = ({ terms }: { terms: Term[] }) => {
   const mounted = useHasMounted(); // need to make sure we're mounted so we can use the localstorage in the courseItemsAtomAtom
@@ -29,6 +53,16 @@ export const CoursePlan = ({ terms }: { terms: Term[] }) => {
   const [selectedTermOption, setSelectedTermOption] = useAtom(
     selectedTermOptionAtom
   );
+
+  const [selectedTab, setSelectedTab] = useAtom(selectedTabAtom);
+
+  const ref = useRef<HTMLDivElement>(null!);
+  const scrollRight = () => {
+    if (ref.current) ref.current.scrollLeft += 150;
+  };
+  const scrollLeft = () => {
+    if (ref.current) ref.current.scrollLeft -= 150;
+  };
 
   const termOptions: TermOption[] = useMemo(
     () =>
@@ -45,40 +79,116 @@ export const CoursePlan = ({ terms }: { terms: Term[] }) => {
     [terms]
   );
 
-  // useEffect(() => {
-  //   document.body.scrollTo({
-  //     top: document.body.scrollHeight,
-  //     behavior: "smooth",
-  //   });
-  // }, [courseItems.length]);
-
   if (!mounted) return null;
 
   return (
-    <div className="pack-content w-full flex flex-col gap-8">
-      <div className=" w-full relative z-10 flex justify-between gap-4">
-        <TermSelect
-          options={termOptions}
-          onChange={setSelectedTermOption}
-          selectedOption={selectedTermOption}
-        />
-        <AddButton />
+    <Tab.Group
+      selectedIndex={selectedTab}
+      onChange={setSelectedTab}
+      defaultIndex={0}
+    >
+      <div className="flex flex-col gap-4 w-full">
+        <div className="z-10 sticky top-[4rem] backdrop-blur-sm bg-white/90 w-full border-b border-slate-200 pt-4 sm:pt-0">
+          <div className="pack-content w-full flex items-center flex-col sm:flex-row max-w-full rounded-xlzz gap-0 sm:gap-4">
+            <TermSelect
+              options={termOptions}
+              onChange={setSelectedTermOption}
+              selectedOption={selectedTermOption}
+            />
+            <div className="flex items-center gap-2 min-w-0 flex-1 w-full">
+              <Tab.List
+                ref={ref}
+                className={clsx(
+                  "flex gap-2 flex-1 w-full overflow-x-auto no-scrollbar py-4 scroll-smooth"
+                )}
+              >
+                {courseItems.map((v) => (
+                  <TabItem key={v.toString()} courseItemAtom={v} />
+                ))}
+                {[...Array(10 - courseItems.length)].map((_, i) => (
+                  <div
+                    key={i}
+                    className="h-10 min-w-[5rem] bg-slate-100 rounded-xl"
+                  />
+                ))}
+              </Tab.List>
+              <div className="flex rounded-xl overflow-hidden w-10 h-10 text-slate-500 bg-slate-200">
+                <button
+                  type="button"
+                  className="w-4 grid place-items-center bg-inherit hover:bg-slate-300 flex-1"
+                  onClick={scrollLeft}
+                >
+                  <IconChevronLeft size={12} stroke={2.5} />
+                </button>
+                <button
+                  type="button"
+                  className="w-4 grid place-items-center bg-inherit hover:bg-slate-300 flex-1"
+                  onClick={scrollRight}
+                >
+                  <IconChevronRight size={12} stroke={2.5} />
+                </button>
+              </div>
+              <AddButton />
+            </div>
+          </div>
+        </div>
+        <Tab.Panels className="isolate z-0 pack-content w-full">
+          {courseItems.map((v) => (
+            <Tab.Panel key={v.toString()}>
+              <CourseSelector
+                courseItemAtom={v}
+                semester={selectedTermOption.value.semester}
+                year={selectedTermOption.value.year}
+              />
+            </Tab.Panel>
+          ))}
+          {courseItems.length === 0 && <CoursePlanSkeleton />}
+        </Tab.Panels>
       </div>
+    </Tab.Group>
+  );
+};
 
-      {courseItems.length === 0 && <CoursePlanSkeleton />}
+const TabItem = ({
+  courseItemAtom,
+}: {
+  courseItemAtom: PrimitiveAtom<CourseItem>;
+}) => {
+  const [courseItem, setCourseItem] = useAtom(courseItemAtom);
 
-      <ul className="relative z-0 flex flex-col gap-4">
-        {courseItems.map((v, i) => (
-          <CourseSelector
-            key={v.toString()}
-            courseItemAtom={v}
-            semester={selectedTermOption.value.semester}
-            year={selectedTermOption.value.year}
-            index={i}
-          />
-        ))}
-      </ul>
-    </div>
+  const { color } = courseItem;
+
+  const dept = courseItem.selectedDept.value;
+  const courseCode = courseItem.selectedCourse.value;
+  const empty = dept === "" || courseCode === "";
+  const title = empty ? "Untitled" : `${dept} ${courseCode.toLowerCase()}`;
+
+  // style tokens:
+  const bgColor = bg_color_base[color];
+  const textColor = text_color[color];
+
+  return (
+    <Tab as={Fragment}>
+      {({ selected }) => (
+        <button
+          className={clsx(
+            "relative px-4 h-10 rounded-xl whitespace-nowrap font-bold text-sm",
+            "outline-none appearance-none",
+            bgColor,
+            textColor
+          )}
+        >
+          <span>{title}</span>
+          {selected && (
+            <motion.span
+              layoutId="slide"
+              animate={{ backgroundColor: hex_bg_color[color] }}
+              className="absolute left-0 -bottom-4 h-1 w-full bg-slate-500"
+            />
+          )}
+        </button>
+      )}
+    </Tab>
   );
 };
 
@@ -86,6 +196,7 @@ const AddButton = ({ addLimit = 10 }: { addLimit?: number }) => {
   const [courseItems, setCourseItems] = useAtom(courseItemsAtom);
   const [showError, setShowError] = useState(false);
   const close = () => setShowError(false);
+  const setSelectedTab = useSetAtom(selectedTabAtom);
 
   const overlimit = courseItems.length >= addLimit;
 
@@ -107,19 +218,18 @@ const AddButton = ({ addLimit = 10 }: { addLimit?: number }) => {
 
       return [...items, newItem];
     });
+
+    setSelectedTab(courseItems.length);
   };
 
   return (
     <>
       <button
         type="button"
-        className="flex justify-center items-center gap-2 w-min px-2 h-10 rounded-3xl rounded-bl bg-primary-500 text-white font-bold disabled:cursor-not-allowed"
+        className="flex justify-center items-center gap-2 w-min px-2 h-10 rounded-xl rounded-3xlzz rounded-blzz bg-primary-500 text-white font-bold disabled:cursor-not-allowed"
         onClick={addCourseItem}
       >
-        <span className="hidden sm:flex whitespace-nowrap pl-2 text-opacity-100">
-          Course
-        </span>
-        <IconCirclePlus />
+        <IconPlus />
       </button>
       <ErrorMessage show={showError} close={close} />
     </>

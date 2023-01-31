@@ -2,6 +2,7 @@
 
 import { Combobox, Disclosure, Menu, Popover } from "@headlessui/react";
 import {
+  IconAdjustmentsHorizontal,
   IconCheck,
   IconChevronDown,
   IconCircleChevronDown,
@@ -47,6 +48,7 @@ import {
 import { fetchDistinctCourseIds, fetchDistinctDepts } from "../../database/api";
 import clsx from "clsx";
 import { PrettyColorPicker } from "../PrettyColorPicker/PrettyColorPicker";
+import { selectedTabAtom } from "../CoursePlan/CoursePlan";
 
 const staleTime = 60 * 60 * 1000;
 
@@ -61,20 +63,15 @@ export type CourseSelectorProps = {
   semester: Semester;
   year: number;
   courseItemAtom: PrimitiveAtom<CourseItem>;
-  index: number;
 };
 
 export const CourseSelector = memo(function CourseSelector({
   semester,
   year,
   courseItemAtom,
-  index,
 }: CourseSelectorProps) {
   const deptRef = useRef<HTMLInputElement>(null!);
   const courseCodeRef = useRef<HTMLInputElement>(null!);
-
-  const focusDeptInput = () => deptRef?.current?.focus();
-  const focusCourseCodeInput = () => courseCodeRef?.current?.focus();
 
   const [courseItem, setCourseItem] = useAtom(courseItemAtom);
 
@@ -165,88 +162,66 @@ export const CourseSelector = memo(function CourseSelector({
   const ringStyle = `${ringColor} ring-0 focus-visible:ring-2 ring-inset appearance-none outline-none`;
 
   return (
-    <Disclosure
-      defaultOpen
-      as="li"
-      className="relative flex flex-col gap-4"
-      style={{ zIndex: 20 - index }}
-    >
-      {({ open }) => (
-        <>
-          <div
+    <div className="relative flex flex-col gap-4">
+      <>
+        <div
+          className={clsx(
+            "stickyzz z-10 top-[calc(4rem+0.5rem)] flex gap-0 w-full rounded-2xl p-3 text-sm font-medium",
+            textColor,
+            bgc
+          )}
+        >
+          <AutoCompleteInput
+            ref={deptRef}
+            options={deptOptions}
+            selectedOption={courseItem.selectedDept}
+            onChange={updateSelectedDept}
+            placeholder="Dept"
+            color={color}
+          />
+          <AutoCompleteInput
+            ref={courseCodeRef}
+            options={courseOptions}
+            selectedOption={courseItem.selectedCourse}
+            onChange={updateSelectedCourse}
+            placeholder="Code"
+            color={color}
+            disabled={disableCourseSelect}
+          />
+          <h1
             className={clsx(
-              "sticky z-10 top-[calc(4rem+0.5rem)] flex gap-0 w-full rounded-2xl rounded-br p-2 py-3 text-sm font-medium",
-              textColor,
-              bgc
+              "overflow-hidden flex items-center flex-grow flex-shrink pl-3 pr-1 rounded-md font-semibold text-sm whitespace-nowrap",
+              ringStyle
             )}
           >
-            <Disclosure.Button
-              className={clsx(
-                "grid place-items-center rounded-full px-1 mr-1",
-                ringStyle,
-                highlightBgColor
-              )}
-            >
-              <IconCircleChevronDown
-                stroke={1.75}
-                className={clsx(
-                  "transition-[transform]",
-                  open ? "rotate-180" : "rotate-0"
-                )}
-              />
-            </Disclosure.Button>
-            <AutoCompleteInput
-              ref={deptRef}
-              options={deptOptions}
-              selectedOption={courseItem.selectedDept}
-              onChange={updateSelectedDept}
-              placeholder="Dept"
-              color={color}
-            />
-            <AutoCompleteInput
-              ref={courseCodeRef}
-              options={courseOptions}
-              selectedOption={courseItem.selectedCourse}
-              onChange={updateSelectedCourse}
-              placeholder="Code"
-              color={color}
-              disabled={disableCourseSelect}
-            />
-            <Disclosure.Button
-              className={clsx(
-                "overflow-hidden flex items-center flex-grow flex-shrink pl-3 pr-1 rounded-md font-semibold text-sm whitespace-nowrap",
-                ringStyle
-              )}
-            >
-              {title}
-            </Disclosure.Button>
+            {title}
+          </h1>
 
-            <ActionDropdown
+          <ActionDropdown
+            courseItemAtom={courseItemAtom}
+            buttonStyle={clsx(ringStyle, highlightBgColor)}
+          />
+        </div>
+
+        <div className="relative z-0">
+          {courseItem.selectedDept.value !== "" &&
+          courseItem.selectedCourse.value !== "" ? (
+            <SectionSelector
+              semester={semester}
+              year={year}
               courseItemAtom={courseItemAtom}
-              buttonStyle={clsx(ringStyle, highlightBgColor)}
             />
-          </div>
-
-          <Disclosure.Panel className="relative z-0">
-            {courseItem.selectedDept.value !== "" &&
-            courseItem.selectedCourse.value !== "" ? (
-              <SectionSelector
-                semester={semester}
-                year={year}
-                courseItemAtom={courseItemAtom}
-              />
-            ) : (
-              <HelpMessage
-                deptInputRef={deptRef}
-                courseCodeInputRef={courseCodeRef}
-                color={color}
-                disableCourseCode={courseItem.selectedDept.value === ""}
-              />
-            )}
-          </Disclosure.Panel>
-        </>
-      )}
-    </Disclosure>
+          ) : (
+            <HelpMessage
+              deptInputRef={deptRef}
+              courseCodeInputRef={courseCodeRef}
+              color={color}
+              disableCourseCode={courseItem.selectedDept.value === ""}
+            />
+          )}
+        </div>
+      </>
+    </div>
   );
 },
 arePropsEqual);
@@ -317,17 +292,21 @@ const ActionDropdown = ({
 }) => {
   const [courseItem, setCourseItem] = useAtom(courseItemAtom);
   const setCourseItems = useSetAtom(courseItemsAtom);
+  const setSelectedTab = useSetAtom(selectedTabAtom);
 
   const { color } = courseItem;
 
   // const bgColorHighlight = bg_color_hover[color];
 
-  const removeSelf = () =>
+  const removeSelf = () => {
     setCourseItems((list) => {
       const idx = list.findIndex((item) => item.id === courseItem.id);
       if (idx === -1) return list;
       return [...list.slice(0, idx), ...list.slice(idx + 1)];
     });
+
+    setSelectedTab(0);
+  };
 
   const setColor = (color: PrettyColor) =>
     setCourseItem((v) => ({ ...v, color }));
@@ -336,11 +315,11 @@ const ActionDropdown = ({
     <Popover as="div" className="relative flex flex-col">
       <Popover.Button
         className={clsx(
-          "grid place-items-center h-full w-full rounded-full",
+          "grid place-items-center rounded-lg w-8 h-8",
           buttonStyle
         )}
       >
-        <IconDotsVertical />
+        <IconAdjustmentsHorizontal />
       </Popover.Button>
 
       {/* this extra div allows us to anchor the Menu.Items container to the bottom of Menu.Button*/}
@@ -538,7 +517,6 @@ function arePropsEqual(
     return false;
   if (prev.semester !== next.semester) return false;
   if (prev.year !== next.year) return false;
-  if (prev.index !== next.index) return false;
 
   return true;
 }
