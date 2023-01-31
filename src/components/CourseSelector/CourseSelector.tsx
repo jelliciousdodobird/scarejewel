@@ -243,17 +243,42 @@ const HelpMessage = ({
 
   return (
     <div className="relative">
-      <div
-        className={clsx(
-          "text-xl w-full rounded-xl flex gap-4",
-          " [&>*]:hidden [&>*:first-child]:flex sm:[&>*:not(:last-child)]:flex md:[&>*]:flex"
-        )}
-      >
-        {[...Array(3).keys()].map((i) => (
-          <div key={i} className="h-80 w-full bg-slate-100 rounded-2xl"></div>
-        ))}
+      <div className="text-xl w-full rounded-xl flex gap-4">
+        <div className="rounded-2xl w-full h-80 bg-slate-100" />
+        <div className="rounded-2xl w-full h-80 bg-slate-100" />
+        <div className="rounded-2xl w-full h-80 bg-slate-100 hidden md:flex" />
       </div>
-      <span className="text-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 font-extrabold text-4xl text-slate-400">
+
+      <div className="absolute inset-0 grid place-content-center text-4xl font-extrabold p-6 text-slate-500">
+        <div className="w-full max-w-lg text-center">
+          To pick a course, first select a
+          <button
+            type="button"
+            className={clsx(
+              "inline whitespace-pre text-slate-700",
+              helperTextHover
+            )}
+            onClick={focusDeptInput}
+          >
+            {" department "}
+          </button>
+          then a
+          <button
+            type="button"
+            className={clsx(
+              "inline whitespace-pre text-slate-700 disabled:cursor-not-allowed",
+              helperTextHover
+            )}
+            onClick={focusCourseCodeInput}
+            disabled={disableCourseCode}
+          >
+            {" course code"}
+          </button>
+          .
+        </div>
+      </div>
+
+      {/* <span className="text-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 font-extrabold text-4xl text-slate-400">
         To pick a course, first select a
         <button
           type="button"
@@ -278,7 +303,7 @@ const HelpMessage = ({
           {" course code"}
         </button>
         .
-      </span>
+      </span> */}
     </div>
   );
 };

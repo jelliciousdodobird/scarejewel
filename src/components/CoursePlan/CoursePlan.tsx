@@ -13,9 +13,17 @@ import clsx from "clsx";
 import { motion } from "framer-motion";
 import { atom, PrimitiveAtom, useAtom, useAtomValue, useSetAtom } from "jotai";
 import { nanoid } from "nanoid";
-import { useMemo, useState, Fragment, WheelEventHandler, useRef } from "react";
+import {
+  useMemo,
+  useState,
+  Fragment,
+  WheelEventHandler,
+  useRef,
+  useEffect,
+} from "react";
 import { Term } from "../../database/types";
 import { useHasMounted } from "../../hooks/useHasMounted";
+import { useLastValidValue } from "../../hooks/useLastValidValue";
 import {
   courseItemsAtomAtom,
   selectedTermOptionAtom,
@@ -48,20 +56,30 @@ const defaultAtom = atom({
 });
 
 export const CoursePlan = ({ terms }: { terms: Term[] }) => {
+  const anchorRef = useRef<HTMLDivElement>(null!);
   const mounted = useHasMounted(); // need to make sure we're mounted so we can use the localstorage in the courseItemsAtomAtom
   const [courseItems, setCourseItems] = useAtom(courseItemsAtomAtom);
+  const [selectedTab, setSelectedTab] = useAtom(selectedTabAtom);
   const [selectedTermOption, setSelectedTermOption] = useAtom(
     selectedTermOptionAtom
   );
 
-  const [selectedTab, setSelectedTab] = useAtom(selectedTabAtom);
+  const prev = useLastValidValue(courseItems.length);
 
-  const ref = useRef<HTMLDivElement>(null!);
+  const tabListRef = useRef<HTMLDivElement>(null!);
+
   const scrollRight = () => {
-    if (ref.current) ref.current.scrollLeft += 150;
+    if (tabListRef.current) tabListRef.current.scrollLeft += 150;
   };
   const scrollLeft = () => {
-    if (ref.current) ref.current.scrollLeft -= 150;
+    if (tabListRef.current) tabListRef.current.scrollLeft -= 150;
+  };
+
+  const scrollRightMax = () => {
+    if (tabListRef.current) tabListRef.current.scrollLeft = 2000;
+  };
+  const scrollLeftMax = () => {
+    if (tabListRef.current) tabListRef.current.scrollLeft = 0;
   };
 
   const termOptions: TermOption[] = useMemo(
@@ -79,6 +97,32 @@ export const CoursePlan = ({ terms }: { terms: Term[] }) => {
     [terms]
   );
 
+  useEffect(() => {
+    const delta = courseItems.length - prev;
+    if (delta > 0) scrollRightMax();
+    else scrollLeftMax();
+  }, [courseItems.length]);
+
+  /**
+   * PROBLEM:
+   *    Whenever you switch tabs, there may be scroll jank.
+   * CAUSE:
+   *    If the tab that is selected has a lot of content (more height) AND you scroll down past the sticky container,
+   *    your scroll position value can be very high (high as in you're scrolled DOWN, meaing you're low on the page).
+   *    If you then switch to a tab that has less content (less height), the scroll position will be pushed back up
+   *    since there is not enough content (height) for the scroll position to be at its previous high value.
+   *    This is very disorienting.
+   * SOLUTION:
+   *    1. Keep track of where the sticky container starts (the position just before it starts its sticking) [stickyAnchorRef]
+   *    2. Whenever the tab switches we scroll back up to that position. [this useEffect]
+   *    This solution works because if the scroll position you get by scrolling the stickyAnchorRef into view is
+   *    a stable position meaning you can always depend on that scroll position to be accessible.
+   */
+  useEffect(() => {
+    // helps reduce scroll jank caused by switching tabs:
+    anchorRef?.current?.scrollIntoView({ behavior: "smooth" });
+  }, [selectedTab]);
+
   if (!mounted) return null;
 
   return (
@@ -87,8 +131,13 @@ export const CoursePlan = ({ terms }: { terms: Term[] }) => {
       onChange={setSelectedTab}
       defaultIndex={0}
     >
-      <div className="flex flex-col gap-4 w-full">
-        <div className="z-10 sticky top-[4rem] backdrop-blur-sm bg-white/90 w-full border-b border-slate-200 pt-4 sm:pt-0">
+      <div className="relative isolate z-0 flex flex-col gap-4 w-full">
+        <div
+          // this element marks the location of the start of the sticky container
+          className="absolute top-0 scroll-mt-16" // scroll-mt-16 needs to match the the sticky container's top value
+          ref={anchorRef}
+        />
+        <div className="z-10 sticky top-16 backdrop-blur-sm bg-white/90 w-full border-b border-slate-200 pt-4 sm:pt-0">
           <div className="pack-content w-full flex items-center flex-col sm:flex-row max-w-full rounded-xlzz gap-0 sm:gap-4">
             <TermSelect
               options={termOptions}
@@ -97,32 +146,33 @@ export const CoursePlan = ({ terms }: { terms: Term[] }) => {
             />
             <div className="flex items-center gap-2 min-w-0 flex-1 w-full">
               <Tab.List
-                ref={ref}
+                ref={tabListRef}
                 className={clsx(
                   "flex gap-2 flex-1 w-full overflow-x-auto no-scrollbar py-4 scroll-smooth"
                 )}
               >
-                {courseItems.map((v) => (
-                  <TabItem key={v.toString()} courseItemAtom={v} />
-                ))}
-                {[...Array(10 - courseItems.length)].map((_, i) => (
-                  <div
-                    key={i}
-                    className="h-10 min-w-[5rem] bg-slate-100 rounded-xl"
+                {courseItems.map((v, i) => (
+                  <TabItem
+                    key={v.toString()}
+                    courseItemAtom={v}
+                    index={i + 1}
                   />
                 ))}
+                {courseItems.length < 10 && (
+                  <div className="h-10 w-full bg-slate-100 rounded-xl" />
+                )}
               </Tab.List>
-              <div className="flex rounded-xl overflow-hidden w-10 h-10 text-slate-500 bg-slate-200">
+              <div className="flex rounded-xl overflow-hidden w-10 h-10 text-slate-500 bg-slate-100">
                 <button
                   type="button"
-                  className="w-4 grid place-items-center bg-inherit hover:bg-slate-300 flex-1"
+                  className="w-4 grid place-items-center bg-inherit hover:bg-slate-200 flex-1"
                   onClick={scrollLeft}
                 >
                   <IconChevronLeft size={12} stroke={2.5} />
                 </button>
                 <button
                   type="button"
-                  className="w-4 grid place-items-center bg-inherit hover:bg-slate-300 flex-1"
+                  className="w-4 grid place-items-center bg-inherit hover:bg-slate-200 flex-1"
                   onClick={scrollRight}
                 >
                   <IconChevronRight size={12} stroke={2.5} />
@@ -151,8 +201,10 @@ export const CoursePlan = ({ terms }: { terms: Term[] }) => {
 
 const TabItem = ({
   courseItemAtom,
+  index,
 }: {
   courseItemAtom: PrimitiveAtom<CourseItem>;
+  index: number;
 }) => {
   const [courseItem, setCourseItem] = useAtom(courseItemAtom);
 
@@ -161,7 +213,9 @@ const TabItem = ({
   const dept = courseItem.selectedDept.value;
   const courseCode = courseItem.selectedCourse.value;
   const empty = dept === "" || courseCode === "";
-  const title = empty ? "Untitled" : `${dept} ${courseCode.toLowerCase()}`;
+  const title = empty
+    ? `Course ${index}`
+    : `${dept} ${courseCode.toLowerCase()}`;
 
   // style tokens:
   const bgColor = bg_color_base[color];
