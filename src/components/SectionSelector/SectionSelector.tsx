@@ -14,6 +14,7 @@ import {
   SectionTypeLabel,
 } from "../ClassSectionItem/ClassSectionItem";
 import clsx from "clsx";
+import { SectionSelectorSkeleton } from "./SectionSelector.skeleton";
 
 const staleTime = 60 * 60 * 1000; // 1 hour
 
@@ -107,9 +108,10 @@ export const SectionSelector = ({
 
   if (isLoading)
     return (
-      <div className="relative -z-10 flex flex-col">
-        <div className="animate-pulse flex text-2xl font-bold p-4">LOADING</div>
-      </div>
+      <SectionSelectorSkeleton></SectionSelectorSkeleton>
+      // <div className="relative -z-10 flex flex-col">
+      //   <div className="animate-pulse flex text-2xl font-bold p-4">LOADING</div>
+      // </div>
     );
 
   const groups = splitIntoGroups(courseItem.availableSections);
