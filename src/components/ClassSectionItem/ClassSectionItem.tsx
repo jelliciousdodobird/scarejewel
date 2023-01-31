@@ -120,17 +120,15 @@ function ClassCard({ data, update }: ClassSectionItemProps) {
 
           // base styles:
           "flex flex-col gap-8 p-6 bg-white",
-          "rounded-lg transition-[opacity_background-color_box-shadow] duration-300",
+          "rounded-2xl transition-[opacity_background-color_box-shadow] duration-300",
 
-          displayMode ? "" : "rounded-tr-[6rem]",
-
-          !hidden && "shadow-center shadow-slate-500/10",
+          !hidden && "shadow-[rgba(149,157,165,0.15)_0px_8px_24px]",
           hidden ? "bg-stone-50" : "bg-white" // background color
         )}
       >
         <div
           className={clsx(
-            "flex flex-col gap-6",
+            "flex flex-col gap-8",
             "[&>*]:duration-300 [&>*]:transition-[filter_opacity]",
             hidden ? "[&>*]:grayscale-[80%]" : "[&>*]:grayscale-0",
             hidden ? "[&>*]:opacity-20" : "[&>*]:opacity-100"
@@ -173,7 +171,7 @@ function ClassCard({ data, update }: ClassSectionItemProps) {
         </div>
       </div>
       {!displayMode && (
-        <div className="absolute top-0 right-0 flex flex-col items-center gap-2 w-min h-min text-slate-400">
+        <div className="absolute top-4 right-4 flex flex-col items-center gap-2 w-min h-min text-slate-400">
           <Switch
             checked={selected}
             onChange={setSelected}

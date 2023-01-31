@@ -114,12 +114,12 @@ export const SectionSelector = ({
   const groups = splitIntoGroups(courseItem.availableSections);
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col gap-12">
       {groups.length > 1 && <GroupMessage />}
       {groups.map((group, i) => (
         <div
           key={group.group_id}
-          className="flex flex-col gap-10 my-8 py-2 pl-6 border-l border-slate-100 hover:border-slate-200"
+          className="flex flex-col gap-8 my-8zz first:mt-0 py-2 pl-6zz "
         >
           <div className="flex flex-col gap-4 rounded-xl">
             <h3 className="font-extrabold text-2xl uppercase">Group {i + 1}</h3>
