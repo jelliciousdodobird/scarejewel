@@ -176,7 +176,7 @@ function ClassCard({ data, update }: ClassSectionItemProps) {
         </div>
       </div>
       {!displayMode && (
-        <div className="absolute top-4 right-4 flex flex-col items-center gap-2 w-min h-min text-slate-400zz">
+        <div className="absolute top-4 right-4 flex flex-col items-center gap-2 w-min h-min">
           <Switch
             checked={selected}
             onChange={setSelected}

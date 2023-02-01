@@ -112,8 +112,9 @@ export const SectionSelector = ({
                 <GroupMessageTooltip />
               </h3>
             )}
-            <div className="isolate flex flex-wrap gap-2">
-              <div className="flex flex-col gap-2 bg-slate-100 dark:bg-neutral-900 text-sm text-slate-900 dark:text-neutral-300 p-3 px-4 rounded-xl">
+            {/* <div className="isolate flex flex-wrap gap-2"> */}
+            <div className="isolate flex gap-4 flex-wrap p-6 rounded-xl text-sm bg-slate-200 dark:bg-neutral-900 text-slate-700 dark:text-neutral-300 ">
+              <div className="flex flex-col gap-2">
                 <span className="flex gap-2 items-center">
                   <span>
                     <IconAlertCircle />
@@ -138,6 +139,7 @@ export const SectionSelector = ({
                 </span>
               </div>
             </div>
+            {/* </div> */}
           </div>
           <ul className="isolate grid grid-cols-[repeat(auto-fill,minmax(min(320px,100%),1fr))] gap-8 rounded-md bg-transparent">
             {group.classSections.map((cs) => (
@@ -194,7 +196,7 @@ const GroupMessageTooltip = () => {
                 <span className="flex font-bold text-base uppercase w-full">
                   Stay in group!
                 </span>
-                <span className="text-sm px-4zz text-neutral-600 dark:text-neutral-500 dark:font-light border-l-2zzborder-yellow-400">
+                <span className="text-sm text-neutral-600 dark:text-neutral-500 dark:font-light">
                   Do not pick sections from ACROSS groups. It is considered
                   invalid when you register on the official CSULB site. For
                   example, you cannot register for a

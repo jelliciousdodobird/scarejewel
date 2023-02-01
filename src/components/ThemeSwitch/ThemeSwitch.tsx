@@ -14,10 +14,7 @@ export const ThemeSwitch = () => {
   // render a skeleton is not mounted to prevent layout shifts:
   if (!mounted)
     return (
-      <button
-        type="button"
-        className="w-16 h-8 rounded-full bg-slate-100 text-xs grid place-items-center text-black"
-      ></button>
+      <div className="w-10 aspect-square rounded-xl bg-slate-100 dark:bg-neutral-700" />
     );
 
   return (

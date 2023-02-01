@@ -601,7 +601,7 @@ const OverlapTooltip = ({
                   <span className="flex font-bold text-base uppercase w-full text-rose-500 dark:text-rose-700">
                     Time Overlap
                   </span>
-                  <span className="text-sm text-centerzz font-medium text-slate-500 dark:text-neutral-500">
+                  <span className="text-sm font-medium text-slate-500 dark:text-neutral-500">
                     The colored segments to the left represent the times that
                     are overlapped. Click on the segments to collapse a section.
                   </span>

@@ -10,7 +10,7 @@ export default async function PlanPage() {
   const terms = data ?? [];
 
   return (
-    <div className="relative flex flex-col gap-8 bg-gradient-to-bzz from-whitezz to-slate-100zz min-h-full py-8">
+    <div className="relative flex flex-col gap-8 min-h-full py-8">
       <PlanPageHeroSection />
       <SelectedSnapshot />
       <CoursePlan terms={terms} />

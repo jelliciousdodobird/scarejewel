@@ -32,6 +32,7 @@ import {
   // glow,
   bg_color_highlight_hover,
   helper_hover_text,
+  option_on,
 } from "./CourseSelector.variants";
 import { fetchDistinctCourseIds, fetchDistinctDepts } from "../../database/api";
 import clsx from "clsx";
@@ -158,7 +159,7 @@ export const CourseSelector = memo(function CourseSelector({
         )}
       >
         <div className="pack-content w-full">
-          <div className="relative flex py-3">
+          <div className="relative flex gap-3 py-3">
             <ActionDropdown
               courseItemAtom={courseItemAtom}
               buttonStyle={clsx(ringStyle, highlightBgColor)}
@@ -182,7 +183,7 @@ export const CourseSelector = memo(function CourseSelector({
             />
             <h1
               className={clsx(
-                "overflow-hidden flex items-center flex-grow flex-shrink pl-3 pr-1 rounded-md font-semibold text-sm whitespace-nowrap",
+                "overflow-hidden flex items-center flex-grow flex-shrink rounded-md font-semibold text-sm whitespace-nowrap",
                 ringStyle
               )}
             >
@@ -299,7 +300,7 @@ const ActionDropdown = ({
     <Popover as="div" className="relative flex flex-col">
       <Popover.Button
         className={clsx(
-          "grid place-items-center rounded-xl w-8 h-8 dark:hover:text-white",
+          "grid place-items-center rounded-md w-8 aspect-square",
           buttonStyle
         )}
       >
@@ -310,8 +311,8 @@ const ActionDropdown = ({
       <div className="relative">
         <Popover.Panel
           className={clsx(
-            "absolute left-0 top-0 flex flex-col gap-10 p-6 mt-4 text-slate-900",
-            "rounded-lg bg-white shadow-lg ring-1 ring-black/5",
+            "absolute left-0 top-0 flex flex-col gap-10 p-6 mt-6 text-slate-900",
+            "rounded-xl bg-white shadow-lg ring-1 ring-black/5",
             "dark:bg-neutral-800 dark:ring-white/5"
           )}
         >
@@ -393,9 +394,8 @@ export const AutoCompleteInput = forwardRef<
     // style tokens:
     const highlightBgColor = bg_color_highlight[color];
     const highlightTextColor = text_color_active[color];
-    // const highlightTextColor = text_color[color];
-    const hoverBgColor = bg_color_highlight_hover[color];
     const placeholderTextColor = placeholder_text_color[color];
+    const optionOn = option_on[color];
 
     return (
       <Combobox
@@ -412,10 +412,9 @@ export const AutoCompleteInput = forwardRef<
                 autoComplete="off"
                 placeholder={placeholder}
                 className={clsx(
-                  "relative z-50 flex justify-between px-3 h-8 w-full max-w-[62px] min-w-[62px] rounded-md text-base font-mono font-semibold caret-black disabled:cursor-not-allowed dark:text-white",
-                  hoverBgColor,
+                  "relative z-50 flex justify-between px-3 h-8 w-full max-w-[62px] min-w-[62px] rounded-md text-base font-mono font-semibold caret-black disabled:cursor-not-allowed",
                   `${placeholderTextColor} placeholder:text-base placeholder:uppercase appearance-none outline-none`,
-                  open ? highlightBgColor : "bg-transparent"
+                  highlightBgColor
                 )}
                 displayValue={(dept: ComboOption) =>
                   open ? query : dept.value
@@ -446,7 +445,7 @@ export const AutoCompleteInput = forwardRef<
             <Combobox.Options
               as="div"
               className={clsx(
-                "absolute z-40 top-0 left-0 p-2 pr-1 pt-14 bg-white dark:bg-neutral-800 rounded-md  w-full sm:w-min min-w-[18rem] mb-32",
+                "absolute z-40 top-0 left-0 p-4 pr-1 mt-[4.25rem] bg-white dark:bg-neutral-800 rounded-xl w-full sm:w-min min-w-[18rem] mb-32",
                 "appearance-none outline-none shadow-lg ring-1 ring-black/5 dark:ring-white/5"
               )}
             >
@@ -468,9 +467,7 @@ export const AutoCompleteInput = forwardRef<
                       <li
                         className={clsx(
                           "flex items-center gap-4 px-3 min-h-[2.5rem] rounded cursor-pointer whitespace-nowrap text-sm",
-                          active || selected
-                            ? highlightBgColor
-                            : "bg-transparent ",
+                          active || selected ? optionOn : "bg-transparent ",
                           active || selected
                             ? highlightTextColor
                             : "text-slate-900 dark:text-white"

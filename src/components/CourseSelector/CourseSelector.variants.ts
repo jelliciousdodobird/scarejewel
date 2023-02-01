@@ -15,29 +15,29 @@ export const bg_color_base: PrettyColorMap = {
 };
 
 export const bg_color_highlight: PrettyColorMap = {
-  yellow: "bg-yellow-100 dark:bg-yellow-900",
-  cyan: "bg-cyan-100 dark:bg-cyan-900",
-  emerald: "bg-emerald-100 dark:bg-emerald-900",
-  fuchsia: "bg-fuchsia-100 dark:bg-fuchsia-900",
-  indigo: "bg-indigo-100 dark:bg-indigo-900",
-  lime: "bg-lime-100 dark:bg-lime-900",
-  orange: "bg-orange-100 dark:bg-orange-900",
-  rose: "bg-rose-100 dark:bg-rose-900",
-  sky: "bg-sky-100 dark:bg-sky-900",
-  violet: "bg-violet-100 dark:bg-violet-900",
+  yellow: "bg-yellow-300 dark:bg-yellow-600/60",
+  cyan: "bg-cyan-300 dark:bg-cyan-600/60",
+  emerald: "bg-emerald-300 dark:bg-emerald-600/60",
+  fuchsia: "bg-fuchsia-300 dark:bg-fuchsia-600/60",
+  indigo: "bg-indigo-300 dark:bg-indigo-600/60",
+  lime: "bg-lime-300 dark:bg-lime-600/60",
+  orange: "bg-orange-300 dark:bg-orange-600/60",
+  rose: "bg-rose-300 dark:bg-rose-600/60",
+  sky: "bg-sky-300 dark:bg-sky-600/60",
+  violet: "bg-violet-300 dark:bg-violet-600/60",
 };
 
 export const bg_color_highlight_hover: PrettyColorMap = {
-  yellow: "hover:bg-yellow-100 dark:hover:bg-yellow-900",
-  cyan: "hover:bg-cyan-100 dark:hover:bg-cyan-900",
-  emerald: "hover:bg-emerald-100 dark:hover:bg-emerald-900",
-  fuchsia: "hover:bg-fuchsia-100 dark:hover:bg-fuchsia-900",
-  indigo: "hover:bg-indigo-100 dark:hover:bg-indigo-900",
-  lime: "hover:bg-lime-100 dark:hover:bg-lime-900",
-  orange: "hover:bg-orange-100 dark:hover:bg-orange-900",
-  rose: "hover:bg-rose-100 dark:hover:bg-rose-900",
-  sky: "hover:bg-sky-100 dark:hover:bg-sky-900",
-  violet: "hover:bg-violet-100 dark:hover:bg-violet-900",
+  yellow: "hover:bg-yellow-300 dark:hover:bg-yellow-600/60",
+  cyan: "hover:bg-cyan-300 dark:hover:bg-cyan-600/60",
+  emerald: "hover:bg-emerald-300 dark:hover:bg-emerald-600/60",
+  fuchsia: "hover:bg-fuchsia-300 dark:hover:bg-fuchsia-600/60",
+  indigo: "hover:bg-indigo-300 dark:hover:bg-indigo-600/60",
+  lime: "hover:bg-lime-300 dark:hover:bg-lime-600/60",
+  orange: "hover:bg-orange-300 dark:hover:bg-orange-600/60",
+  rose: "hover:bg-rose-300 dark:hover:bg-rose-600/60",
+  sky: "hover:bg-sky-300 dark:hover:bg-sky-600/60",
+  violet: "hover:bg-violet-300 dark:hover:bg-violet-600/60",
 };
 
 export const bg_color_hover: PrettyColorMap = {
@@ -116,4 +116,17 @@ export const helper_hover_text: PrettyColorMap = {
   rose: "hover:text-rose-500 dark:hover:text-rose-500",
   sky: "hover:text-sky-500 dark:hover:text-sky-500",
   violet: "hover:text-violet-500 dark:hover:text-violet-500",
+};
+
+export const option_on: PrettyColorMap = {
+  yellow: "bg-yellow-200 dark:bg-yellow-500/30",
+  cyan: "bg-cyan-200 dark:bg-cyan-500/30",
+  emerald: "bg-emerald-200 dark:bg-emerald-500/30",
+  fuchsia: "bg-fuchsia-200 dark:bg-fuchsia-500/30",
+  indigo: "bg-indigo-200 dark:bg-indigo-500/30",
+  lime: "bg-lime-200 dark:bg-lime-500/30",
+  orange: "bg-orange-200 dark:bg-orange-500/30",
+  rose: "bg-rose-200 dark:bg-rose-500/30",
+  sky: "bg-sky-200 dark:bg-sky-500/30",
+  violet: "bg-violet-200 dark:bg-violet-500/30",
 };

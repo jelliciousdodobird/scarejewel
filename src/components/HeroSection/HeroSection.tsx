@@ -5,7 +5,7 @@ import Link from "next/link";
 export const HeroSection = () => {
   return (
     <div className="w-full pack-content text-primary-900">
-      <div className="overflow-hidden flex relative group flex-col-reverse sm:flex-col-reverse md:flex-row bg-gradient-to-t md:bg-gradient-to-r from-transparentzzto-primary-50 from-primary-500 to-sky-500 rounded-3xl">
+      <div className="overflow-hidden flex relative group flex-col-reverse sm:flex-col-reverse md:flex-row bg-gradient-to-t md:bg-gradient-to-r from-primary-500 to-sky-500 rounded-3xl">
         <div className="z-10 isolate relative w-full p-8 md:p-12 flex flex-col gap-6 rounded-2xl">
           <h1 className="w-full font-extrabold text-6xl text-white">
             {"Yotëi"}
@@ -168,7 +168,7 @@ export const HeroSection = () => {
             <Link
               href="/plan"
               className={clsx(
-                "relative group/hero-btn h-minzz w-minzz font-semibold text-lg text-opacity-100 text-white",
+                "relative group/hero-btn font-semibold text-lg text-opacity-100 text-white",
                 "transition-[padding] duration-200",
                 "py-3 px-6"
                 // "      py-3       pl-6       pr-6" // note that difference between the normal and hover padding values
@@ -177,8 +177,7 @@ export const HeroSection = () => {
             >
               <span
                 className={clsx(
-                  "absolute top-0 left-0 w-full h-full rounded-full ring-[3px]zzring-sky-500 bg-white group-hover/hero-btn:scale-110 transition-[transform]"
-                  // "bg-white bg-gradient-to-rzzfrom-emerald-300zzvia-primary-500 to-indigo-500 animate-gradient-x group-hover/hero-btn:[animation-duration:2s]zz group-hover/hero-btn:scale-110 " // gradient animation: ;
+                  "absolute top-0 left-0 w-full h-full rounded-full bg-white group-hover/hero-btn:scale-110 transition-[transform]"
                 )}
               />
               <span className="isolate flex items-center gap-1 whitespace-nowrap text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 via-primary-500 to-indigo-500 animate-gradient-x font-extrabold">
