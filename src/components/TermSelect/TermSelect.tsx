@@ -28,7 +28,7 @@ export const TermSelect = ({
           <Listbox.Button
             className={clsx(
               "group grid grid-cols-[1fr_min-content] justify-items-center items-center h-10 w-full text-slate-400 dark:text-neutral-500 font-semibold rounded-xl",
-              "bg-white ring-0 ring-primary-100 hover:ring-4 focus:ring-4 border border-slate-200 hover:border-primary-300 focus:border-primary-300",
+              "bg-white ring-0 ring-primary-100 hover:ring-[3px] focus:ring-[3px] border border-slate-200 hover:border-primary-300 focus:border-primary-300",
               "dark:bg-neutral-800 dark:ring-primary-900 dark:border-neutral-700 dark:hover:border-primary-700 dark:focus:border-primary-700",
               "appearance-none outline-none"
             )}

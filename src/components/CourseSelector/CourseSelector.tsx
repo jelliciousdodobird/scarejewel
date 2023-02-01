@@ -299,7 +299,7 @@ const ActionDropdown = ({
     <Popover as="div" className="relative flex flex-col">
       <Popover.Button
         className={clsx(
-          "grid place-items-center rounded-lg w-8 h-8 dark:hover:text-white",
+          "grid place-items-center rounded-xl w-8 h-8 dark:hover:text-white",
           buttonStyle
         )}
       >
@@ -446,7 +446,7 @@ export const AutoCompleteInput = forwardRef<
             <Combobox.Options
               as="div"
               className={clsx(
-                "absolute z-40 top-0 left-0 p-2 pr-1 pt-12 bg-white dark:bg-neutral-800 rounded-md  w-full sm:w-min min-w-[18rem] mb-32",
+                "absolute z-40 top-0 left-0 p-2 pr-1 pt-14 bg-white dark:bg-neutral-800 rounded-md  w-full sm:w-min min-w-[18rem] mb-32",
                 "appearance-none outline-none shadow-lg ring-1 ring-black/5 dark:ring-white/5"
               )}
             >
@@ -455,7 +455,7 @@ export const AutoCompleteInput = forwardRef<
                   <li className="w-full">
                     <button
                       type="button"
-                      className="w-full flex justify-center items-center gap-4 px-3 py-2 whitespace-nowrap rounded-md bg-rose-50 text-rose-500 font-semibold hover:bg-rose-100 hover:text-rose-600"
+                      className="w-full flex justify-center items-center gap-4 px-3 h-12 whitespace-nowrap rounded-lg font-bold bg-rose-50 text-rose-500 hover:bg-rose-100 hover:text-rose-600 dark:bg-red-500/50 dark:text-red-100 dark:hover:bg-red-500/60 dark:hover:text-red-200 dark:font-semibold"
                       onClick={resetQuery}
                     >
                       No results. Click to reset.

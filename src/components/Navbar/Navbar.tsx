@@ -33,7 +33,8 @@ export const Navbar = () => {
             tabIndex={1}
             htmlFor="nav-toggle"
             className={clsx(
-              "rounded-full w-12 h-12 grid place-items-center sm:hidden cursor-pointer hover:text-primary-500 ring-current peer-focus-visible/nav-toggle:ring-2",
+              "rounded-xl w-10 aspect-square grid place-items-center sm:hidden cursor-pointer hover:text-primary-500 ring-current peer-focus-visible/nav-toggle:ring-2",
+              "hover:bg-primary-100 hover:text-primary-500 dark:hover:bg-primary-900 dark:hover:text-primary-100",
               "[&>.nav-menu-icon]:flex [&>.nav-close-icon]:hidden",
               "peer-checked/nav-toggle:[&>.nav-menu-icon]:hidden peer-checked/nav-toggle:[&>.nav-close-icon]:flex"
             )}
@@ -58,11 +59,11 @@ export const Navbar = () => {
                 <Link
                   href={link.path}
                   className={clsx(
-                    "capitalize font-medium",
+                    "capitalize font-semibold",
                     // styles for mobile:
-                    "pl-4 pr-8 h-12 flex items-center justify-center hover:bg-primary-400 hover:text-white hover:font-bold ",
+                    "pl-4 pr-8 h-12 flex items-center justify-center hover:bg-primary-100 hover:text-primary-500 dark:hover:bg-primary-800 dark:hover:text-primary-100",
                     // styles for desktop:
-                    "sm:pl-0 sm:pr-0 sm:h-auto sm:hover:bg-transparent sm:hover:text-primary-500 sm:hover:font-medium"
+                    "sm:pl-0 sm:pr-0 sm:h-auto sm:hover:bg-transparent sm:hover:text-primary-500 sm:dark:hover:bg-transparent sm:dark:hover:text-primary-500"
                   )}
                 >
                   {link.label}

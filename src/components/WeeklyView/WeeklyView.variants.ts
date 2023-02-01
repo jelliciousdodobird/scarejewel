@@ -59,35 +59,35 @@ export const icon_bg_color_on: PrettyColorMap = {
 };
 
 export const ring_highlight: PrettyColorMap = {
-  yellow: "ring-yellow-300 dark:ring-yellow-600",
-  cyan: "ring-cyan-300 dark:ring-cyan-600",
-  emerald: "ring-emerald-300 dark:ring-emerald-600",
-  fuchsia: "ring-fuchsia-300 dark:ring-fuchsia-600",
-  indigo: "ring-indigo-300 dark:ring-indigo-600",
-  lime: "ring-lime-300 dark:ring-lime-600",
-  orange: "ring-orange-300 dark:ring-orange-600",
-  rose: "ring-rose-300 dark:ring-rose-600",
-  sky: "ring-sky-300 dark:ring-sky-600",
-  violet: "ring-violet-300 dark:ring-violet-600",
+  yellow: "ring-yellow-300 dark:ring-yellow-500",
+  cyan: "ring-cyan-300 dark:ring-cyan-500",
+  emerald: "ring-emerald-300 dark:ring-emerald-500",
+  fuchsia: "ring-fuchsia-300 dark:ring-fuchsia-500",
+  indigo: "ring-indigo-300 dark:ring-indigo-500",
+  lime: "ring-lime-300 dark:ring-lime-500",
+  orange: "ring-orange-300 dark:ring-orange-500",
+  rose: "ring-rose-300 dark:ring-rose-500",
+  sky: "ring-sky-300 dark:ring-sky-500",
+  violet: "ring-violet-300 dark:ring-violet-500",
 };
 
 export const ring_highlight_on: PrettyColorMap = {
   yellow:
-    "hover:ring-yellow-500 focus-within:ring-yellow-500 dark:hover:ring-yellow-900 dark:focus-within:ring-yellow-900",
-  cyan: "hover:ring-cyan-500 focus-within:ring-cyan-500 dark:hover:ring-cyan-900 dark:focus-within:ring-cyan-900",
+    "hover:ring-yellow-500 focus-within:ring-yellow-500 dark:hover:ring-yellow-700 dark:focus-within:ring-yellow-700",
+  cyan: "hover:ring-cyan-500 focus-within:ring-cyan-500 dark:hover:ring-cyan-700 dark:focus-within:ring-cyan-700",
   emerald:
-    "hover:ring-emerald-500 focus-within:ring-emerald-500 dark:hover:ring-emerald-900 dark:focus-within:ring-emerald-900",
+    "hover:ring-emerald-500 focus-within:ring-emerald-500 dark:hover:ring-emerald-700 dark:focus-within:ring-emerald-700",
   fuchsia:
-    "hover:ring-fuchsia-500 focus-within:ring-fuchsia-500 dark:hover:ring-fuchsia-900 dark:focus-within:ring-fuchsia-900",
+    "hover:ring-fuchsia-500 focus-within:ring-fuchsia-500 dark:hover:ring-fuchsia-700 dark:focus-within:ring-fuchsia-700",
   indigo:
-    "hover:ring-indigo-500 focus-within:ring-indigo-500 dark:hover:ring-indigo-900 dark:focus-within:ring-indigo-900",
-  lime: "hover:ring-lime-500 focus-within:ring-lime-500 dark:hover:ring-lime-900 dark:focus-within:ring-lime-900",
+    "hover:ring-indigo-500 focus-within:ring-indigo-500 dark:hover:ring-indigo-700 dark:focus-within:ring-indigo-700",
+  lime: "hover:ring-lime-500 focus-within:ring-lime-500 dark:hover:ring-lime-700 dark:focus-within:ring-lime-700",
   orange:
-    "hover:ring-orange-500 focus-within:ring-orange-500 dark:hover:ring-orange-900 dark:focus-within:ring-orange-900",
-  rose: "hover:ring-rose-500 focus-within:ring-rose-500 dark:hover:ring-rose-900 dark:focus-within:ring-rose-900",
-  sky: "hover:ring-sky-500 focus-within:ring-sky-500 dark:hover:ring-sky-900 dark:focus-within:ring-sky-900",
+    "hover:ring-orange-500 focus-within:ring-orange-500 dark:hover:ring-orange-700 dark:focus-within:ring-orange-700",
+  rose: "hover:ring-rose-500 focus-within:ring-rose-500 dark:hover:ring-rose-700 dark:focus-within:ring-rose-700",
+  sky: "hover:ring-sky-500 focus-within:ring-sky-500 dark:hover:ring-sky-700 dark:focus-within:ring-sky-700",
   violet:
-    "hover:ring-violet-500 focus-within:ring-violet-500 dark:hover:ring-violet-900 dark:focus-within:ring-violet-900",
+    "hover:ring-violet-500 focus-within:ring-violet-500 dark:hover:ring-violet-700 dark:focus-within:ring-violet-700",
 };
 
 export const time_item_bg_color: PrettyColorMap = {
@@ -117,16 +117,22 @@ export const tab_bg_color: PrettyColorMap = {
 };
 
 export const tab_bg_color_on: PrettyColorMap = {
-  yellow: "hover:bg-yellow-300 focus-visible:bg-yellow-300",
-  cyan: "hover:bg-cyan-300 focus-visible:bg-cyan-300",
-  emerald: "hover:bg-emerald-300 focus-visible:bg-emerald-300",
-  fuchsia: "hover:bg-fuchsia-300 focus-visible:bg-fuchsia-300",
-  indigo: "hover:bg-indigo-300 focus-visible:bg-indigo-300",
-  lime: "hover:bg-lime-300 focus-visible:bg-lime-300",
-  orange: "hover:bg-orange-300 focus-visible:bg-orange-300",
-  rose: "hover:bg-rose-300 focus-visible:bg-rose-300",
-  sky: "hover:bg-sky-300 focus-visible:bg-sky-300",
-  violet: "hover:bg-violet-300 focus-visible:bg-violet-300",
+  yellow:
+    "hover:bg-yellow-300 focus-visible:bg-yellow-300 dark:hover:bg-yellow-900 dark:focus-visible:bg-yellow-900",
+  cyan: "hover:bg-cyan-300 focus-visible:bg-cyan-300 dark:hover:bg-cyan-900 dark:focus-visible:bg-cyan-900",
+  emerald:
+    "hover:bg-emerald-300 focus-visible:bg-emerald-300 dark:hover:bg-emerald-900 dark:focus-visible:bg-emerald-900",
+  fuchsia:
+    "hover:bg-fuchsia-300 focus-visible:bg-fuchsia-300 dark:hover:bg-fuchsia-900 dark:focus-visible:bg-fuchsia-900",
+  indigo:
+    "hover:bg-indigo-300 focus-visible:bg-indigo-300 dark:hover:bg-indigo-900 dark:focus-visible:bg-indigo-900",
+  lime: "hover:bg-lime-300 focus-visible:bg-lime-300 dark:hover:bg-lime-900 dark:focus-visible:bg-lime-900",
+  orange:
+    "hover:bg-orange-300 focus-visible:bg-orange-300 dark:hover:bg-orange-900 dark:focus-visible:bg-orange-900",
+  rose: "hover:bg-rose-300 focus-visible:bg-rose-300 dark:hover:bg-rose-900 dark:focus-visible:bg-rose-900",
+  sky: "hover:bg-sky-300 focus-visible:bg-sky-300 dark:hover:bg-sky-900 dark:focus-visible:bg-sky-900",
+  violet:
+    "hover:bg-violet-300 focus-visible:bg-violet-300 dark:hover:bg-violet-900 dark:focus-visible:bg-violet-900",
 };
 
 export const time_item_text_color: PrettyColorMap = {

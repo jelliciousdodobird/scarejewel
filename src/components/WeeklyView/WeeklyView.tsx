@@ -381,7 +381,7 @@ const TimeItem = ({
   return (
     <div
       className={clsx(
-        "relative flex w-full h-full rounded-lg overflow-hidden ring-1",
+        "relative flex w-full h-full rounded-xl overflow-hidden ring-1 hover:ring-[3px] focus-within:ring-[3px] bg-transparent",
         ringHighlight,
         ringHighlightOn
       )}
@@ -390,9 +390,10 @@ const TimeItem = ({
         <button
           type="button"
           className={clsx(
-            "flex justify-center items-start min-w-[1rem] sm:min-w-[1.5rem] h-full mix-blend-multiply hover:mix-blend-normal focus-visible:mix-blend-normal",
+            "flex justify-center items-start min-w-[1rem] sm:min-w-[1.5rem] h-full mix-blend-multiply hover:mix-blend-normal focus-visible:mix-blend-normal dark:hover:text-white",
             shrink ? tabBgColor : bgColor,
-            tabBgColorOn
+            tabBgColorOn,
+            textColor
           )}
           onClick={onClick}
         >
@@ -400,8 +401,8 @@ const TimeItem = ({
           <span
             className={clsx(
               "mt-2 grid place-items-center transition-[transform] duration-500",
-              shrink ? "rotate-180" : "rotate-0",
-              textColor
+              shrink ? "rotate-180" : "rotate-0"
+              // textColor
             )}
           >
             <IconChevronRight className="w-3 h-3" stroke={2.5} />
@@ -421,7 +422,7 @@ const TimeItem = ({
           <div className="flex gap-2 flex-col sm:flex-row flex-wrap items-center font-semibold h-min w-full">
             <span
               className={clsx(
-                "rounded h-6 w-6 sm:h-10 sm:w-10 grid place-items-center",
+                "rounded-lg h-6 w-6 sm:h-10 sm:w-10 grid place-items-center",
                 iconBgColor,
                 iconBgColorOn,
                 iconTextColor,
@@ -556,7 +557,11 @@ const OverlapTooltip = ({
 }) => {
   const [portalTo, setPortalTo] = useState<HTMLElement | null>(null);
   const [open, setOpen] = useState(false);
-  const closeTooltip = () => setOpen(false);
+
+  // we need these three lines to fix a radix-ui / headless-ui onBlur issue:
+  const pointerIsDownOutside = useRef(false);
+  const setPointerIsDownOutside = () => (pointerIsDownOutside.current = true);
+  const forceClose = () => !pointerIsDownOutside.current && setOpen(false);
 
   useEffect(() => {
     const selector = portalTooltipToId ? `#${portalTooltipToId}` : "body";
@@ -569,7 +574,7 @@ const OverlapTooltip = ({
       <Popover.Trigger asChild>
         <button
           type="button"
-          className="text-rose-500 hover:bg-slate-200 hover:text-slate-500 rounded-lg p-1"
+          className="grid place-items-center rounded-lg w-6 aspect-square bg-rose-100 text-rose-500 hover:bg-rose-200 hover:text-rose-600 dark:bg-rose-800/20 dark:text-rose-600 dark:hover:bg-rose-800/20 dark:hover:text-rose-500"
           aria-label="Show time overlap tip"
         >
           <IconAlertCircle size={16} stroke={2.5} />
@@ -582,7 +587,9 @@ const OverlapTooltip = ({
               sideOffset={2}
               align="center"
               side="bottom"
-              onBlur={closeTooltip} // THIS IS NEEDED ON MOBILE BECAUSE onPointerDownOutside() will not fire when WeeklyView is inside headless-ui's modal
+              // THIS IS NEEDED ON MOBILE BECAUSE onPointerDownOutside() will not fire when WeeklyView is inside headless-ui's modal
+              onPointerDownOutside={setPointerIsDownOutside}
+              onBlur={forceClose}
             >
               <motion.div
                 initial={{ y: -50, opacity: 0, scale: 0.5 }}
@@ -590,16 +597,16 @@ const OverlapTooltip = ({
                 exit={{ y: -80, opacity: 0, scale: 0 }}
                 transition={{ ease: "easeOut" }}
               >
-                <div className="overflow-hidden flex flex-col gap-2 p-4 bg-white text-rose-500 text-sm rounded-xl shadow-center shadow-black/5 w-60">
-                  <span className="flex justify-center font-bold text-base uppercase w-full">
+                <div className="overflow-hidden flex flex-col gap-2 w-60 p-4 text-sm rounded-xl shadow-center shadow-black/5 bg-white dark:bg-neutral-900/95 dark:shadow-black/5">
+                  <span className="flex font-bold text-base uppercase w-full text-rose-500 dark:text-rose-700">
                     Time Overlap
                   </span>
-                  <span className="text-sm font-light text-slate-900 text-center">
+                  <span className="text-sm text-centerzz font-medium text-slate-500 dark:text-neutral-500">
                     The colored segments to the left represent the times that
                     are overlapped. Click on the segments to collapse a section.
                   </span>
                 </div>
-                <Popover.Arrow className="fill-white" />
+                <Popover.Arrow className="fill-white dark:fill-neutral-900/95" />
               </motion.div>
             </Popover.Content>
           </Popover.Portal>

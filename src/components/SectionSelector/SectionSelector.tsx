@@ -164,7 +164,7 @@ const GroupMessageTooltip = () => {
           type="button"
           className={clsx(
             "w-8 h-8 grid place-items-center text-yellow-500 bg-yellow-100 hover:bg-yellow-200 hover:text-yellow-700 rounded-full",
-            "dark:text-yellow-900 dark:bg-yellow-400 dark:hover:bg-yellow-500 dark:hover:text-neutral-800"
+            "dark:text-yellow-500 dark:bg-yellow-500/20 dark:hover:bg-yellow-500/40 dark:hover:text-yellow-400"
           )}
           aria-label="Show time overlap tip"
         >
@@ -182,19 +182,19 @@ const GroupMessageTooltip = () => {
             <motion.div
               initial={{ y: -50, opacity: 0, scale: 0.5 }}
               animate={{ y: 0, opacity: 1, scale: 1 }}
-              exit={{ y: -80, opacity: 0, scale: 0 }}
+              exit={{ y: -100, opacity: 0, scale: 0 }}
               transition={{ ease: "easeOut" }}
             >
               <div
                 className={clsx(
-                  "overflow-hidden flex flex-col gap-2 p-4 max-w-[80vw] w-96 bg-white text-yellow-500 text-sm rounded-sm shadow-center shadow-black/20 ring-[3px] ring-white/80",
-                  "dark:bg-neutral-900 dark:text-yellow-500 dark:shadow-black/50 dark:ring-neutral-900/0 dark:rounded"
+                  "overflow-hidden flex flex-col gap-2 rounded-lg p-4 max-w-[80vw] w-96 bg-white text-yellow-500 text-sm shadow-center shadow-black/20",
+                  "dark:bg-neutral-900/[98%] dark:text-yellow-500 dark:shadow-black/50"
                 )}
               >
                 <span className="flex font-bold text-base uppercase w-full">
                   Stay in group!
                 </span>
-                <span className="text-sm px-4 text-neutral-700 dark:text-neutral-200 dark:font-light border-l-2 border-yellow-400">
+                <span className="text-sm px-4zz text-neutral-600 dark:text-neutral-500 dark:font-light border-l-2zzborder-yellow-400">
                   Do not pick sections from ACROSS groups. It is considered
                   invalid when you register on the official CSULB site. For
                   example, you cannot register for a
@@ -219,8 +219,8 @@ const GroupMessageTooltip = () => {
               </div>
               <Popover.Arrow
                 className="fill-white dark:fill-neutral-900"
-                height="0.5rem"
-                width="1rem"
+                // height="0.5rem"
+                // width="1rem"
               />
             </motion.div>
           </Popover.Content>

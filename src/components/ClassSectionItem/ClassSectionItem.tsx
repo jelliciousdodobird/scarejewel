@@ -176,7 +176,7 @@ function ClassCard({ data, update }: ClassSectionItemProps) {
         </div>
       </div>
       {!displayMode && (
-        <div className="absolute top-4 right-4 flex flex-col items-center gap-2 w-min h-min text-slate-400">
+        <div className="absolute top-4 right-4 flex flex-col items-center gap-2 w-min h-min text-slate-400zz">
           <Switch
             checked={selected}
             onChange={setSelected}
@@ -196,8 +196,8 @@ function ClassCard({ data, update }: ClassSectionItemProps) {
             checked={hidden}
             onChange={setHidden}
             className={clsx(
-              "grid place-items-center w-10 h-10 rounded-full bg-white dark:bg-neutral-700 text-rose-500 hover:text-red-500",
-              "shadow-center shadow-rose-500/20 hover:shadow-rose-500/40 dark:shadow-none"
+              "grid place-items-center w-10 h-10 rounded-full bg-white dark:bg-neutral-700 text-slate-400 dark:text-neutral-600 hover:text-rose-500 dark:hover:text-rose-500",
+              "shadow-center shadow-neutral-500/20 hover:shadow-neutral-500/40 dark:shadow-none"
             )}
           >
             {hidden ? <IconEyeOff /> : <IconEye />}
@@ -222,9 +222,9 @@ export const SectionTypeLabel = ({
   return (
     <span
       className={clsx(
-        "w-20 h-20 flex flex-col justify-center items-center gap-1 rounded-lg  pl-2 pr-3 py-1",
-        "uppercase font-extrabold text-slate-700 text-sm bg-slate-100",
-        "dark:text-white dark:bg-neutral-700"
+        "w-20 h-20 flex flex-col justify-center items-center gap-1 rounded-lg pl-2 pr-3 py-1",
+        "uppercase font-extrabold text-slate-500 text-sm bg-slate-100",
+        "dark:text-neutral-500 dark:bg-neutral-700"
       )}
     >
       <span>{icon}</span>
@@ -298,7 +298,7 @@ export const DayTag = ({ day }: { day: ClassDay | string }) => {
   return (
     <span
       className={clsx(
-        "relative grid place-items-center rounded-full px-4 py-1 capitalize text-sm dark:font-medium",
+        "relative grid place-items-center rounded-full px-4 py-1 capitalize text-sm",
         // "sm:px-[0.625rem] sm:py-[0.125rem] sm:rounded",
         bgColor,
         textColor
