@@ -138,7 +138,7 @@ export const CoursePlan = ({ terms }: { terms: Term[] }) => {
           className="absolute top-0 scroll-mt-16" // scroll-mt-16 needs to match the the sticky container's top value
           ref={anchorRef}
         />
-        <div className="z-10 sticky top-16 backdrop-blur-sm bg-white/90 w-full border-b border-slate-200 pt-4 sm:pt-0">
+        <div className="z-10 sticky top-16 backdrop-blur-sm bg-white/90 dark:bg-neutral-800/90 w-full border-b border-black/[7%] dark:border-white/[7%] pt-4 sm:pt-0">
           <div className="pack-content w-full flex items-center flex-col sm:flex-row max-w-full gap-0 sm:gap-4">
             <TermSelect
               options={termOptions}
@@ -163,17 +163,17 @@ export const CoursePlan = ({ terms }: { terms: Term[] }) => {
                   <div className="h-10 w-full bg-transparent rounded-xl" />
                 )}
               </Tab.List>
-              <div className="flex rounded-xl overflow-hidden w-10 h-10 text-slate-500 bg-slate-100">
+              <div className="flex rounded-xl overflow-hidden w-10 h-10 text-slate-500 bg-slate-100 dark:text-white dark:bg-neutral-700">
                 <button
                   type="button"
-                  className="w-4 grid place-items-center bg-inherit hover:bg-slate-200 flex-1"
+                  className="w-4 grid place-items-center bg-inherit hover:bg-slate-200 dark:hover:bg-neutral-600 flex-1"
                   onClick={scrollLeft}
                 >
                   <IconChevronLeft size={12} stroke={2.5} />
                 </button>
                 <button
                   type="button"
-                  className="w-4 grid place-items-center bg-inherit hover:bg-slate-200 flex-1"
+                  className="w-4 grid place-items-center bg-inherit hover:bg-slate-200 dark:hover:bg-neutral-600 flex-1"
                   onClick={scrollRight}
                 >
                   <IconChevronRight size={12} stroke={2.5} />

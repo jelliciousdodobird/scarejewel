@@ -45,7 +45,7 @@ export const WeeklyQuickView = () => {
             <div className="fixed inset-0 pt-8">
               <Dialog.Panel
                 className={clsx(
-                  "relative flex flex-col w-full bg-white rounded-tl-3xl rounded-tr-3xl overflow-hidden",
+                  "relative flex flex-col w-full bg-white dark:bg-neutral-800 rounded-tl-3xl rounded-tr-3xl overflow-hidden",
                   "max-h-full min-h-full h-full",
                   "pack-content !pl-0 !pr-0"
                 )}
@@ -60,7 +60,7 @@ export const WeeklyQuickView = () => {
                   className="group/drawer-btn isolate z-10 grid place-items-center w-full pt-2 pb-8 bg-inherit"
                   onClick={toggleOpen}
                 >
-                  <div className="h-1 w-8 bg-slate-200 group-hover/drawer-btn:bg-primary-500 rounded-full"></div>
+                  <div className="h-1 w-8 bg-slate-200 dark:bg-neutral-700 group-hover/drawer-btn:bg-primary-500 rounded-full"></div>
                 </button>
                 <div
                   className={clsx(

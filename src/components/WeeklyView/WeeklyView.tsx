@@ -189,17 +189,18 @@ export const WeeklyView = ({
   );
 
   // styles (it's a pain to edit these styles cus they're far apart in the code so i extracted them here):
-  const sectionHeaderClass =
-    "flex justify-center items-center h-14 bg-slate-100 text-slate-700 text-xl font-bold w-full";
+  // const sectionHeaderClass =
+  //   "flex justify-center items-center h-14 bg-slate-100 text-slate-700 dark:bg-slate-100 dark:text-slate-700 text-xl font-bold w-full";
   const headerClass =
-    "h-12 uppercase font-semibold text-sm text-slate-500 bg-slate-50";
-  const timeSlotClass = "border-b border-slate-100 last:border-b-0";
+    "h-12 uppercase font-semibold text-sm text-slate-500 bg-slate-50 dark:text-neutral-300 dark:bg-neutral-900/50";
+  const timeSlotClass =
+    "border-b border-slate-100 last:border-b-0 dark:border-neutral-500/10";
   const timeSlotDynamicStyle: CSSProperties = {
     height: numOfMinsPerBlock * yScale,
   };
 
   return (
-    <div className="relative flex flex-col overflow-hidden rounded-2xl ring-1 ring-black/5 bg-white">
+    <div className="relative flex flex-col overflow-hidden rounded-2xl ring-1 ring-black/5 bg-white dark:bg-neutral-800 dark:ring-neutral-500/5">
       <SelectedSnapshot />
       {showLimitedView && (
         <div className="z-50 absolute inset-0 grid place-items-center">
@@ -212,7 +213,9 @@ export const WeeklyView = ({
       {/* TABLE CONTAINER */}
       <div className="flex flex-col isolate relative" ref={containerRef}>
         {/* TABLE HEADER */}
-        <p className={clsx("gap-6", sectionHeaderClass)}>Weekly View</p>
+        <p className="gap-6 flex justify-center items-center h-14 bg-slate-100 text-slate-700 dark:bg-neutral-900/70 dark:text-white text-xl font-bold w-full">
+          Weekly View
+        </p>
         {/* TABLE DATA*/}
         <div className="flex">
           {/* TIME COLUMN (1st column) (for ex: 0:00am to 11:59pm) */}
@@ -242,7 +245,7 @@ export const WeeklyView = ({
                 >
                   <span
                     className={clsx(
-                      "text-xs text-slate-500 lowercase",
+                      "text-xs text-slate-500 dark:text-neutral-500 lowercase",
                       "group-first/time-slot:opacity-0 group-first/time-slot:pointer-events-none"
                     )}
                   >

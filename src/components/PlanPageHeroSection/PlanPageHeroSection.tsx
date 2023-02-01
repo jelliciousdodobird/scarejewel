@@ -11,7 +11,7 @@ const courses: CourseDetail[] = [{ course: "BIOL 260", color: "cyan" }];
 
 const Card = () => {
   return (
-    <div className="rounded-2xl min-w-[300px] min-h-[340px] bg-white"></div>
+    <div className="rounded-2xl min-w-[300px] min-h-[340px] bg-white dark:bg-neutral-800"></div>
   );
 };
 
@@ -72,7 +72,7 @@ export const PlanPageHeroSection = () => {
             <Card />
           </motion.div>
         </div>
-        <div className="rounded-3xl absolute inset-0 shadow-[inset_0_0_20px_0_rgba(0,0,0,0.2)] shadow-primary-500/10"></div>
+        <div className="rounded-3xl absolute inset-0 shadow-[inset_0_0_20px_0_rgba(0,0,0,0.2)] shadow-black/10"></div>
       </div>
     </div>
   );

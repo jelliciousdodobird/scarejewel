@@ -7,7 +7,7 @@ export const Logo = () => {
         <span className="w-3 aspect-square bg-transparent-400"></span>
         <span className="w-3 aspect-square bg-primary-400 [clip-path:polygon(0_100%,100%_0,0_0)]"></span>
       </div>
-      <span className="[line-height:22px] h-min text-3xl font-extrabold text-neutral-800">
+      <span className="[line-height:22px] h-min text-3xl font-extrabold dark:font-bold text-neutral-800 dark:text-white">
         {"Yotëi"}
       </span>
     </span>

@@ -113,7 +113,7 @@ export const SectionSelector = ({
               </h3>
             )}
             <div className="isolate flex flex-wrap gap-2">
-              <div className="flex flex-col gap-2 bg-slate-100 text-sm text-slate-900 p-3 px-4 rounded-xl">
+              <div className="flex flex-col gap-2 bg-slate-100 dark:bg-neutral-900 text-sm text-slate-900 dark:text-neutral-300 p-3 px-4 rounded-xl">
                 <span className="flex gap-2 items-center">
                   <span>
                     <IconAlertCircle />
@@ -162,7 +162,10 @@ const GroupMessageTooltip = () => {
       <Popover.Trigger asChild>
         <button
           type="button"
-          className="w-8 h-8 grid place-items-center text-yellow-500 bg-yellow-100 hover:bg-yellow-200 hover:text-yellow-700 rounded-full"
+          className={clsx(
+            "w-8 h-8 grid place-items-center text-yellow-500 bg-yellow-100 hover:bg-yellow-200 hover:text-yellow-700 rounded-full",
+            "dark:text-yellow-900 dark:bg-yellow-400 dark:hover:bg-yellow-500 dark:hover:text-neutral-800"
+          )}
           aria-label="Show time overlap tip"
         >
           <IconAlertTriangle stroke={2} size={20} />
@@ -182,25 +185,40 @@ const GroupMessageTooltip = () => {
               exit={{ y: -80, opacity: 0, scale: 0 }}
               transition={{ ease: "easeOut" }}
             >
-              <div className="overflow-hidden flex flex-col gap-2 p-4 max-w-[80vw] w-96 bg-white text-yellow-500 text-sm rounded-sm shadow-center shadow-black/20 ring-[3px] ring-white/80">
+              <div
+                className={clsx(
+                  "overflow-hidden flex flex-col gap-2 p-4 max-w-[80vw] w-96 bg-white text-yellow-500 text-sm rounded-sm shadow-center shadow-black/20 ring-[3px] ring-white/80",
+                  "dark:bg-neutral-900 dark:text-yellow-500 dark:shadow-black/50 dark:ring-neutral-900/0 dark:rounded"
+                )}
+              >
                 <span className="flex font-bold text-base uppercase w-full">
                   Stay in group!
                 </span>
-                <span className="text-sm px-4 text-neutral-700 border-l-2 border-yellow-400">
+                <span className="text-sm px-4 text-neutral-700 dark:text-neutral-200 dark:font-light border-l-2 border-yellow-400">
                   Do not pick sections from ACROSS groups. It is considered
                   invalid when you register on the official CSULB site. For
                   example, you cannot register for a
-                  <span className="font-bold ">{" lecture "}</span>
-                  section from<span className="font-bold">{" group 1 "}</span>
-                  then a<span className="font-bold ">{" lab "}</span>section
-                  from
-                  <span className="font-bold">{" group 2 "}</span>. It is only
-                  allowed here so that it is easier to rearrange your schedule
-                  to see what works.
+                  <span className="font-bold dark:font-semibold ">
+                    {" lecture "}
+                  </span>
+                  section from
+                  <span className="font-bold dark:font-semibold">
+                    {" group 1 "}
+                  </span>
+                  then a
+                  <span className="font-bold dark:font-semibold ">
+                    {" lab "}
+                  </span>
+                  section from
+                  <span className="font-bold dark:font-semibold">
+                    {" group 2 "}
+                  </span>
+                  . It is only allowed here so that it is easier to rearrange
+                  your schedule to see what works.
                 </span>
               </div>
               <Popover.Arrow
-                className="fill-white"
+                className="fill-white dark:fill-neutral-900"
                 height="0.5rem"
                 width="1rem"
               />

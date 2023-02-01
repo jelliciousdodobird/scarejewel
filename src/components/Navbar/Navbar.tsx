@@ -14,8 +14,8 @@ export const Navbar = () => {
   return (
     <div
       className={clsx(
-        "bg-white/80 dark:bg-slate-900/80 backdrop-blur-md",
-        "border-b border-black/[7%]"
+        "bg-white/80 dark:bg-neutral-800/90 backdrop-blur-md",
+        "border-b border-black/[7%] dark:border-white/[7%]"
       )}
     >
       <div className="flex justify-between items-center h-16 pack-content">
@@ -23,16 +23,17 @@ export const Navbar = () => {
         <Link href="/">
           <Logo />
         </Link>
-        <nav className="">
+        <nav className="relative">
           <input
             id="nav-toggle"
             type="checkbox"
-            className="hidden peer/nav-toggle"
+            className="absolute top-0 right-0 w-0 h-0 opacity-0 peer/nav-toggle"
           />
           <label
+            tabIndex={1}
             htmlFor="nav-toggle"
             className={clsx(
-              "w-12 h-12 grid place-items-center sm:hidden cursor-pointer hover:text-primary-500",
+              "rounded-full w-12 h-12 grid place-items-center sm:hidden cursor-pointer hover:text-primary-500 ring-current peer-focus-visible/nav-toggle:ring-2",
               "[&>.nav-menu-icon]:flex [&>.nav-close-icon]:hidden",
               "peer-checked/nav-toggle:[&>.nav-menu-icon]:hidden peer-checked/nav-toggle:[&>.nav-close-icon]:flex"
             )}
@@ -46,10 +47,10 @@ export const Navbar = () => {
             className={clsx(
               "flex min-h-min border-black/5 transition-[transform_opacity] duration-300",
               // styles for mobile:
-              "translate-x-full opacity-0 flex-col gap-0 w-full fixed top-16 left-0 bg-white pb-2 border-b",
-              "peer-checked/nav-toggle:translate-x-0 peer-checked/nav-toggle:opacity-100", // transition states for mobiles
+              "[visibility:hidden] translate-x-full opacity-0 flex-col gap-0 w-full fixed top-16 left-0 bg-white dark:bg-neutral-800 pb-2 border-b",
+              "peer-checked/nav-toggle:visible peer-checked/nav-toggle:translate-x-0 peer-checked/nav-toggle:opacity-100", // transition states for mobiles
               // styles for desktop:
-              "sm:translate-x-0 sm:opacity-100 sm:flex-row sm:gap-4 sm:w-auto sm:relative sm:top-auto sm:left-auto sm:bg-transparent sm:pb-0 sm:border-none"
+              "sm:visible sm:translate-x-0 sm:opacity-100 sm:flex-row sm:gap-4 sm:w-auto sm:relative sm:top-auto sm:left-auto sm:bg-transparent sm:dark:bg-transparent sm:pb-0 sm:border-none"
             )}
           >
             {links.map((link) => (

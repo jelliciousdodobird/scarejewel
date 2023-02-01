@@ -4,48 +4,53 @@ import Link from "next/link";
 
 export const HeroSection = () => {
   return (
-    <div className="w-full pack-content">
-      <div className="overflow-hidden flex relative group flex-col-reverse sm:flex-col-reverse md:flex-row bg-gradient-to-t md:bg-gradient-to-r from-transparent to-primary-50 rounded-3xl">
-        <div className="z-10 isolate relative w-full p-4 md:p-8 md:pl-0 flex flex-col gap-6 rounded-2xl">
-          <h1 className="w-full font-extrabold text-6xl">{"Yotëi"}</h1>
+    <div className="w-full pack-content text-primary-900">
+      <div className="overflow-hidden flex relative group flex-col-reverse sm:flex-col-reverse md:flex-row bg-gradient-to-t md:bg-gradient-to-r from-transparentzzto-primary-50 from-primary-500 to-sky-500 rounded-3xl">
+        <div className="z-10 isolate relative w-full p-8 md:p-12 flex flex-col gap-6 rounded-2xl">
+          <h1 className="w-full font-extrabold text-6xl text-white">
+            {"Yotëi"}
+          </h1>
           <p className="flex gap-4 items-center">
             <span className="font-bold text-2xl">{"yo·tei"}</span>
             <span className="font-light text-2xl">{"/yoh teh/"}</span>
           </p>
           <div className="grid grid-cols-[5rem_1fr] gap-8 text-xl">
-            <span className="grid place-items-center bg-slate-200 text-slate-500 h-8 px-2 rounded-lg font-semibold text-lg italic">
+            <span className="grid place-items-center bg-primary-900 text-slate-200 h-8 px-2 rounded-lg font-semibold text-lg italic">
               origin
             </span>
             <span className="mt-[2px]">
               the Japanese word for <span className="font-extrabold">plan</span>
               .
             </span>
-            <span className="grid place-items-center bg-slate-200 text-slate-500 h-8 px-2 rounded-lg font-semibold text-lg italic">
+            <span className="grid place-items-center bg-primary-900 text-slate-200 h-8 px-2 rounded-lg font-semibold text-lg italic">
               noun
             </span>
             <span className="mt-[2px] flex flex-col gap-4 ">
               <span className="">
-                <span className="text-slate-500 font-extrabold whitespace-pre">
-                  {"1   "}
+                <span className="text-primary-900 font-extrabold mr-4">
+                  {"1"}
                 </span>
                 <span className="">
                   {"a design or scheme of arrangement: "}
                 </span>
-                <span className="text-neutral-700 italic font-light">
+                <span className=" italic font-light">
                   {"an elaborate plan for seating guests."}
                 </span>
               </span>
               <span className="">
-                <span className="text-slate-500 font-extrabold whitespace-pre">
-                  {"2   "}
+                <span className="text-primary-900 font-extrabold mr-4">
+                  {"2"}
                 </span>
                 <span className="">{"a Mike Tyson quote: "}</span>
-                <span className="text-neutral-700 italic font-light">
+                <span className=" italic font-light">
                   {"everybody has a plan until they get punched in the mouth."}
                 </span>
               </span>
-              <span className="text-primary-500">
-                <span className="font-extrabold whitespace-pre">{"3   "}</span>
+              <span className="text-white">
+                <span className="text-primary-500 font-extrabold mr-4 relative">
+                  <span className="-z-10 absolute top-1/2 left-1/2 rounded-full bg-white w-7 aspect-square -translate-x-1/2 -translate-y-1/2" />
+                  {"3"}
+                </span>
                 <span className="font-semibold">
                   {"a web app to help CSULB students arrange their schedules: "}
                 </span>
@@ -69,7 +74,7 @@ export const HeroSection = () => {
                 "will-change-transform [border:1px_solid_rgba(0,0,0,0.01)] [-webkit-backface-visibility:hidden]",
                 "      [transform:rotateX(60deg)_rotateZ(25deg)_translateZ(0px)]",
                 "hover:[transform:rotateX(60deg)_rotateZ(25deg)_translateZ(0px)_translateY(40px)]",
-                "overflow-hidden rounded-xl w-[400px] h-[800px] bg-primary-500"
+                "overflow-hidden rounded-xl w-[400px] h-[800px] bg-[#E7E7E7]"
               )}
             />
 
@@ -78,7 +83,7 @@ export const HeroSection = () => {
                 "will-change-transform [border:1px_solid_rgba(0,0,0,0.01)] [-webkit-backface-visibility:hidden]",
                 "      [transform:rotateX(60deg)_rotateZ(25deg)_translateZ(50px)]",
                 "hover:[transform:rotateX(60deg)_rotateZ(25deg)_translateZ(50px)_translateY(40px)]",
-                "overflow-hidden rounded-xl w-[400px] h-[800px] bg-primary-400"
+                "overflow-hidden rounded-xl w-[400px] h-[800px] bg-[#EDEDED]"
               )}
             />
 
@@ -87,7 +92,7 @@ export const HeroSection = () => {
                 "will-change-transform [border:1px_solid_rgba(0,0,0,0.01)] [-webkit-backface-visibility:hidden]",
                 "      [transform:rotateX(60deg)_rotateZ(25deg)_translateZ(100px)]",
                 "hover:[transform:rotateX(60deg)_rotateZ(25deg)_translateZ(100px)_translateY(40px)]",
-                "overflow-hidden rounded-xl w-[400px] h-[800px] bg-primary-300"
+                "overflow-hidden rounded-xl w-[400px] h-[800px] bg-[#F3F3F3]"
               )}
             />
 
@@ -96,7 +101,7 @@ export const HeroSection = () => {
                 "will-change-transform [border:1px_solid_rgba(0,0,0,0.01)] [-webkit-backface-visibility:hidden]",
                 "      [transform:rotateX(60deg)_rotateZ(25deg)_translateZ(150px)]",
                 "hover:[transform:rotateX(60deg)_rotateZ(25deg)_translateZ(150px)_translateY(40px)]",
-                "overflow-hidden rounded-xl w-[400px] h-[800px] bg-primary-200"
+                "overflow-hidden rounded-xl w-[400px] h-[800px] bg-[#F9F9F9]"
               )}
             />
 
@@ -106,7 +111,7 @@ export const HeroSection = () => {
                 "will-change-transform [border:1px_solid_rgba(0,0,0,0.01)] [-webkit-backface-visibility:hidden]",
                 "      [transform:rotateX(60deg)_rotateZ(25deg)_translateZ(200px)]",
                 "hover:[transform:rotateX(60deg)_rotateZ(25deg)_translateZ(200px)_translateY(40px)]",
-                "overflow-hidden rounded-xl w-[400px] h-[800px] bg-primary-100",
+                "overflow-hidden rounded-xl w-[400px] h-[800px] bg-[#FFFFFF]",
                 "peer/top-card"
               )}
             />
@@ -121,12 +126,12 @@ export const HeroSection = () => {
                 "pointer-events-none"
               )}
             >
-              <span className="grid grid-cols-[1fr_1fr_1fr] gap-y-8  gap-x-6 w-full text-primary-600 font-extrabold text-2xl">
-                <span className="bg-primary-400/10 w-full h-16 rounded-xl col-span-full row-span-full grid place-items-center " />
-                <span className="bg-primary-400/10 w-full h-12 rounded-xl" />
-                <span className="bg-primary-400/10 w-full h-12 rounded-xl col-span-2" />
-                <span className="bg-primary-400/10 w-full h-12 rounded-xl" />
-                <span className="bg-primary-400/10 w-full h-12 rounded-xl col-span-2" />
+              <span className="grid grid-cols-[1fr_1fr_1fr] gap-y-8 gap-x-6 w-full text-primary-600 font-extrabold text-2xl">
+                <span className="bg-neutral-300/10 scale-90 w-full h-16 rounded-xl col-span-full row-span-full grid place-items-center " />
+                <span className="bg-neutral-300/10 scale-90 w-full h-12 rounded-xl" />
+                <span className="bg-neutral-300/10 scale-90 w-full h-12 rounded-xl col-span-2" />
+                <span className="bg-neutral-300/10 scale-90 w-full h-12 rounded-xl" />
+                <span className="bg-neutral-300/10 scale-90 w-full h-12 rounded-xl col-span-2" />
               </span>
             </div>
 
@@ -140,14 +145,14 @@ export const HeroSection = () => {
                 "pointer-events-none"
               )}
             >
-              <span className="grid grid-cols-[1fr_1fr_1fr] gap-y-8  gap-x-6 w-full text-primary-600 font-extrabold text-2xl">
-                <span className="bg-primary-200 w-full h-16 rounded-xl col-span-full row-span-full grid place-items-center ">
+              <span className="grid grid-cols-[1fr_1fr_1fr] gap-y-8  gap-x-6 w-full text-neutral-700 font-extrabold text-2xl">
+                <span className="bg-neutral-100 w-full h-16 rounded-xl col-span-full row-span-full grid place-items-center ">
                   MATH 101
                 </span>
-                <span className="bg-primary-200 w-full h-12 rounded-xl" />
-                <span className="bg-primary-200 w-full h-12 rounded-xl col-span-2" />
-                <span className="bg-primary-200 w-full h-12 rounded-xl" />
-                <span className="bg-primary-200 w-full h-12 rounded-xl col-span-2" />
+                <span className="bg-neutral-100 w-full h-12 rounded-xl" />
+                <span className="bg-neutral-100 w-full h-12 rounded-xl col-span-2" />
+                <span className="bg-neutral-100 w-full h-12 rounded-xl" />
+                <span className="bg-neutral-100 w-full h-12 rounded-xl col-span-2" />
               </span>
             </div>
           </div>
@@ -159,28 +164,30 @@ export const HeroSection = () => {
               This means we have to use height and width on that flex container to position the button (after the absolute positioning).
               All this complexity just cus of the blurriness caused from transform:scale().
           */}
-          <div className="absolute bottom-0 right-0 h-44 w-48 md:w-64 md:h-40 flex justify-center items-center pointer-events-none [&>*]:pointer-events-auto">
+          <div className="absolute bottom-8 right-4 md:bottom-12 md:right-12 flex justify-center items-center pointer-events-none [&>*]:pointer-events-auto">
             <Link
               href="/plan"
               className={clsx(
-                "relative group/hero-btn h-min w-min font-semibold text-lg text-opacity-100 text-white",
+                "relative group/hero-btn h-minzz w-minzz font-semibold text-lg text-opacity-100 text-white",
                 "transition-[padding] duration-200",
-                "      py-2       pl-5       pr-2", // note that difference between the normal and hover padding values
-                "hover:py-3 hover:pl-8 hover:pr-5"
+                "py-3 px-6"
+                // "      py-3       pl-6       pr-6" // note that difference between the normal and hover padding values
+                // "hover:py-4 hover:pl-8 hover:pr-8"
               )}
             >
               <span
                 className={clsx(
-                  "absolute top-0 left-0 w-full h-full rounded-full ring-[2px] ring-primary-50",
-                  "bg-gradient-to-r from-emerald-300 via-primary-500 to-indigo-500 animate-gradient-x group-hover/hero-btn:[animation-duration:2s]" // gradient animation
+                  "absolute top-0 left-0 w-full h-full rounded-full ring-[3px]zzring-sky-500 bg-white group-hover/hero-btn:scale-110 transition-[transform]"
+                  // "bg-white bg-gradient-to-rzzfrom-emerald-300zzvia-primary-500 to-indigo-500 animate-gradient-x group-hover/hero-btn:[animation-duration:2s]zz group-hover/hero-btn:scale-110 " // gradient animation: ;
                 )}
               />
-              <span className="isolate flex items-center gap-1 whitespace-nowrap">
-                Start Plan <IconArrowBadgeRight />
+              <span className="isolate flex items-center gap-1 whitespace-nowrap text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 via-primary-500 to-indigo-500 animate-gradient-x font-extrabold">
+                Start Planning
               </span>
             </Link>
           </div>
         </div>
+        <div className="absolute inset-0 pointer-events-none rounded-3xl shadow-[inset_-5px_5px_20px_0px_rgba(0,0,0,0.50)] shadow-black/[0.02]"></div>
       </div>
     </div>
   );
