@@ -1,10 +1,15 @@
 export const Logo = () => {
   return (
-    <span className="relative text-3xl font-extrabold text-primary-500">
-      {"Yotei"}
-      <span className="w-[6px] h-[6px] rounded-full absolute top-[5px] left-[68px] bg-rose-500"></span>
-      <span className="w-[6px] h-[6px] rounded-full absolute top-[5px] left-[60px] bg-yellow-400"></span>
-      <span className="w-[6px] h-[6px] rounded-full absolute top-[5px] left-[52px] bg-emerald-500"></span>
+    <span className="flex items-center gap-2 h-min">
+      <div className="grid grid-cols-2 grid-row-2 min-h-min min-w-min">
+        <span className="w-3 aspect-square bg-primary-400 [clip-path:polygon(0_0,100%_100%,100%_0)]"></span>
+        <span className="w-3 aspect-square bg-primary-400 [clip-path:polygon(0_100%,100%_100%,100%_0)]"></span>
+        <span className="w-3 aspect-square bg-transparent-400"></span>
+        <span className="w-3 aspect-square bg-primary-400 [clip-path:polygon(0_100%,100%_0,0_0)]"></span>
+      </div>
+      <span className="[line-height:22px] h-min text-3xl font-extrabold text-neutral-800">
+        {"Yotëi"}
+      </span>
     </span>
   );
 };
