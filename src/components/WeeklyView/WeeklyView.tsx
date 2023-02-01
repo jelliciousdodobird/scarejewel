@@ -11,6 +11,7 @@ import {
 import clsx from "clsx";
 import { AnimatePresence, motion } from "framer-motion";
 import { atom, useAtom, useAtomValue, useSetAtom } from "jotai";
+import Link from "next/link";
 import {
   createElement,
   CSSProperties,
@@ -51,8 +52,9 @@ import {
   ring_highlight_on,
 } from "./WeeklyView.variants";
 
-// export const selectedSectionAtom = atom<ClassSectionWithState | null>(null);
 export const timeOverlapTooltipId = "time-overlap-tooltip";
+const _8am = 60 * (8 - 1);
+const _2pm = 60 * (14 + 1);
 
 type DayColumn = {
   day: DayName;
@@ -83,7 +85,7 @@ export const WeeklyView = ({
 
   // simple derived state:
   const timeFormatIs24h = timeFormat === "24h";
-  const showFullView = sections.length === 0;
+  const showLimitedView = sections.length === 0;
 
   // functions:
   const toggleTimeFormat = () =>
@@ -126,10 +128,10 @@ export const WeeklyView = ({
     // most student don't have sunday/saturday classes so we only want to show that day
     // (1) if they do have a class for it,
     // or
-    // (2) if we need to force a full week view
+    // (2) if we need to force a full week view (not applicable anymore)
     const daykey = col.day.short;
-    if (daykey === "sa") col.show = showFullView || col.sections.length !== 0;
-    if (daykey === "su") col.show = showFullView || col.sections.length !== 0;
+    if (daykey === "sa") col.show = col.sections.length !== 0;
+    if (daykey === "su") col.show = col.sections.length !== 0;
   });
 
   // FROM HERE TIL THE RENDER FUNCTION, WE ARE DETERMINING WHAT WILL GET RENDERED:
@@ -173,8 +175,8 @@ export const WeeklyView = ({
   );
 
   // finally, we adjust the start and ends times, depending on if we want the full view:
-  const endTime = showFullView ? TWENTY_FOUR_HOURS_IN_MINS : endTimeOffset;
-  const startTime = showFullView ? 0 : Math.min(startTimeOffset, endTime);
+  const endTime = showLimitedView ? _2pm : endTimeOffset;
+  const startTime = showLimitedView ? _8am : Math.min(startTimeOffset, endTime);
 
   // now with
   const timeSlotsLength = Math.min(
@@ -197,129 +199,129 @@ export const WeeklyView = ({
   };
 
   return (
-    <>
+    <div className="relative flex flex-col overflow-hidden rounded-2xl ring-1 ring-black/5 bg-white">
       <SelectedSnapshot />
-      {/* <SelectedSectionPopup /> */}
-      <div className="relative flex flex-col overflow-hidden rounded-2xl ring-1 ring-black/5 bg-white">
-        <div className="absolute z-50" id={timeOverlapTooltipId}></div>
-        {/* TABLE CONTAINER */}
-        <div
-          // className="flex flex-col isolate relative overflow-hidden rounded-2xl border border-black/5"
-          className="flex flex-col isolate relative"
-          ref={containerRef}
-        >
-          {/* TABLE HEADER */}
-          <p className={clsx("gap-6", sectionHeaderClass)}>Weekly View</p>
-          {/* TABLE DATA*/}
-          <div className="flex">
-            {/* TIME COLUMN (1st column) (for ex: 0:00am to 11:59pm) */}
-            <div className="flex flex-col min-w-[3.5rem] max-w-[3.5rem]">
-              {/* TIME COLUMN HEADER */}
-              <Switch
-                checked={timeFormatIs24h}
-                onChange={toggleTimeFormat}
-                className={clsx(
-                  "grid place-items-center hover:text-primary-500",
-                  headerClass
-                )}
-              >
-                {timeFormat}
-              </Switch>
-
-              {/* TIME COLUMN DATA */}
-              <div className="relative flex flex-col w-full">
-                {timeSlots.map((time) => (
-                  <div
-                    key={time}
-                    className={clsx(
-                      "group/time-slot relative flex justify-end p-2",
-                      timeSlotClass
-                    )}
-                    style={timeSlotDynamicStyle}
-                  >
-                    <span
-                      className={clsx(
-                        "text-xs text-slate-500 lowercase",
-                        "group-first/time-slot:opacity-0 group-first/time-slot:pointer-events-none"
-                      )}
-                    >
-                      {getTimeFormatted(time, timeFormat)}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-            {/* DAY COLUMNS CONTAINER */}
-            {mainView.map((col) => (
-              <div key={col.day.long} className="isolate flex flex-col flex-1">
-                {/* DAY COLUMN HEADER */}
-                <h2
-                  className={clsx(
-                    "relative flex justify-center items-center gap-0 sm:gap-1",
-                    headerClass
-                  )}
-                >
-                  <span className="hidden sm:block">{col.day.medium}</span>
-                  <span className="sm:hidden">{col.day.short}</span>
-                  {col.hasOverlap && <OverlapTooltip />}
-                </h2>
-
-                {/* DAY COLUMN HEADER DATA*/}
-                <div className="relative flex w-full">
-                  <div className="z-0 relative flex flex-col w-full">
-                    {timeSlots.map((time) => (
-                      <div
-                        key={time}
-                        className={clsx("text-[10px]", timeSlotClass)}
-                        style={timeSlotDynamicStyle}
-                      />
-                    ))}
-                  </div>
-                  <div className="z-10 absolute top-0 left-0 flex flex-col w-full isolate h-full px-2 pointer-events-none">
-                    {/* this extra div is needed so that TimeItem does not overflow because of the px-1 above */}
-                    <div className="relative [&>*]:pointer-events-auto">
-                      {col.sections.map((cs, i) => (
-                        <TimeSlot
-                          length={col.sections.length}
-                          order={i}
-                          key={cs.uid}
-                          data={cs}
-                          hasOverlap={col.hasOverlap}
-                          startOffset={startTime}
-                          yScale={yScale}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+      {showLimitedView && (
+        <div className="z-50 absolute inset-0 grid place-items-center">
+          <Link href="/plan" className="text-4xl font-extrabold text-center">
+            {"Start by adding class sections!"}
+          </Link>
         </div>
-        {subViewSections.length !== 0 && (
-          <div className="flex flex-col">
-            <p className={clsx("flex flex-col", sectionHeaderClass)}>
-              <span>{"No Time or Day"}</span>
-              <span className="text-xs font-semibold italic lowercase">
-                {"(TBA • N/A • Async)"}
-              </span>
-            </p>
+      )}
+      <div className="absolute z-40" id={timeOverlapTooltipId}></div>
+      {/* TABLE CONTAINER */}
+      <div className="flex flex-col isolate relative" ref={containerRef}>
+        {/* TABLE HEADER */}
+        <p className={clsx("gap-6", sectionHeaderClass)}>Weekly View</p>
+        {/* TABLE DATA*/}
+        <div className="flex">
+          {/* TIME COLUMN (1st column) (for ex: 0:00am to 11:59pm) */}
+          <div className="flex flex-col min-w-[3.5rem] max-w-[3.5rem]">
+            {/* TIME COLUMN HEADER */}
+            <Switch
+              checked={timeFormatIs24h}
+              onChange={toggleTimeFormat}
+              className={clsx(
+                "grid place-items-center hover:text-primary-500",
+                headerClass
+              )}
+            >
+              {timeFormat}
+            </Switch>
 
-            <div className="flex gap-4 justify-center flex-wrap p-4">
-              {subViewSections.map((dayCol) => (
-                <Fragment key={dayCol.day.long}>
-                  {dayCol.sections.map((section) => (
-                    <div className="w-min-[20rem]" key={section.uid}>
-                      <TimeItem data={section} />
-                    </div>
-                  ))}
-                </Fragment>
+            {/* TIME COLUMN DATA */}
+            <div className="relative flex flex-col w-full">
+              {timeSlots.map((time) => (
+                <div
+                  key={time}
+                  className={clsx(
+                    "group/time-slot relative flex justify-end p-2",
+                    timeSlotClass
+                  )}
+                  style={timeSlotDynamicStyle}
+                >
+                  <span
+                    className={clsx(
+                      "text-xs text-slate-500 lowercase",
+                      "group-first/time-slot:opacity-0 group-first/time-slot:pointer-events-none"
+                    )}
+                  >
+                    {getTimeFormatted(time, timeFormat)}
+                  </span>
+                </div>
               ))}
             </div>
           </div>
-        )}
+          {/* DAY COLUMNS CONTAINER */}
+          {mainView.map((col) => (
+            <div key={col.day.long} className="isolate flex flex-col flex-1">
+              {/* DAY COLUMN HEADER */}
+              <h2
+                className={clsx(
+                  "relative flex justify-center items-center gap-0 sm:gap-1",
+                  headerClass
+                )}
+              >
+                <span className="hidden sm:block">{col.day.medium}</span>
+                <span className="sm:hidden">{col.day.short}</span>
+                {col.hasOverlap && <OverlapTooltip />}
+              </h2>
+
+              {/* DAY COLUMN HEADER DATA*/}
+              <div className="relative flex w-full">
+                <div className="z-0 relative flex flex-col w-full">
+                  {timeSlots.map((time) => (
+                    <div
+                      key={time}
+                      className={clsx("text-[10px]", timeSlotClass)}
+                      style={timeSlotDynamicStyle}
+                    />
+                  ))}
+                </div>
+                <div className="z-10 absolute top-0 left-0 flex flex-col w-full isolate h-full px-2 pointer-events-none">
+                  {/* this extra div is needed so that TimeItem does not overflow because of the px-1 above */}
+                  <div className="relative [&>*]:pointer-events-auto">
+                    {col.sections.map((cs, i) => (
+                      <TimeSlot
+                        length={col.sections.length}
+                        order={i}
+                        key={cs.uid}
+                        data={cs}
+                        hasOverlap={col.hasOverlap}
+                        startOffset={startTime}
+                        yScale={yScale}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
-    </>
+      {subViewSections.length !== 0 && (
+        <div className="flex flex-col">
+          <p className={clsx("flex items-center gap-4 px-4", headerClass)}>
+            <span>{"No Time or Day"}</span>
+            <span className="text-sm font-medium italic lowercase ">
+              {"(TBA • N/A • Async)"}
+            </span>
+          </p>
+
+          <div className="flex gap-4 flex-wrap p-4">
+            {subViewSections.map((dayCol) => (
+              <Fragment key={dayCol.day.long}>
+                {dayCol.sections.map((section) => (
+                  <div className="w-min-[20rem]" key={section.uid}>
+                    <TimeItem data={section} />
+                  </div>
+                ))}
+              </Fragment>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
   );
 };
 
@@ -413,7 +415,7 @@ const TimeItem = ({
         onClick={openPopup}
       >
         <div className="w-full h-full overflow-hidden flex gap-3 sm:gap-2 rounded">
-          <div className="flex gap-2 flex-col sm:flex-row  zzflex-row flex-wrap items-center font-semibold w-minzz h-minzz h-min w-full">
+          <div className="flex gap-2 flex-col sm:flex-row flex-wrap items-center font-semibold h-min w-full">
             <span
               className={clsx(
                 "rounded h-6 w-6 sm:h-10 sm:w-10 grid place-items-center",
@@ -442,7 +444,7 @@ const TimeItem = ({
           <Dialog
             open={open}
             onClose={closePopup}
-            className="relative z-50zz"
+            className="relative"
             static
             as={motion.div}
           >
@@ -458,7 +460,7 @@ const TimeItem = ({
             {/* Full-screen scrollable container */}
             <div className="fixed inset-0 overflow-y-auto">
               {/* Container to center the panel */}
-              <div className="flex min-h-full items-center justify-center p-4zz pack-content w-full">
+              <div className="flex min-h-full items-center justify-center pack-content w-full">
                 {/* The actual dialog panel  */}
                 <Dialog.Panel
                   className="max-w-md min-w-[min(400px,100%)]"

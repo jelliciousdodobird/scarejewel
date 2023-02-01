@@ -1,6 +1,10 @@
 "use client";
 
-import { IconAlertCircle } from "@tabler/icons";
+import {
+  IconAlertCircle,
+  IconAlertTriangle,
+  IconTrafficCone,
+} from "@tabler/icons";
 import { useQuery } from "@tanstack/react-query";
 import { PrimitiveAtom, useAtom } from "jotai";
 import { Fragment, useEffect, useState } from "react";
@@ -14,6 +18,8 @@ import {
   SectionTypeLabel,
 } from "../ClassSectionItem/ClassSectionItem";
 import clsx from "clsx";
+import * as Popover from "@radix-ui/react-popover";
+import { AnimatePresence, motion } from "framer-motion";
 
 const staleTime = 60 * 60 * 1000; // 1 hour
 
@@ -83,25 +89,6 @@ export const SectionSelector = ({
     });
   }, [data]);
 
-  if (queryDisabled)
-    return (
-      <div className="relative">
-        <div
-          className={clsx(
-            "text-xl w-full rounded-xl flex gap-4",
-            " [&>*]:hidden [&>*:first-child]:flex sm:[&>*:not(:last-child)]:flex md:[&>*]:flex"
-          )}
-        >
-          {[...Array(3).keys()].map((i) => (
-            <div key={i} className="h-80 w-full bg-slate-100 rounded-2xl"></div>
-          ))}
-        </div>
-        <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex font-extrabold text-4xl text-slate-500">
-          Get started by picking a department and course code.
-        </span>
-      </div>
-    );
-
   if (isLoading)
     return (
       <div className="relative -z-10 flex flex-col">
@@ -112,30 +99,33 @@ export const SectionSelector = ({
   const groups = splitIntoGroups(courseItem.availableSections);
 
   return (
-    <div className="flex flex-col gap-12">
-      {groups.length > 1 && <GroupMessage />}
+    <div className="flex flex-col gap-16">
       {groups.map((group, i) => (
-        <div
-          key={group.group_id}
-          className="flex flex-col gap-8 my-8zz first:mt-0 py-2 pl-6zz "
-        >
-          <div className="flex flex-col gap-4 rounded-xl">
-            <h3 className="font-extrabold text-2xl uppercase">Group {i + 1}</h3>
-            <div className="flex flex-wrap gap-2">
+        <div key={group.group_id} className="flex flex-col gap-8">
+          <div className="relative z-10 flex flex-col gap-4 rounded-xl">
+            {groups.length > 1 && (
+              <h3 className="isolate z-10 flex gap-2 items-center">
+                <span className="font-extrabold text-2xl flex gap-2 uppercase">{`Group ${
+                  i + 1
+                }`}</span>
+
+                <GroupMessageTooltip />
+              </h3>
+            )}
+            <div className="isolate flex flex-wrap gap-2">
               <div className="flex flex-col gap-2 bg-slate-100 text-sm text-slate-900 p-3 px-4 rounded-xl">
                 <span className="flex gap-2 items-center">
                   <span>
                     <IconAlertCircle />
                   </span>
                   <span className="font-bold text-base uppercase">
-                    Instructions
+                    Must Pick
                   </span>
                 </span>
                 <span className="whitespace-nowrap">
-                  Enrollment requires one of each:
+                  Enrollment requires one of each section:
                 </span>
               </div>
-
               <div className="flex flex-col">
                 <span className="flex gap-2">
                   {group.uniqueSectionTypes.map((type) => (
@@ -149,7 +139,7 @@ export const SectionSelector = ({
               </div>
             </div>
           </div>
-          <ul className="grid grid-cols-[repeat(auto-fill,minmax(min(320px,100%),1fr))] gap-8 rounded-md bg-transparent">
+          <ul className="isolate grid grid-cols-[repeat(auto-fill,minmax(min(320px,100%),1fr))] gap-8 rounded-md bg-transparent">
             {group.classSections.map((cs) => (
               <ClassSectionItem
                 key={cs.uid}
@@ -164,28 +154,60 @@ export const SectionSelector = ({
   );
 };
 
-export const GroupMessage = () => {
+const GroupMessageTooltip = () => {
+  const [open, setOpen] = useState(false);
+  const closeTooltip = () => setOpen(false);
   return (
-    <span className="flex flex-col gap-4 text-sm rounded-xl p-6 bg-rose-50 text-rose-600 ">
-      <span className="flex gap-2 items-center ">
-        <span>
-          <IconAlertCircle />
-        </span>
-        <span className="font-bold text-lg text-rose-600 uppercase">
-          Warning
-        </span>
-      </span>
-      <span className="">Do not pick sections from ACROSS groups. </span>
-
-      <span className="">
-        It is considered invalid when you register on the official CSULB site.
-        For example, you cannot register for a
-        <span className="font-bold ">{" lecture "}</span>
-        section from<span className="font-bold">{" group 1 "}</span>then a
-        <span className="font-bold ">{" lab "}</span>section from
-        <span className="font-bold">{" group 2 "}</span>. It is only allowed
-        here so that it is easier to rearrange your schedule to see what works.
-      </span>
-    </span>
+    <Popover.Root open={open} onOpenChange={setOpen}>
+      <Popover.Trigger asChild>
+        <button
+          type="button"
+          className="w-8 h-8 grid place-items-center text-yellow-500 bg-yellow-100 hover:bg-yellow-200 hover:text-yellow-700 rounded-full"
+          aria-label="Show time overlap tip"
+        >
+          <IconAlertTriangle stroke={2} size={20} />
+        </button>
+      </Popover.Trigger>
+      <AnimatePresence>
+        {open && (
+          <Popover.Content
+            forceMount
+            sideOffset={2}
+            align="center"
+            side="bottom"
+          >
+            <motion.div
+              initial={{ y: -50, opacity: 0, scale: 0.5 }}
+              animate={{ y: 0, opacity: 1, scale: 1 }}
+              exit={{ y: -80, opacity: 0, scale: 0 }}
+              transition={{ ease: "easeOut" }}
+            >
+              <div className="overflow-hidden flex flex-col gap-2 p-4 max-w-[80vw] w-96 bg-white text-yellow-500 text-sm rounded-sm shadow-center shadow-black/20 ring-[3px] ring-white/80">
+                <span className="flex font-bold text-base uppercase w-full">
+                  Stay in group!
+                </span>
+                <span className="text-sm px-4 text-neutral-700 border-l-2 border-yellow-400">
+                  Do not pick sections from ACROSS groups. It is considered
+                  invalid when you register on the official CSULB site. For
+                  example, you cannot register for a
+                  <span className="font-bold ">{" lecture "}</span>
+                  section from<span className="font-bold">{" group 1 "}</span>
+                  then a<span className="font-bold ">{" lab "}</span>section
+                  from
+                  <span className="font-bold">{" group 2 "}</span>. It is only
+                  allowed here so that it is easier to rearrange your schedule
+                  to see what works.
+                </span>
+              </div>
+              <Popover.Arrow
+                className="fill-white"
+                height="0.5rem"
+                width="1rem"
+              />
+            </motion.div>
+          </Popover.Content>
+        )}
+      </AnimatePresence>
+    </Popover.Root>
   );
 };

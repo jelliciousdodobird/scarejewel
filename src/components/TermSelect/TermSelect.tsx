@@ -24,7 +24,7 @@ export const TermSelect = ({
   return (
     <Listbox value={selectedOption} onChange={onChange} by="id">
       {({ open }) => (
-        <div className="relative flex flex-col min-w-[12rem] w-full sm:w-auto">
+        <div className="z-10 relative flex flex-col min-w-[12rem] w-full sm:w-auto">
           <Listbox.Button
             className={clsx(
               "group grid grid-cols-[1fr_min-content] justify-items-center items-center h-10 w-full text-slate-400 font-semibold rounded-xl ",

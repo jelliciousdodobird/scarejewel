@@ -156,71 +156,71 @@ export const CourseSelector = memo(function CourseSelector({
   const textColor = text_color[color];
   const ringColor = ring_color[color];
   const highlightBgColor = bg_color_highlight_hover[color];
-  // const helperTextHover = helper_hover_text[color];
 
   // repeated styles:
   const ringStyle = `${ringColor} ring-0 focus-visible:ring-2 ring-inset appearance-none outline-none`;
 
   return (
-    <div className="relative flex flex-col gap-4">
-      <>
-        <div
-          className={clsx(
-            "stickyzz z-10 top-[calc(4rem+0.5rem)] flex gap-0 w-full rounded-2xl p-3 text-sm font-medium",
-            textColor,
-            bgc
-          )}
-        >
-          <AutoCompleteInput
-            ref={deptRef}
-            options={deptOptions}
-            selectedOption={courseItem.selectedDept}
-            onChange={updateSelectedDept}
-            placeholder="Dept"
-            color={color}
-          />
-          <AutoCompleteInput
-            ref={courseCodeRef}
-            options={courseOptions}
-            selectedOption={courseItem.selectedCourse}
-            onChange={updateSelectedCourse}
-            placeholder="Code"
-            color={color}
-            disabled={disableCourseSelect}
-          />
-          <h1
-            className={clsx(
-              "overflow-hidden flex items-center flex-grow flex-shrink pl-3 pr-1 rounded-md font-semibold text-sm whitespace-nowrap",
-              ringStyle
-            )}
-          >
-            {title}
-          </h1>
-
-          <ActionDropdown
-            courseItemAtom={courseItemAtom}
-            buttonStyle={clsx(ringStyle, highlightBgColor)}
-          />
-        </div>
-
-        <div className="relative z-0">
-          {courseItem.selectedDept.value !== "" &&
-          courseItem.selectedCourse.value !== "" ? (
-            <SectionSelector
-              semester={semester}
-              year={year}
+    <div className="isolate relative flex flex-col gap-8">
+      <div
+        className={clsx(
+          "z-10 isolate flex gap-0 w-full text-sm font-medium",
+          textColor,
+          bgc
+        )}
+      >
+        <div className="pack-content w-full">
+          <div className="relative flex py-3">
+            <ActionDropdown
               courseItemAtom={courseItemAtom}
+              buttonStyle={clsx(ringStyle, highlightBgColor)}
             />
-          ) : (
-            <HelpMessage
-              deptInputRef={deptRef}
-              courseCodeInputRef={courseCodeRef}
+            <AutoCompleteInput
+              ref={deptRef}
+              options={deptOptions}
+              selectedOption={courseItem.selectedDept}
+              onChange={updateSelectedDept}
+              placeholder="Dept"
               color={color}
-              disableCourseCode={courseItem.selectedDept.value === ""}
             />
-          )}
+            <AutoCompleteInput
+              ref={courseCodeRef}
+              options={courseOptions}
+              selectedOption={courseItem.selectedCourse}
+              onChange={updateSelectedCourse}
+              placeholder="Code"
+              color={color}
+              disabled={disableCourseSelect}
+            />
+            <h1
+              className={clsx(
+                "overflow-hidden flex items-center flex-grow flex-shrink pl-3 pr-1 rounded-md font-semibold text-sm whitespace-nowrap",
+                ringStyle
+              )}
+            >
+              {title}
+            </h1>
+          </div>
         </div>
-      </>
+      </div>
+
+      <div className="relative z-0 pack-content w-full">
+        {courseItem.selectedDept.value !== "" &&
+        courseItem.selectedCourse.value !== "" ? (
+          <SectionSelector
+            semester={semester}
+            year={year}
+            courseItemAtom={courseItemAtom}
+          />
+        ) : (
+          <HelpMessage
+            deptInputRef={deptRef}
+            courseCodeInputRef={courseCodeRef}
+            color={color}
+            disableCourseCode={courseItem.selectedDept.value === ""}
+          />
+        )}
+      </div>
     </div>
   );
 },
@@ -243,7 +243,7 @@ const HelpMessage = ({
 
   return (
     <div className="relative">
-      <div className="text-xl w-full rounded-xl flex gap-4">
+      <div className="text-xl w-full rounded-xl flex gap-8">
         <div className="rounded-2xl w-full h-80 bg-slate-100" />
         <div className="rounded-2xl w-full h-80 bg-slate-100" />
         <div className="rounded-2xl w-full h-80 bg-slate-100 hidden md:flex" />
@@ -277,33 +277,6 @@ const HelpMessage = ({
           .
         </div>
       </div>
-
-      {/* <span className="text-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 font-extrabold text-4xl text-slate-400">
-        To pick a course, first select a
-        <button
-          type="button"
-          className={clsx(
-            "inline whitespace-pre text-slate-600",
-            helperTextHover
-          )}
-          onClick={focusDeptInput}
-        >
-          {" department "}
-        </button>
-        then a
-        <button
-          type="button"
-          className={clsx(
-            "inline whitespace-pre text-slate-600 disabled:cursor-not-allowed",
-            helperTextHover
-          )}
-          onClick={focusCourseCodeInput}
-          disabled={disableCourseCode}
-        >
-          {" course code"}
-        </button>
-        .
-      </span> */}
     </div>
   );
 };
@@ -320,8 +293,6 @@ const ActionDropdown = ({
   const setSelectedTab = useSetAtom(selectedTabAtom);
 
   const { color } = courseItem;
-
-  // const bgColorHighlight = bg_color_hover[color];
 
   const removeSelf = () => {
     setCourseItems((list) => {
@@ -344,14 +315,14 @@ const ActionDropdown = ({
           buttonStyle
         )}
       >
-        <IconAdjustmentsHorizontal />
+        <IconAdjustmentsHorizontal size={20} />
       </Popover.Button>
 
       {/* this extra div allows us to anchor the Menu.Items container to the bottom of Menu.Button*/}
       <div className="relative">
         <Popover.Panel
           className={clsx(
-            "absolute right-0 top-0 flex flex-col gap-4 p-4 mt-4 text-slate-900",
+            "absolute left-0 top-0 flex flex-col gap-4 p-4 mt-4 text-slate-900",
             "rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5"
           )}
         >

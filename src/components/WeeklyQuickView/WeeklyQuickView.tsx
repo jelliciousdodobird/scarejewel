@@ -57,10 +57,10 @@ export const WeeklyQuickView = () => {
               >
                 <button
                   type="button"
-                  className="isolate z-10 grid place-items-center w-full pt-2 pb-8 bg-inherit"
+                  className="group/drawer-btn isolate z-10 grid place-items-center w-full pt-2 pb-8 bg-inherit"
                   onClick={toggleOpen}
                 >
-                  <div className="h-1 w-8 bg-slate-200 rounded-full"></div>
+                  <div className="h-1 w-8 bg-slate-200 group-hover/drawer-btn:bg-primary-500 rounded-full"></div>
                 </button>
                 <div
                   className={clsx(

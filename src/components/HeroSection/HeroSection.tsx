@@ -116,7 +116,6 @@ export const HeroSection = () => {
               className={clsx(
                 "                    [transform:rotateX(60deg)_rotateZ(25deg)_translateZ(200px)]",
                 "peer-hover/top-card:[transform:rotateX(60deg)_rotateZ(25deg)_translateZ(200px)_translateY(40px)]",
-                "peer-hover/top-card:scale-[20%]zz scale-0zz",
                 "overflow-hidden rounded-xl w-[400px] h-[800px] bg-transparent",
                 "flex flex-col items-center justify-end p-12 pb-16",
                 "pointer-events-none"
@@ -176,7 +175,7 @@ export const HeroSection = () => {
                   "bg-gradient-to-r from-emerald-300 via-primary-500 to-indigo-500 animate-gradient-x group-hover/hero-btn:[animation-duration:2s]" // gradient animation
                 )}
               />
-              <span className="isolate flex items-center gap-1 whitespace-nowrap uppercasezz">
+              <span className="isolate flex items-center gap-1 whitespace-nowrap">
                 Start Plan <IconArrowBadgeRight />
               </span>
             </Link>
