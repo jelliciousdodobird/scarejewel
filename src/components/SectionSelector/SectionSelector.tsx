@@ -121,7 +121,7 @@ export const SectionSelector = ({
           key={group.group_id}
           className="flex flex-col gap-8 my-8zz first:mt-0 py-2 pl-6zz "
         >
-          <div className="flex flex-col gap-4 rounded-xl">
+          <div className="flex flex-col gap-4">
             <h3 className="font-extrabold text-2xl uppercase">Group {i + 1}</h3>
             <div className="flex flex-wrap gap-2">
               <div className="flex flex-col gap-2 bg-slate-100 text-sm text-slate-900 p-3 px-4 rounded-xl">
