@@ -118,7 +118,6 @@ export const CoursePlan = ({ terms }: { terms: Term[] }) => {
    *    a stable position meaning you can always depend on that scroll position to be accessible.
    */
   useEffect(() => {
-    console.log("ref");
     // helps reduce scroll jank / disorientation caused by switching tabs:
     anchorRef?.current?.scrollIntoView({ behavior: "smooth" });
   }, [selectedTab]);
@@ -138,7 +137,7 @@ export const CoursePlan = ({ terms }: { terms: Term[] }) => {
           className="absolute top-0 scroll-mt-16" // scroll-mt-16 needs to match the the sticky container's top value
           ref={anchorRef}
         />
-        <div className="z-10 sticky top-16 backdrop-blur-sm bg-white/90 dark:bg-neutral-800/90 w-full border-b border-black/[7%] dark:border-white/[7%] pt-4 sm:pt-0">
+        <div className="z-10 sticky top-[calc(4rem+1px)] backdrop-blur-sm bg-white/90 dark:bg-neutral-800/90 w-full border-b border-black/[7%] dark:border-white/[7%] pt-4 sm:pt-0">
           <div className="pack-content w-full flex items-center flex-col sm:flex-row max-w-full gap-0 sm:gap-4">
             <TermSelect
               options={termOptions}

@@ -20,10 +20,10 @@ export const ThemeSwitch = () => {
   return (
     <button
       type="button"
-      className="w-10 aspect-square rounded-xl text-xs grid place-items-center hover:bg-primary-100 hover:text-primary-500 dark:hover:bg-primary-900 dark:hover:text-primary-100"
+      className="w-10 aspect-square rounded-xl text-xs grid place-items-center text-slate-500 hover:bg-primary-100 hover:text-primary-500 dark:text-neutral-400 dark:hover:bg-primary-900 dark:hover:text-primary-100"
       onClick={toggleTheme}
     >
-      {theme === "dark" ? <IconMoon /> : <IconSun />}
+      {theme === "dark" ? <IconMoon size={20} /> : <IconSun size={20} />}
     </button>
   );
 };
