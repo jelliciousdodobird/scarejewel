@@ -30,7 +30,7 @@ export const NavLink = ({ href, label }: NavLinkProps) => {
       {active && (
         <motion.span
           layoutId="nav-link"
-          className="absolute -bottom-1 w-full h-[2px] bg-slate-500 dark:bg-neutral-400 hidden sm:block"
+          className="absolute -bottom-1 w-full h-[2px] bg-slate-300 dark:bg-neutral-400 hidden sm:block"
         />
       )}
     </Link>
