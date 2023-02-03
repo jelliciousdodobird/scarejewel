@@ -17,7 +17,7 @@ export const SectionSelectorSkeleton = () => {
       </div>
       <ul className="grid grid-cols-[repeat(auto-fill,minmax(min(320px,100%),1fr))] gap-8 rounded-md bg-transparent">
         {[...Array(skeletonQuantity)].map((x, i) => (
-          <ClassSectionItemSkeleton></ClassSectionItemSkeleton>
+          <ClassSectionItemSkeleton key={i}></ClassSectionItemSkeleton>
         ))}
       </ul>
     </div>
