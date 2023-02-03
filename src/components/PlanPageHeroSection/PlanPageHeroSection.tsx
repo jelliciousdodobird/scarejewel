@@ -125,7 +125,7 @@ const HeroSection = () => {
 
       <div className="z-50 absolute inset-0 pack-content w-full h-full flex justify-center items-center">
         <div className="flex flex-col gap-8">
-          <h1 className="text-[clamp(56px,12vw,128px)] text-9xl font-extrabold w-min">
+          <h1 className="text-[clamp(56px,12vw,128px)] [line-height:1] font-extrabold w-min">
             {"Schedules Made "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 via-primary-500 to-indigo-500 animate-gradient-x">
               {"Easy."}
