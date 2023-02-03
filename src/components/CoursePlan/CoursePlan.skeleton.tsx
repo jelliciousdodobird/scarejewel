@@ -2,15 +2,18 @@ import clsx from "clsx";
 
 export const CoursePlanSkeleton = () => {
   return (
-    <div className="relative flex flex-col gap-4">
-      <div className="flex gap-4 h-14 w-full rounded-2xl bg-slate-100 p-3">
-        <div className="rounded-lg w-20 h-full bg-slate-200" />
-        <div className="rounded-lg w-20 h-full bg-slate-200" />
+    <div className="relative flex flex-col gap-8">
+      <div className=" w-full bg-slate-100 dark:bg-neutral-700 ">
+        <div className="pack-content w-full flex gap-4 h-14 p-3">
+          <div className="rounded-lg h-full aspect-square bg-slate-200 dark:bg-neutral-600" />
+          <div className="rounded-lg w-20 h-full bg-slate-200 dark:bg-neutral-600" />
+          <div className="rounded-lg w-20 h-full bg-slate-200 dark:bg-neutral-600" />
+        </div>
       </div>
-      <div className="flex gap-4 w-full">
-        <div className="rounded-2xl w-full h-80 bg-slate-100" />
-        <div className="rounded-2xl w-full h-80 bg-slate-100" />
-        <div className="rounded-2xl w-full h-80 bg-slate-100 hidden md:flex" />
+      <div className="flex gap-8 w-full pack-content">
+        <div className="rounded-2xl w-full h-80 bg-slate-100 dark:bg-neutral-700" />
+        <div className="rounded-2xl w-full h-80 bg-slate-100 dark:bg-neutral-700" />
+        <div className="rounded-2xl w-full h-80 bg-slate-100 dark:bg-neutral-700 hidden md:flex" />
       </div>
 
       <div className="absolute inset-0 grid place-content-center p-6 text-4xl font-extrabold text-slate-500">

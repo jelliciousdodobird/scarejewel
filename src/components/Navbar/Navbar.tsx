@@ -1,35 +1,35 @@
+import { IconMenu, IconX } from "@tabler/icons";
 import clsx from "clsx";
 import Link from "next/link";
 import { Logo } from "../Logo/Logo";
+import { NavLink } from "../NavLink/NavLink";
+import { NavItem, NavList } from "../NavList/NavList";
+import { NavMenuButton } from "../NavMenuButton/NavMenuButton";
 import { ThemeSwitch } from "../ThemeSwitch/ThemeSwitch";
 
-const links = [
-  { label: "plan", path: "/plan" },
-  { label: "week", path: "/week" },
-  { label: "about", path: "/about" },
+const links: NavItem[] = [
+  { label: "plan", href: "/plan" },
+  { label: "week", href: "/week" },
+  { label: "about", href: "/about" },
 ];
 
 export const Navbar = () => {
   return (
     <div
       className={clsx(
-        "bg-white/80 dark:bg-slate-900/80 backdrop-blur-md",
-        "border-b border-black/[7%]"
+        "bg-white/80 dark:bg-neutral-800/90 backdrop-blur-md",
+        "border-b border-black/[7%] dark:border-white/[7%]"
       )}
     >
       <div className="flex justify-between items-center h-16 pack-content">
-        <ThemeSwitch />
         <Link href="/">
           <Logo />
         </Link>
-        <nav className="">
-          <ul className="flex items-center gap-4 h-full">
-            {links.map((link) => (
-              <li key={link.label} className="capitalize font">
-                <Link href={link.path}>{link.label}</Link>
-              </li>
-            ))}
-          </ul>
+
+        <nav className="flex gap-0 sm:gap-4 h-min">
+          <ThemeSwitch />
+          <NavMenuButton />
+          <NavList links={links} />
         </nav>
       </div>
     </div>

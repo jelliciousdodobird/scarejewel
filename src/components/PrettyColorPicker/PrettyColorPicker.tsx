@@ -20,16 +20,16 @@ export const PrettyColorPicker = ({
     <RadioGroup
       value={selectedColor}
       onChange={onChange}
-      className="relative flex flex-col gap-2"
+      className="relative flex flex-col gap-4"
     >
-      <RadioGroup.Label className="font-bold text-slate-700">
-        Color
+      <RadioGroup.Label className="font-bold text-slate-700 dark:text-white">
+        Course Color
       </RadioGroup.Label>
       <ul className="grid grid-cols-[repeat(5,min-content)] justify-start gap-3">
         {colors.map((color) => (
           <RadioGroup.Option
             as="li"
-            className="outline-none"
+            className="outline-none appearance-none"
             key={color}
             value={color}
           >
@@ -37,9 +37,9 @@ export const PrettyColorPicker = ({
               <button
                 type="button"
                 className={clsx(
-                  "w-8 h-8 rounded-full outline-none",
+                  "w-8 h-8 rounded-full outline-none appearance-none",
                   "grid place-items-center",
-                  "ring-2 ring-offset-2",
+                  "ring-2 ring-offset-2 dark:ring-offset-neutral-800",
                   active || checked ? ring_color[color] : "ring-transparent",
                   bg_color[color]
                 )}

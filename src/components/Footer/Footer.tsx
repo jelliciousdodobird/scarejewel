@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export const Footer = () => {
   return (
-    <div className="w-full min-h-[20rem] border-t border-t-black/[7%] bg-slate-100 text-slate-900">
+    <div className="w-full min-h-[20rem] border-t border-t-black/[7%] bg-slate-100 text-slate-900 dark:text-neutral-300 dark:bg-neutral-900">
       <nav className="pack-content w-full">
         <ul className="py-8">
           <li className="">

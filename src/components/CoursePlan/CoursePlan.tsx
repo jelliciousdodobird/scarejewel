@@ -74,7 +74,6 @@ export const CoursePlan = ({ terms }: { terms: Term[] }) => {
   const scrollLeft = () => {
     if (tabListRef.current) tabListRef.current.scrollLeft -= 150;
   };
-
   const scrollRightMax = () => {
     if (tabListRef.current) tabListRef.current.scrollLeft = 2000;
   };
@@ -119,7 +118,7 @@ export const CoursePlan = ({ terms }: { terms: Term[] }) => {
    *    a stable position meaning you can always depend on that scroll position to be accessible.
    */
   useEffect(() => {
-    // helps reduce scroll jank caused by switching tabs:
+    // helps reduce scroll jank / disorientation caused by switching tabs:
     anchorRef?.current?.scrollIntoView({ behavior: "smooth" });
   }, [selectedTab]);
 
@@ -131,20 +130,21 @@ export const CoursePlan = ({ terms }: { terms: Term[] }) => {
       onChange={setSelectedTab}
       defaultIndex={0}
     >
-      <div className="relative isolate z-0 flex flex-col gap-4 w-full">
+      <div className="relative isolate z-0 flex flex-col gap-0 w-full">
         <div
+          id="testtest"
           // this element marks the location of the start of the sticky container
           className="absolute top-0 scroll-mt-16" // scroll-mt-16 needs to match the the sticky container's top value
           ref={anchorRef}
         />
-        <div className="z-10 sticky top-16 backdrop-blur-sm bg-white/90 w-full border-b border-slate-200 pt-4 sm:pt-0">
-          <div className="pack-content w-full flex items-center flex-col sm:flex-row max-w-full rounded-xlzz gap-0 sm:gap-4">
+        <div className="z-10 sticky top-[calc(4rem+1px)] backdrop-blur-sm bg-white/90 dark:bg-neutral-800/90 w-full border-b border-black/[7%] dark:border-white/[7%] pt-4 sm:pt-0">
+          <div className="pack-content w-full flex items-center flex-col sm:flex-row max-w-full gap-0 sm:gap-4">
             <TermSelect
               options={termOptions}
               onChange={setSelectedTermOption}
               selectedOption={selectedTermOption}
             />
-            <div className="flex items-center gap-2 min-w-0 flex-1 w-full">
+            <div className="z-0 isolate flex items-center gap-2 min-w-0 flex-1 w-full">
               <Tab.List
                 ref={tabListRef}
                 className={clsx(
@@ -159,20 +159,20 @@ export const CoursePlan = ({ terms }: { terms: Term[] }) => {
                   />
                 ))}
                 {courseItems.length < 10 && (
-                  <div className="h-10 w-full bg-slate-100 rounded-xl" />
+                  <div className="h-10 w-full bg-transparent rounded-xl" />
                 )}
               </Tab.List>
-              <div className="flex rounded-xl overflow-hidden w-10 h-10 text-slate-500 bg-slate-100">
+              <div className="flex rounded-xl overflow-hidden w-10 h-10 text-slate-500 bg-slate-100 dark:text-white dark:bg-neutral-700">
                 <button
                   type="button"
-                  className="w-4 grid place-items-center bg-inherit hover:bg-slate-200 flex-1"
+                  className="w-4 grid place-items-center bg-inherit hover:bg-slate-200 dark:hover:bg-neutral-600 flex-1"
                   onClick={scrollLeft}
                 >
                   <IconChevronLeft size={12} stroke={2.5} />
                 </button>
                 <button
                   type="button"
-                  className="w-4 grid place-items-center bg-inherit hover:bg-slate-200 flex-1"
+                  className="w-4 grid place-items-center bg-inherit hover:bg-slate-200 dark:hover:bg-neutral-600 flex-1"
                   onClick={scrollRight}
                 >
                   <IconChevronRight size={12} stroke={2.5} />
@@ -182,7 +182,11 @@ export const CoursePlan = ({ terms }: { terms: Term[] }) => {
             </div>
           </div>
         </div>
-        <Tab.Panels className="isolate z-0 pack-content w-full">
+        <Tab.Panels
+          // THIS min-h HELPS PREVENT SCROLL JANK WHEN USERS CHANGE dept or course code
+          // DO NOT REMOVE
+          className="min-h-[500px]"
+        >
           {courseItems.map((v) => (
             <Tab.Panel key={v.toString()}>
               <CourseSelector
@@ -280,7 +284,7 @@ const AddButton = ({ addLimit = 10 }: { addLimit?: number }) => {
     <>
       <button
         type="button"
-        className="flex justify-center items-center gap-2 w-min px-2 h-10 rounded-xl rounded-3xlzz rounded-blzz bg-primary-500 text-white font-bold disabled:cursor-not-allowed"
+        className="flex justify-center items-center gap-2 w-min px-2 h-10 rounded-xl bg-primary-500 text-white font-bold disabled:cursor-not-allowed"
         onClick={addCourseItem}
       >
         <IconPlus />

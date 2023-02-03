@@ -11,11 +11,8 @@ export const Instructions = () => {
             </span>
 
             <span className="flex flex-col justify-center">
-              <span className="text-3xl font-semiboldzz">
-                Pick a
-                <span className="font-extrabold zztext-emerald-500 ">
-                  {" term"}
-                </span>
+              <span className="text-3xl">
+                Pick a<span className="font-extrabold">{" term"}</span>
               </span>
               <span className="text-xs font-semibold">
                 {"Spring 2023 · Fall 2020 · Summer 2016 · Spring 2009"}
@@ -38,11 +35,8 @@ export const Instructions = () => {
               2
             </span>
             <span className="flex flex-col justify-center">
-              <span className="text-3xl font-semiboldzz">
-                Pick a
-                <span className="font-extrabold zztext-yellow-500 ">
-                  {" course"}
-                </span>
+              <span className="text-3xl">
+                Pick a<span className="font-extrabold">{" course"}</span>
               </span>
               <span className="text-xs font-semibold">
                 {"MATH 260 · BIO 201 · LIT 420 · ECON 100"}
@@ -66,11 +60,8 @@ export const Instructions = () => {
               3
             </span>
             <span className="flex flex-col justify-center">
-              <span className="text-3xl font-semiboldzz">
-                Pick{" "}
-                <span className="font-extrabold zztext-rose-500 ">
-                  {" sections"}
-                </span>
+              <span className="text-3xl">
+                Pick <span className="font-extrabold">{" sections"}</span>
               </span>
               <span className="text-xs font-semibold">
                 {"Lab · Lecture · Seminar · Activity · Supplementary"}

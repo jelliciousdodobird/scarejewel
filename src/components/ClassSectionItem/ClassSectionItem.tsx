@@ -122,7 +122,10 @@ function ClassCard({ data, update }: ClassSectionItemProps) {
           "flex flex-col gap-8 p-6 bg-white",
           "rounded-2xl transition-[opacity_background-color_box-shadow] duration-300",
 
-          !hidden && "shadow-[rgba(149,157,165,0.15)_0px_8px_24px]",
+          displayMode ? "dark:bg-neutral-800" : "dark:bg-neutral-700/20",
+
+          !hidden &&
+            "shadow-[rgba(149,157,165,0.15)_0px_8px_24px] dark:shadow-none",
           hidden ? "bg-stone-50" : "bg-white" // background color
         )}
       >
@@ -131,22 +134,24 @@ function ClassCard({ data, update }: ClassSectionItemProps) {
             "flex flex-col gap-8",
             "[&>*]:duration-300 [&>*]:transition-[filter_opacity]",
             hidden ? "[&>*]:grayscale-[80%]" : "[&>*]:grayscale-0",
-            hidden ? "[&>*]:opacity-20" : "[&>*]:opacity-100"
+            hidden
+              ? "[&>*]:opacity-20 dark:[&>*]:opacity-5"
+              : "[&>*]:opacity-100"
           )}
         >
           <div className="flex gap-6">
             <SectionTypeLabel sectionType={section_type} />
             <div className="flex flex-col justify-center">
-              <span className="text-slate-700 font-bold">
+              <span className="text-slate-700 dark:text-neutral-50 font-bold">
                 {dept_abbr} {course_number.toLowerCase()}
               </span>
-              <span className="text-slate-500 text-sm font-semibold lowercase">
+              <span className="text-slate-500 dark:text-neutral-100 text-sm font-semibold lowercase">
                 {section_number} {class_number}
               </span>
               <InstructorLink
                 firstName={instructor_fn}
                 lastName={instructor_ln}
-                className="text-slate-500 text-sm hover:underline"
+                className="text-slate-500 dark:text-neutral-100 text-sm hover:underline"
               />
             </div>
           </div>
@@ -154,7 +159,7 @@ function ClassCard({ data, update }: ClassSectionItemProps) {
           <div className="flex flex-col gap-1">
             <div className="flex gap-2 items-center">
               <TimeRange start={time_start} end={time_end} />
-              <span className="text-sm text-slate-500 font-semibold">
+              <span className="text-sm text-slate-500 dark:text-neutral-400 font-semibold">
                 {`(${formatLocation(location)})`}
               </span>
             </div>
@@ -171,18 +176,18 @@ function ClassCard({ data, update }: ClassSectionItemProps) {
         </div>
       </div>
       {!displayMode && (
-        <div className="absolute top-4 right-4 flex flex-col items-center gap-2 w-min h-min text-slate-400">
+        <div className="absolute top-4 right-4 flex flex-col items-center gap-2 w-min h-min">
           <Switch
             checked={selected}
             onChange={setSelected}
             className={clsx(
-              "grid place-items-center w-12 h-12 rounded-full shadow-center",
+              "grid place-items-center w-12 h-12 rounded-full shadow-center dark:shadow-none",
               selected ? "" : "shadow-emerald-500/20",
               selected
                 ? "hover:shadow-emerald-500/60"
                 : "hover:shadow-emerald-500/40",
               selected ? "text-white" : "text-emerald-500",
-              selected ? "bg-emerald-500" : "bg-white"
+              selected ? "bg-emerald-500" : "bg-white dark:bg-neutral-700"
             )}
           >
             {selected ? <IconCheck /> : <IconPlus />}
@@ -191,8 +196,8 @@ function ClassCard({ data, update }: ClassSectionItemProps) {
             checked={hidden}
             onChange={setHidden}
             className={clsx(
-              "grid place-items-center w-10 h-10 rounded-full bg-white text-rose-500 hover:text-red-500",
-              "shadow-center shadow-rose-500/20 hover:shadow-rose-500/40"
+              "grid place-items-center w-10 h-10 rounded-full bg-white dark:bg-neutral-700 text-slate-400 dark:text-neutral-600 hover:text-rose-500 dark:hover:text-rose-500",
+              "shadow-center shadow-neutral-500/20 hover:shadow-neutral-500/40 dark:shadow-none"
             )}
           >
             {hidden ? <IconEyeOff /> : <IconEye />}
@@ -217,8 +222,9 @@ export const SectionTypeLabel = ({
   return (
     <span
       className={clsx(
-        "w-20 h-20 flex flex-col justify-center items-center gap-1 rounded-lg  pl-2 pr-3 py-1",
-        "uppercase font-extrabold text-slate-700 text-sm bg-slate-100"
+        "w-20 h-20 flex flex-col justify-center items-center gap-1 rounded-lg pl-2 pr-3 py-1",
+        "uppercase font-extrabold text-slate-500 text-sm bg-slate-100",
+        "dark:text-neutral-500 dark:bg-neutral-700"
       )}
     >
       <span>{icon}</span>
@@ -261,7 +267,7 @@ const Comment = ({
       <span
         ref={contentRef}
         className={clsx(
-          "text-sm text-slate-500",
+          "text-sm text-slate-500 dark:text-neutral-400",
           isExpanded || forceShowFull ? "line-clamp-none" : "line-clamp-1"
         )}
       >
@@ -270,7 +276,10 @@ const Comment = ({
       {isClamped && !forceShowFull && (
         <button
           type="button"
-          className="flex justify-center items-center self-end px-2 rounded-md text-sm text-slate-400 cursor-pointer hover:bg-slate-200 hover:text-slate-700 w-min whitespace-nowrap "
+          className={clsx(
+            "flex justify-center items-center self-end px-2 rounded-md text-sm text-slate-400 cursor-pointer hover:bg-slate-200 hover:text-slate-700 w-min whitespace-nowrap",
+            "dark:text-neutral-600 dark:hover:bg-neutral-700 dark:hover:text-neutral-300"
+          )}
           onClick={toggleExpand}
         >
           {isExpanded ? "less" : "more"}
@@ -338,13 +347,17 @@ const TimeRange = ({ start, end }: { start: number; end: number }) => {
 
   return (
     <span className="relative flex">
-      <span className="text-slate-900 font-bold">{startTimePre}</span>
-      <span className="relative top-0 text-slate-400 lowercase text-[12px] font-semibold">
+      <span className="text-slate-900 dark:text-neutral-100 font-bold">
+        {startTimePre}
+      </span>
+      <span className="relative top-0 text-slate-400 dark:text-neutral-500 lowercase text-[12px] font-semibold">
         {startTimePost}
       </span>
-      <span className="text-slate-900 mx-1">-</span>
-      <span className="text-slate-900 font-bold">{endTimePost}</span>
-      <span className="relative top-0 text-slate-400 lowercase text-[12px] font-semibold">
+      <span className="text-slate-900 dark:text-neutral-100 mx-1">-</span>
+      <span className="text-slate-900 dark:text-neutral-100 font-bold">
+        {endTimePost}
+      </span>
+      <span className="relative top-0 text-slate-400 dark:text-neutral-500 lowercase text-[12px] font-semibold">
         {endTimePre}
       </span>
     </span>

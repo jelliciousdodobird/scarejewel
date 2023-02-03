@@ -1,25 +1,13 @@
 "use client";
 
-import { Combobox, Disclosure, Menu, Popover } from "@headlessui/react";
-import {
-  IconAdjustmentsHorizontal,
-  IconCheck,
-  IconChevronDown,
-  IconCircleChevronDown,
-  IconDotsVertical,
-  IconPalette,
-  IconSquareRoundedChevronDown,
-  IconTrash,
-  IconX,
-} from "@tabler/icons";
+import { Combobox, Popover } from "@headlessui/react";
+import { IconAdjustmentsHorizontal, IconCheck, IconTrash } from "@tabler/icons";
 import { useQuery } from "@tanstack/react-query";
 import { PrimitiveAtom, useAtom, useSetAtom } from "jotai";
 import {
-  ForwardedRef,
   forwardRef,
   Fragment,
   memo,
-  ReactNode,
   RefObject,
   useEffect,
   useMemo,
@@ -44,6 +32,7 @@ import {
   // glow,
   bg_color_highlight_hover,
   helper_hover_text,
+  option_on,
 } from "./CourseSelector.variants";
 import { fetchDistinctCourseIds, fetchDistinctDepts } from "../../database/api";
 import clsx from "clsx";
@@ -156,71 +145,71 @@ export const CourseSelector = memo(function CourseSelector({
   const textColor = text_color[color];
   const ringColor = ring_color[color];
   const highlightBgColor = bg_color_highlight_hover[color];
-  // const helperTextHover = helper_hover_text[color];
 
   // repeated styles:
   const ringStyle = `${ringColor} ring-0 focus-visible:ring-2 ring-inset appearance-none outline-none`;
 
   return (
-    <div className="relative flex flex-col gap-4">
-      <>
-        <div
-          className={clsx(
-            "stickyzz z-10 top-[calc(4rem+0.5rem)] flex gap-0 w-full rounded-2xl p-3 text-sm font-medium",
-            textColor,
-            bgc
-          )}
-        >
-          <AutoCompleteInput
-            ref={deptRef}
-            options={deptOptions}
-            selectedOption={courseItem.selectedDept}
-            onChange={updateSelectedDept}
-            placeholder="Dept"
-            color={color}
-          />
-          <AutoCompleteInput
-            ref={courseCodeRef}
-            options={courseOptions}
-            selectedOption={courseItem.selectedCourse}
-            onChange={updateSelectedCourse}
-            placeholder="Code"
-            color={color}
-            disabled={disableCourseSelect}
-          />
-          <h1
-            className={clsx(
-              "overflow-hidden flex items-center flex-grow flex-shrink pl-3 pr-1 rounded-md font-semibold text-sm whitespace-nowrap",
-              ringStyle
-            )}
-          >
-            {title}
-          </h1>
-
-          <ActionDropdown
-            courseItemAtom={courseItemAtom}
-            buttonStyle={clsx(ringStyle, highlightBgColor)}
-          />
-        </div>
-
-        <div className="relative z-0">
-          {courseItem.selectedDept.value !== "" &&
-          courseItem.selectedCourse.value !== "" ? (
-            <SectionSelector
-              semester={semester}
-              year={year}
+    <div className="isolate relative flex flex-col gap-8">
+      <div
+        className={clsx(
+          "z-10 isolate flex gap-0 w-full text-sm font-medium",
+          textColor,
+          bgc
+        )}
+      >
+        <div className="pack-content w-full">
+          <div className="relative flex gap-3 py-3">
+            <ActionDropdown
               courseItemAtom={courseItemAtom}
+              buttonStyle={clsx(ringStyle, highlightBgColor)}
             />
-          ) : (
-            <HelpMessage
-              deptInputRef={deptRef}
-              courseCodeInputRef={courseCodeRef}
+            <AutoCompleteInput
+              ref={deptRef}
+              options={deptOptions}
+              selectedOption={courseItem.selectedDept}
+              onChange={updateSelectedDept}
+              placeholder="Dept"
               color={color}
-              disableCourseCode={courseItem.selectedDept.value === ""}
             />
-          )}
+            <AutoCompleteInput
+              ref={courseCodeRef}
+              options={courseOptions}
+              selectedOption={courseItem.selectedCourse}
+              onChange={updateSelectedCourse}
+              placeholder="Code"
+              color={color}
+              disabled={disableCourseSelect}
+            />
+            <h1
+              className={clsx(
+                "overflow-hidden flex items-center flex-grow flex-shrink rounded-md font-semibold text-sm whitespace-nowrap",
+                ringStyle
+              )}
+            >
+              {title}
+            </h1>
+          </div>
         </div>
-      </>
+      </div>
+
+      <div className="relative z-0 pack-content w-full">
+        {courseItem.selectedDept.value !== "" &&
+        courseItem.selectedCourse.value !== "" ? (
+          <SectionSelector
+            semester={semester}
+            year={year}
+            courseItemAtom={courseItemAtom}
+          />
+        ) : (
+          <HelpMessage
+            deptInputRef={deptRef}
+            courseCodeInputRef={courseCodeRef}
+            color={color}
+            disableCourseCode={courseItem.selectedDept.value === ""}
+          />
+        )}
+      </div>
     </div>
   );
 },
@@ -243,19 +232,19 @@ const HelpMessage = ({
 
   return (
     <div className="relative">
-      <div className="text-xl w-full rounded-xl flex gap-4">
-        <div className="rounded-2xl w-full h-80 bg-slate-100" />
-        <div className="rounded-2xl w-full h-80 bg-slate-100" />
-        <div className="rounded-2xl w-full h-80 bg-slate-100 hidden md:flex" />
+      <div className="text-xl w-full rounded-xl flex gap-8">
+        <div className="rounded-2xl w-full h-80 bg-slate-100 dark:bg-neutral-700" />
+        <div className="rounded-2xl w-full h-80 bg-slate-100 dark:bg-neutral-700" />
+        <div className="rounded-2xl w-full h-80 bg-slate-100 dark:bg-neutral-700 hidden md:flex" />
       </div>
 
-      <div className="absolute inset-0 grid place-content-center text-4xl font-extrabold p-6 text-slate-500">
+      <div className="absolute inset-0 grid place-content-center text-4xl font-extrabold p-6 text-slate-500 dark:text-white">
         <div className="w-full max-w-lg text-center">
           To pick a course, first select a
           <button
             type="button"
             className={clsx(
-              "inline whitespace-pre text-slate-700",
+              "inline whitespace-pre text-slate-700 dark:text-neutral-900",
               helperTextHover
             )}
             onClick={focusDeptInput}
@@ -266,7 +255,7 @@ const HelpMessage = ({
           <button
             type="button"
             className={clsx(
-              "inline whitespace-pre text-slate-700 disabled:cursor-not-allowed",
+              "inline whitespace-pre text-slate-700 dark:text-neutral-900 disabled:cursor-not-allowed",
               helperTextHover
             )}
             onClick={focusCourseCodeInput}
@@ -277,33 +266,6 @@ const HelpMessage = ({
           .
         </div>
       </div>
-
-      {/* <span className="text-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 font-extrabold text-4xl text-slate-400">
-        To pick a course, first select a
-        <button
-          type="button"
-          className={clsx(
-            "inline whitespace-pre text-slate-600",
-            helperTextHover
-          )}
-          onClick={focusDeptInput}
-        >
-          {" department "}
-        </button>
-        then a
-        <button
-          type="button"
-          className={clsx(
-            "inline whitespace-pre text-slate-600 disabled:cursor-not-allowed",
-            helperTextHover
-          )}
-          onClick={focusCourseCodeInput}
-          disabled={disableCourseCode}
-        >
-          {" course code"}
-        </button>
-        .
-      </span> */}
     </div>
   );
 };
@@ -320,8 +282,6 @@ const ActionDropdown = ({
   const setSelectedTab = useSetAtom(selectedTabAtom);
 
   const { color } = courseItem;
-
-  // const bgColorHighlight = bg_color_hover[color];
 
   const removeSelf = () => {
     setCourseItems((list) => {
@@ -340,19 +300,20 @@ const ActionDropdown = ({
     <Popover as="div" className="relative flex flex-col">
       <Popover.Button
         className={clsx(
-          "grid place-items-center rounded-lg w-8 h-8",
+          "grid place-items-center rounded-md w-8 aspect-square",
           buttonStyle
         )}
       >
-        <IconAdjustmentsHorizontal />
+        <IconAdjustmentsHorizontal size={20} />
       </Popover.Button>
 
       {/* this extra div allows us to anchor the Menu.Items container to the bottom of Menu.Button*/}
       <div className="relative">
         <Popover.Panel
           className={clsx(
-            "absolute right-0 top-0 flex flex-col gap-4 p-4 mt-4 text-slate-900",
-            "rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5"
+            "absolute left-0 top-0 flex flex-col gap-10 p-6 mt-6 text-slate-900",
+            "rounded-xl bg-white shadow-lg ring-1 ring-black/5",
+            "dark:bg-neutral-800 dark:ring-white/5"
           )}
         >
           {({ close }) => (
@@ -365,8 +326,9 @@ const ActionDropdown = ({
                   removeSelf();
                 }}
                 className={clsx(
-                  "flex justify-center items-center gap-2 px-4 py-2 rounded-lg bg-rose-50 text-rose-500 font-semibold",
-                  "hover:bg-rose-100 hover:text-rose-600"
+                  "flex justify-center items-center gap-2 px-4 py-2 rounded-lg font-semibold",
+                  "bg-rose-50 text-rose-500 hover:bg-rose-100 hover:text-rose-600",
+                  "dark:bg-red-500 dark:text-white dark:hover:bg-red-600 dark:hover:text-white"
                 )}
               >
                 <IconTrash />
@@ -431,9 +393,9 @@ export const AutoCompleteInput = forwardRef<
 
     // style tokens:
     const highlightBgColor = bg_color_highlight[color];
-    const highlightTextColor = text_color[color];
-    const hoverBgColor = bg_color_highlight_hover[color];
+    const highlightTextColor = text_color_active[color];
     const placeholderTextColor = placeholder_text_color[color];
+    const optionOn = option_on[color];
 
     return (
       <Combobox
@@ -450,10 +412,9 @@ export const AutoCompleteInput = forwardRef<
                 autoComplete="off"
                 placeholder={placeholder}
                 className={clsx(
-                  "relative z-50 flex justify-between px-3 h-8 w-full max-w-[62px] min-w-[62px] rounded-md text-base font-mono font-semibold caret-black disabled:cursor-not-allowed ",
-                  hoverBgColor,
-                  `${placeholderTextColor} placeholder:text-base placeholder:uppercase appearance-none outline-none focus:outline-none`,
-                  open ? highlightBgColor : "bg-transparent"
+                  "relative z-50 flex justify-between px-3 h-8 w-full max-w-[62px] min-w-[62px] rounded-md text-base font-mono font-semibold caret-black disabled:cursor-not-allowed",
+                  `${placeholderTextColor} placeholder:text-base placeholder:uppercase appearance-none outline-none`,
+                  highlightBgColor
                 )}
                 displayValue={(dept: ComboOption) =>
                   open ? query : dept.value
@@ -484,8 +445,8 @@ export const AutoCompleteInput = forwardRef<
             <Combobox.Options
               as="div"
               className={clsx(
-                "absolute z-40 top-0 left-0 p-2 pr-1 pt-12 bg-white rounded-md  w-full sm:w-min min-w-[18rem] mb-32",
-                "appearance-none outline-none  shadow-lg ring-1 ring-black ring-opacity-5"
+                "absolute z-40 top-0 left-0 p-4 pr-1 mt-[4.25rem] bg-white dark:bg-neutral-800 rounded-xl w-full sm:w-min min-w-[18rem] mb-32",
+                "appearance-none outline-none shadow-lg ring-1 ring-black/5 dark:ring-white/5"
               )}
             >
               <ul className="flex flex-col gap-[1px] custom-scrollbar-tiny overflow-y-auto overflow-x-hidden max-h-[calc(5*2.5rem+4px)] pr-3">
@@ -493,7 +454,7 @@ export const AutoCompleteInput = forwardRef<
                   <li className="w-full">
                     <button
                       type="button"
-                      className="w-full flex justify-center items-center gap-4 px-3 py-2 whitespace-nowrap rounded-md bg-rose-50 text-rose-500 font-semibold hover:bg-rose-100 hover:text-rose-600"
+                      className="w-full flex justify-center items-center gap-4 px-3 h-12 whitespace-nowrap rounded-lg font-bold bg-rose-50 text-rose-500 hover:bg-rose-100 hover:text-rose-600 dark:bg-red-500/50 dark:text-red-100 dark:hover:bg-red-500/60 dark:hover:text-red-200 dark:font-semibold"
                       onClick={resetQuery}
                     >
                       No results. Click to reset.
@@ -506,18 +467,16 @@ export const AutoCompleteInput = forwardRef<
                       <li
                         className={clsx(
                           "flex items-center gap-4 px-3 min-h-[2.5rem] rounded cursor-pointer whitespace-nowrap text-sm",
-                          active || selected
-                            ? highlightBgColor
-                            : "bg-transparent",
+                          active || selected ? optionOn : "bg-transparent ",
                           active || selected
                             ? highlightTextColor
-                            : "text-slate-900"
+                            : "text-slate-900 dark:text-white"
                         )}
                       >
-                        <span className="min-w-[2rem] font-mono font-bold">
+                        <span className="min-w-[2rem] font-mono font-bold dark:font-medium">
                           {option.label}
                         </span>
-                        <span className="flex-1">
+                        <span className="flex-1 dark:font-light">
                           {formatTitle(option.title)}
                         </span>
                         {selected && <IconCheck size={20} stroke={3} />}
