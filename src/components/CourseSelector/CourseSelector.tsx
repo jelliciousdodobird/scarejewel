@@ -238,13 +238,13 @@ const HelpMessage = ({
         <div className="rounded-2xl w-full h-80 bg-slate-100 dark:bg-neutral-700 hidden md:flex" />
       </div>
 
-      <div className="absolute inset-0 grid place-content-center text-4xl font-extrabold p-6 text-slate-500 dark:text-white">
+      <div className="absolute inset-0 grid place-content-center text-4xl font-extrabold p-6 text-slate-500 dark:text-neutral-500">
         <div className="w-full max-w-lg text-center">
           To pick a course, first select a
           <button
             type="button"
             className={clsx(
-              "inline whitespace-pre text-slate-700 dark:text-neutral-900",
+              "inline whitespace-pre text-slate-900 dark:text-neutral-100",
               helperTextHover
             )}
             onClick={focusDeptInput}
@@ -255,7 +255,7 @@ const HelpMessage = ({
           <button
             type="button"
             className={clsx(
-              "inline whitespace-pre text-slate-700 dark:text-neutral-900 disabled:cursor-not-allowed",
+              "inline whitespace-pre text-slate-900 dark:text-neutral-100 disabled:cursor-not-allowed",
               helperTextHover
             )}
             onClick={focusCourseCodeInput}
