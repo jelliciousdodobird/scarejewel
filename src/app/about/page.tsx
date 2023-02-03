@@ -12,7 +12,7 @@ const Definition = () => {
       <div className="pack-content w-full flex flex-col gap-8 justify-center ">
         <span className="text-xl font-bold">What exactly is Yotei?</span>
         <div className="z-10 isolate relative w-full max-w-lg flex flex-col gap-6 rounded-2xl">
-          <h1 className="w-full font-extrabold text-6xl">{"Yotëi"}</h1>
+          <h1 className="w-full font-extrabold text-6xl">{"Yotei"}</h1>
           <p className="flex gap-4 items-center">
             <span className="font-bold text-2xl">{"yo·tei"}</span>
             <span className="font-light text-2xl">{"/yoh teh/"}</span>

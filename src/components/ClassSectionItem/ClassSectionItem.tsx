@@ -181,11 +181,8 @@ function ClassCard({ data, update }: ClassSectionItemProps) {
             checked={selected}
             onChange={setSelected}
             className={clsx(
-              "grid place-items-center w-12 h-12 rounded-full shadow-center dark:shadow-none",
-              selected ? "" : "shadow-emerald-500/20",
-              selected
-                ? "hover:shadow-emerald-500/60"
-                : "hover:shadow-emerald-500/40",
+              "grid place-items-center w-12 h-12 rounded-full",
+              "shadow-center shadow-neutral-500/20 hover:shadow-neutral-500/40 dark:shadow-none",
               selected ? "text-white" : "text-emerald-500",
               selected ? "bg-emerald-500" : "bg-white dark:bg-neutral-700"
             )}

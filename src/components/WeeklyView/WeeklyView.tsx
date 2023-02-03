@@ -192,15 +192,15 @@ export const WeeklyView = ({
   // const sectionHeaderClass =
   //   "flex justify-center items-center h-14 bg-slate-100 text-slate-700 dark:bg-slate-100 dark:text-slate-700 text-xl font-bold w-full";
   const headerClass =
-    "h-12 uppercase font-semibold text-sm text-slate-500 bg-slate-50 dark:text-neutral-300 dark:bg-neutral-900/50";
+    "h-12 uppercase font-semibold text-sm text-slate-500 bg-slate-50 dark:text-neutral-400 dark:bg-neutral-900/30";
   const timeSlotClass =
-    "border-b border-slate-100 last:border-b-0 dark:border-neutral-500/10";
+    "border-b last:border-b-0 border-slate-200 dark:border-neutral-700/50";
   const timeSlotDynamicStyle: CSSProperties = {
     height: numOfMinsPerBlock * yScale,
   };
 
   return (
-    <div className="relative flex flex-col overflow-hidden rounded-2xl ring-1 ring-black/5 bg-white dark:bg-neutral-800 dark:ring-neutral-500/5">
+    <div className="relative flex flex-col overflow-hidden rounded-2xl ring-1 ring-slate-200 bg-white dark:bg-neutral-800 dark:ring-neutral-700/50">
       <SelectedSnapshot />
       {showLimitedView && (
         <div className="z-50 absolute inset-0 grid place-items-center">
@@ -213,7 +213,7 @@ export const WeeklyView = ({
       {/* TABLE CONTAINER */}
       <div className="flex flex-col isolate relative" ref={containerRef}>
         {/* TABLE HEADER */}
-        <p className="gap-6 flex justify-center items-center h-14 bg-slate-100 text-slate-700 dark:bg-neutral-900/70 dark:text-white text-xl font-bold w-full">
+        <p className="gap-6 flex justify-center items-center h-14 bg-slate-100 text-slate-700 dark:bg-neutral-900/50 dark:text-white text-xl font-bold w-full">
           Weekly View
         </p>
         {/* TABLE DATA*/}
@@ -381,7 +381,7 @@ const TimeItem = ({
   return (
     <div
       className={clsx(
-        "relative flex w-full h-full rounded-xl overflow-hidden ring-1 hover:ring-[3px] focus-within:ring-[3px] bg-transparent",
+        "relative flex w-full h-full rounded-md sm:rounded-xl overflow-hidden ring-1 hover:ring-[3px] focus-within:ring-[3px] bg-transparent",
         ringHighlight,
         ringHighlightOn
       )}
