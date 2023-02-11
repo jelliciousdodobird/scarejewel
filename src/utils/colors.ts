@@ -12,17 +12,6 @@ export const pretty_colors = [
   "cyan",
   "violet",
 
-  // "emerald",
-  // "yellow",
-  // "orange",
-  // "rose",
-  // "fuchsia",
-  // "lime",
-  // "cyan",
-  // "sky",
-  // "indigo",
-  // "violet",
-
   // "black",
   // "blue",
   // "blueGray",

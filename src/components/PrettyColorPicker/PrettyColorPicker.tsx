@@ -39,7 +39,7 @@ export const PrettyColorPicker = ({
                 className={clsx(
                   "w-8 h-8 rounded-full outline-none appearance-none",
                   "grid place-items-center",
-                  "ring-2 ring-offset-2 dark:ring-offset-neutral-800",
+                  "ring-2 ring-offset-2 dark:ring-offset-neutral-900",
                   active || checked ? ring_color[color] : "ring-transparent",
                   bg_color[color]
                 )}

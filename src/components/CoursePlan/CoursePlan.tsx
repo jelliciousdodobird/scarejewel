@@ -47,13 +47,6 @@ import { CoursePlanSkeleton } from "./CoursePlan.skeleton";
 import { hex_bg_color } from "./CoursePlan.variants";
 
 export const selectedTabAtom = atom(0);
-const defaultAtom = atom({
-  id: "",
-  color: "cyan",
-  availableSections: [],
-  selectedDept: {},
-  selectedCourse: {},
-});
 
 export const CoursePlan = ({ terms }: { terms: Term[] }) => {
   const anchorRef = useRef<HTMLDivElement>(null!);
@@ -66,20 +59,20 @@ export const CoursePlan = ({ terms }: { terms: Term[] }) => {
 
   const prev = useLastValidValue(courseItems.length);
 
-  const tabListRef = useRef<HTMLDivElement>(null!);
+  // const tabListRef = useRef<HTMLDivElement>(null!);
 
-  const scrollRight = () => {
-    if (tabListRef.current) tabListRef.current.scrollLeft += 150;
-  };
-  const scrollLeft = () => {
-    if (tabListRef.current) tabListRef.current.scrollLeft -= 150;
-  };
-  const scrollRightMax = () => {
-    if (tabListRef.current) tabListRef.current.scrollLeft = 2000;
-  };
-  const scrollLeftMax = () => {
-    if (tabListRef.current) tabListRef.current.scrollLeft = 0;
-  };
+  // const scrollRight = () => {
+  //   if (tabListRef.current) tabListRef.current.scrollLeft += 150;
+  // };
+  // const scrollLeft = () => {
+  //   if (tabListRef.current) tabListRef.current.scrollLeft -= 150;
+  // };
+  // const scrollRightMax = () => {
+  //   if (tabListRef.current) tabListRef.current.scrollLeft = 2000;
+  // };
+  // const scrollLeftMax = () => {
+  //   if (tabListRef.current) tabListRef.current.scrollLeft = 0;
+  // };
 
   const termOptions: TermOption[] = useMemo(
     () =>
@@ -96,11 +89,11 @@ export const CoursePlan = ({ terms }: { terms: Term[] }) => {
     [terms]
   );
 
-  useEffect(() => {
-    const delta = courseItems.length - prev;
-    if (delta > 0) scrollRightMax();
-    else scrollLeftMax();
-  }, [courseItems.length]);
+  // useEffect(() => {
+  //   const delta = courseItems.length - prev;
+  //   if (delta > 0) scrollRightMax();
+  //   else scrollLeftMax();
+  // }, [courseItems.length]);
 
   /**
    * PROBLEM:
@@ -129,56 +122,26 @@ export const CoursePlan = ({ terms }: { terms: Term[] }) => {
       selectedIndex={selectedTab}
       onChange={setSelectedTab}
       defaultIndex={0}
+      manual
     >
       <div className="relative isolate z-0 flex flex-col gap-0 w-full">
         <div
-          id="testtest"
           // this element marks the location of the start of the sticky container
           className="absolute top-0 scroll-mt-16" // scroll-mt-16 needs to match the the sticky container's top value
           ref={anchorRef}
         />
         <div className="z-10 sticky top-[calc(4rem+1px)] backdrop-blur-sm bg-white/90 dark:bg-neutral-800/90 w-full border-b border-black/[7%] dark:border-white/[7%] pt-4 sm:pt-0">
           <div className="pack-content w-full flex items-center flex-col sm:flex-row max-w-full gap-0 sm:gap-4">
-            <TermSelect
-              options={termOptions}
-              onChange={setSelectedTermOption}
-              selectedOption={selectedTermOption}
-            />
-            <div className="z-0 isolate flex items-center gap-2 min-w-0 flex-1 w-full">
-              <Tab.List
-                ref={tabListRef}
-                className={clsx(
-                  "flex gap-2 flex-1 w-full overflow-x-auto no-scrollbar py-4 scroll-smooth"
-                )}
-              >
-                {courseItems.map((v, i) => (
-                  <TabItem
-                    key={v.toString()}
-                    courseItemAtom={v}
-                    index={i + 1}
-                  />
-                ))}
-                {courseItems.length < 10 && (
-                  <div className="h-10 w-full bg-transparent rounded-xl" />
-                )}
-              </Tab.List>
-              <div className="flex rounded-xl overflow-hidden w-10 h-10 text-slate-500 bg-slate-100 dark:text-white dark:bg-neutral-700">
-                <button
-                  type="button"
-                  className="w-4 grid place-items-center bg-inherit hover:bg-slate-200 dark:hover:bg-neutral-600 flex-1"
-                  onClick={scrollLeft}
-                >
-                  <IconChevronLeft size={12} stroke={2.5} />
-                </button>
-                <button
-                  type="button"
-                  className="w-4 grid place-items-center bg-inherit hover:bg-slate-200 dark:hover:bg-neutral-600 flex-1"
-                  onClick={scrollRight}
-                >
-                  <IconChevronRight size={12} stroke={2.5} />
-                </button>
-              </div>
+            <div className="flex gap-4 w-full sm:w-auto">
+              <TermSelect
+                options={termOptions}
+                onChange={setSelectedTermOption}
+                selectedOption={selectedTermOption}
+              />
               <AddButton />
+            </div>
+            <div className="z-0 isolate flex items-center gap-2 min-w-0 flex-1 w-full">
+              <TabList courseItems={courseItems} />
             </div>
           </div>
         </div>
@@ -200,6 +163,32 @@ export const CoursePlan = ({ terms }: { terms: Term[] }) => {
         </Tab.Panels>
       </div>
     </Tab.Group>
+  );
+};
+
+const TabList = ({
+  courseItems,
+}: {
+  courseItems: PrimitiveAtom<CourseItem>[];
+}) => {
+  const containerRef = useRef<HTMLDivElement>(null!);
+
+  return (
+    <div ref={containerRef} className="flex w-full overflow-hidden cursor-move">
+      <Tab.List
+        as={motion.div}
+        className="flex gap-2 py-4"
+        drag="x"
+        dragConstraints={containerRef}
+      >
+        {courseItems.map((v, i) => (
+          <TabItem key={v.toString()} courseItemAtom={v} index={i + 1} />
+        ))}
+        {courseItems.length < 10 && (
+          <div className="h-10 w-full bg-transparent rounded-xl" />
+        )}
+      </Tab.List>
+    </div>
   );
 };
 
@@ -232,6 +221,13 @@ const TabItem = ({
           className={clsx(
             "relative px-4 h-10 rounded-xl whitespace-nowrap font-bold text-sm",
             "outline-none appearance-none",
+            "ring-2 ring-offset-2",
+            // light theme:
+            "ring-slate-800/0 ring-offset-white/0",
+            "focus-visible:ring-slate-800 focus-visible:ring-offset-white",
+            // dark theme:
+            "dark:ring-white/0 dark:ring-offset-neutral-800/0",
+            "dark:focus-visible:ring-white dark:focus-visible:ring-offset-neutral-800",
             bgColor,
             textColor
           )}
@@ -284,7 +280,17 @@ const AddButton = ({ addLimit = 10 }: { addLimit?: number }) => {
     <>
       <button
         type="button"
-        className="flex justify-center items-center gap-2 w-min px-2 h-10 rounded-xl bg-primary-500 text-white font-bold disabled:cursor-not-allowed"
+        className={clsx(
+          "flex justify-center items-center gap-2 w-min px-2 h-10 rounded-xl bg-primary-500 text-white font-bold disabled:cursor-not-allowed",
+          "outline-none appearance-none",
+          "ring-2 ring-offset-2",
+          // light theme:
+          "ring-slate-800/0 ring-offset-white/0",
+          "focus-visible:ring-slate-800 focus-visible:ring-offset-white",
+          // dark theme:
+          "dark:ring-white/0 dark:ring-offset-neutral-800/0",
+          "dark:focus-visible:ring-white dark:focus-visible:ring-offset-neutral-800"
+        )}
         onClick={addCourseItem}
       >
         <IconPlus />

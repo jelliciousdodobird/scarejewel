@@ -313,7 +313,7 @@ const ActionDropdown = ({
           className={clsx(
             "absolute left-0 top-0 flex flex-col gap-10 p-6 mt-6 text-slate-900",
             "rounded-xl bg-white shadow-lg ring-1 ring-black/5",
-            "dark:bg-neutral-800 dark:ring-white/5"
+            "dark:bg-neutral-900 dark:ring-white/5"
           )}
         >
           {({ close }) => (
@@ -445,7 +445,7 @@ export const AutoCompleteInput = forwardRef<
             <Combobox.Options
               as="div"
               className={clsx(
-                "absolute z-40 top-0 left-0 p-4 pr-1 mt-[4.25rem] bg-white dark:bg-neutral-800 rounded-xl w-full sm:w-min min-w-[18rem] mb-32",
+                "absolute z-40 top-0 left-0 p-4 pr-1 mt-[4.25rem] bg-white dark:bg-neutral-900 rounded-xl w-full sm:w-min min-w-[18rem] mb-32",
                 "appearance-none outline-none shadow-lg ring-1 ring-black/5 dark:ring-white/5"
               )}
             >
