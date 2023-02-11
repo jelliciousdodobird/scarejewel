@@ -8,10 +8,10 @@ export const Catalog = () => {
   return (
     <div className="py-24 pack-content w-full flex flex-col gap-8 overflow-hidden">
       <div className="flex flex-col items-start gap-24">
-        <span className="z-10 relative text-[clamp(28px,6vw,40px)] text-5xlzz font-extrabold dark:font-bold text-slate-800 dark:text-white">
+        <span className="z-10 relative text-[clamp(28px,6vw,40px)] font-extrabold dark:font-bold text-slate-800 dark:text-white">
           Extensive Catalog of Classes
         </span>
-        <div className="z-0 relative flex py-1 px-8 rounded-xl bg-slate-100zzdark:bg-neutral-900">
+        <div className="z-0 relative flex py-1 px-8 rounded-xl">
           <Year />
           <Semester />
         </div>

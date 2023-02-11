@@ -9,7 +9,7 @@ import { bg_color, text_color } from "./HeroSection.variants";
 export const HeroSection = () => {
   return (
     <div className="relative -top-16 overflow-hidden bg-gradient-to-br from-primary-400 via-primary-500 to-sky-500 h-[100vh]">
-      <div className="absolute inset-0 overflow-hidden flex justify-center gap-8 w-fullzzh-full">
+      <div className="absolute inset-0 overflow-hidden flex justify-center gap-8">
         {columns.map((col, i) => (
           <motion.div
             key={i}
@@ -49,16 +49,13 @@ export const HeroSection = () => {
                 {"Get Started"}
                 <IconArrowRight size={40} stroke={2.5} />
               </span>
-              <span className="absolute left-0 -bottom-6 text-center w-full uppercase font-bold text-sm zzfont-normal text-slate-500 dark:text-neutral-500">
+              <span className="absolute left-0 -bottom-6 text-center w-full uppercase font-bold text-sm text-slate-500 dark:text-neutral-500">
                 {"No signup required!"}
               </span>
             </Link>
           </motion.span>
         </div>
       </div>
-      {/* <div className="absolute bottom-0 p-6 w-full text-neutral-500 text-center sm:text-right">
-        {"Not affliated with CSULB in any way."}
-      </div> */}
     </div>
   );
 };

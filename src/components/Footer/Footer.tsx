@@ -7,7 +7,7 @@ export const Footer = () => {
         <ul className="py-8 mt-auto">
           <li className="text-center">
             {
-              "Made by two alumni for all CSULB students. Not affliated with CSULB in any capacity."
+              "Made by two alumni for all CSULB students. Not affiliated with CSULB in any capacity."
             }
           </li>
         </ul>

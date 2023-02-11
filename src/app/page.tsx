@@ -6,7 +6,7 @@ import { TimeConflict } from "../components/HomePageSections/TimeConflict/TimeCo
 
 export default function HomePage() {
   return (
-    <div className="relative flex flex-col gap-8zz min-h-full pb-8zz">
+    <div className="relative flex flex-col min-h-full">
       <HeroSection />
       <Catalog />
       <SmartDays />
